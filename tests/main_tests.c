@@ -22,8 +22,8 @@
 
 #define INTERNAL_TESTINGLIB
 #define INTERNAL_TESTINGLIB_TESTS
-#include "./include/tests_fxtr.h"
-#include "./include/memutils.h"
+#include "tests_fxtr.h"
+#include "memutils.h"
 
 static void	display_diff_formats(t_module *th)
 {

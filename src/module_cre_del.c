@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/tests_fxtr.h"
+#include "tests_fxtr.h"
 #include <stdlib.h>
 // module destroy
 

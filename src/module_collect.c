@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/tests_fxtr.h"
+#include "tests_fxtr.h"
 
 int	_collect_sbm_t_success(t_module	*m)
 {
