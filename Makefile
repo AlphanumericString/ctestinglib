@@ -47,7 +47,7 @@ BUILD_DIR		=	build
 # -- Files
 LIBS_LIST		=	$(shell find $(LIB_DIRS) -name "*.a" -type f -or \
 							-name "*.so" -type f 2>/dev/null)
-MAKE_SELF		=	$(abs_path $(lastword $(MAKEFILE_LIST)))
+MAKE_SELF		=	$(addprefix $(shell pwd)/, $(lastword $(MAKEFILE_LIST)))
 LOGFILE			=	makeinfo.log
 
 # -- Flags
@@ -140,7 +140,7 @@ $(BUILD_DIR)/%.o:%.cpp
 	$(PRINT) "$(OK)Success$(RESET)\n"						|| \
 	$(PRINT) "$(KO)Fail$(RESET)\n"
 # -- Targets
--include $(REQS) tests.d
+-include $(REQS) $(TREQS)
 
 all:$(NAME)
 #	$(COMP) $(OBJS) $(FLAGS) -o $(NAME) $(LD_FLAGS)		&&
@@ -150,8 +150,9 @@ $(NAME): $(OBJS)
 	$(PRINT) "$(OK)Success$(RESET)\n"					&& \
 	$(RM) -f $(LOGFILE)									|| \
 	$(PRINT) "$(KO)Fail$(RESET)\n"
+tests: $(TNAME)
 $(TNAME): $(TOBJS) $(NAME)
-	$(COMP) $(TOBJS) -L ./ -l $(BASE_NAME) $(FLAGS) -o $(TNAME)
+	@$(COMP) $(TOBJS) -L ./ -l $(BASE_NAME) $(FLAGS) -o $(TNAME)
 dbg_make:
 	@$(ECHO) -e "$(LOG_MIN)SRCS:$(RESET)" $(SRCS)
 	@$(ECHO) -e "$(LOG_MIN)OBJS:$(RESET)" $(OBJS)
