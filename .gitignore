@@ -2,3 +2,9 @@
 .gitignore
 lib*.a
 build/
+.cache
+.clangd
+compile_commands.json
+tags
+*.log
+simple_tests_tester

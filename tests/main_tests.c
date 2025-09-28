@@ -27,18 +27,26 @@
 
 static void	display_diff_formats(t_module *th)
 {
-	write(STDOUT_FILENO, "===============\n", 16);
-	display_results(th, ONELINE);
-	write(STDOUT_FILENO, "===============\n", 16);
-	display_results(th, ONELINE | MODULE_PRINT_LAST);
-	write(STDOUT_FILENO, "===============\n", 16);
+	write(STDOUT_FILENO, "=======default=\n", 16);
 	display_results(th, DEFAULT);
-	write(STDOUT_FILENO, "===============\n", 16);
+	write(STDOUT_FILENO, "========detail=\n", 16);
 	display_results(th, DETAIL_ALL);
-	write(STDOUT_FILENO, "===============\n", 16);
+	write(STDOUT_FILENO, "======dflt+sbm=\n", 16);
 	display_results(th, DEFAULT | MODULE_PRINT_SBM);
-	write(STDOUT_FILENO, "===============\n", 16);
+	write(STDOUT_FILENO, "===ol+sbm+last=\n", 16);
 	display_results(th, ONELINE | MODULE_PRINT_SBM | MODULE_PRINT_LAST);
+	write(STDOUT_FILENO, "===========sbm=\n", 16);
+	display_results(th, MODULE_PRINT_SBM);
+	write(STDOUT_FILENO, "===========inf=\n", 16);
+	display_results(th, MODULE_INF_ALL);
+	write(STDOUT_FILENO, "=======oneline=\n", 16);
+	display_results(th, ONELINE);
+	write(STDOUT_FILENO, "========ol+sbm=\n", 16);
+	display_results(th, ONELINE | MODULE_PRINT_SBM);
+	write(STDOUT_FILENO, "========ol+lst=\n", 16);
+	display_results(th, ONELINE | MODULE_PRINT_LAST);
+	write(STDOUT_FILENO, "====ol+lst+sbm=\n", 16);
+	display_results(th, ONELINE | MODULE_PRINT_LAST | MODULE_PRINT_SBM);
 }
 
 int	main(void)
@@ -48,7 +56,7 @@ int	main(void)
 
 	th = safealloc(sizeof(*th));
 	self_memset(th, 0, sizeof(*th));
-	init_module(th, "main", "Main tests for the project");
+	init_module(th, "Main", "Dummy main to tests the project");
 	add_submodule(th, create_string_tests());
 	add_submodule(th, create_list_tests());
 	add_test_f(th, dummy_fail_test, "mf1");

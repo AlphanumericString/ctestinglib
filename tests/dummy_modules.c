@@ -21,7 +21,7 @@ t_module	*create_string_tests(void)
 
 	str = safealloc(sizeof(*str));
 	self_memset(str, 0, sizeof(*str));
-	init_module(str, "str", "tests for main string module");
+	init_module(str, "str", "tests for dummy string module");
 	add_test_f(str, dummy_success_test, "ss1");
 	return (str);
 }
@@ -32,7 +32,7 @@ t_module	*create_list_tests(void)
 
 	list = safealloc(sizeof(*list));
 	self_memset(list, 0, sizeof(*list));
-	init_module(list, "list", "tests for main list module");
+	init_module(list, "list", "tests for dummy list module");
 	add_test_f(list, dummy_fail_test, "lf1");
 	add_test_f(list, dummy_success_test, "ls1");
 	add_test_f(list, dummy_success_test, "ls2");
