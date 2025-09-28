@@ -55,7 +55,7 @@ static void	test_name_disp(t_test *t, t_module *m, t_display_mode md,
 	depth = (int)pass[0];
 	if (!(md & TESTS_ALL || t->return_value != EXIT_SUCCESS))
 		return ;
-	if (md & (MODULE_SUM_ALL | MODULE_INF_ALL) && !(md & MODULE_PRINT_NONE))
+	if (md & (TM_SUM_ALL | TM_INF_ALL) && !(md & TM_NONE))
 		print_padding(depth + 1);
 	if ((md & TESTS_SILENT) == 0)
 	{

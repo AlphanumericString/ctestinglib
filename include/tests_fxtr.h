@@ -50,22 +50,22 @@ typedef struct s_module
 
 typedef enum e_display_mode
 {
-	MODULE_INF_DESC = 1 << 0, // prints module desc
-	MODULE_INF_NAME = 1 << 1, // prints module name
-	MODULE_INF_ALL = MODULE_INF_NAME | MODULE_INF_DESC, // infos all
+	TM_INF_DESC = 1 << 0, // prints module desc
+	TM_INF_NAME = 1 << 1, // prints module name
+	TM_INF_ALL = TM_INF_NAME | TM_INF_DESC, // infos all
 	//
-	MODULE_SUM_PERCENT = 1 << 2, // summary percent
-	MODULE_SUM_NB = 1 << 3, // summary number
-	MODULE_SUM_ALL = MODULE_SUM_PERCENT | MODULE_SUM_NB, // summary all
+	TM_SUM_PERCENT = 1 << 2, // summary percent
+	TM_SUM_NB = 1 << 3, // summary number
+	TM_SUM_ALL = TM_SUM_PERCENT | TM_SUM_NB, // summary all
 	//
-	MODULE_PRINT_NONE = 1 << 5, // DONT prints module infos.
-	MODULE_PRINT_LAST = (1 << 6) | MODULE_SUM_ALL,
+	TM_NONE = 1 << 5, // DONT prints module infos.
+	TM_PRINT_LAST = (1 << 6) | TM_SUM_ALL,
 	// only last module w all info
-	MODULE_PRINT_SBM = 1 << 7,
-	MODULE_PRINT_SBM_SPLIT = 1 << 8 | MODULE_PRINT_SBM,
+	TM_PRINT_SBM = 1 << 7,
+	TM_SBM_SPLIT = 1 << 8 | TM_PRINT_SBM,
 
-	_MODULE_FIELDS_MASK = MODULE_INF_ALL | MODULE_SUM_ALL | MODULE_PRINT_SBM
-		| MODULE_PRINT_LAST | MODULE_PRINT_NONE,
+	_MODULE_FIELDS_MASK = TM_INF_ALL | TM_SUM_ALL | TM_PRINT_SBM
+		| TM_PRINT_LAST | TM_NONE,
 	//
 	// T NAME : default: only test name is printed
 	TESTS_SILENT = 1 << 10, // dont print the tests names when printing
@@ -75,8 +75,8 @@ typedef enum e_display_mode
 	//
 	// quick defaults
 	SILENT = 1 << 13, // returns res of tests, 0=ok 1=fail.
-	DEFAULT = MODULE_INF_ALL | MODULE_SUM_ALL,
-	ONELINE = MODULE_PRINT_NONE | TESTS_FULLNAME,
+	DEFAULT = TM_INF_ALL | TM_SUM_ALL,
+	ONELINE = TM_NONE | TESTS_FULLNAME,
 	DETAIL_ALL = DEFAULT | TESTS_ALL,
 }	t_display_mode;
 

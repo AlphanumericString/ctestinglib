@@ -20,13 +20,13 @@ static void	module_display_tests_infos(t_module *m, t_display_mode md)
 
 	test_total = _collect_sbm_t_total(m);
 	test_passed = _collect_sbm_t_success(m);
-	if (md & MODULE_PRINT_SBM_SPLIT)
+	if (md & TM_SBM_SPLIT)
 	{
 		test_total = m->tests_count;
 		test_passed = m->tests_passed;
 	}
 	module_sum_nb(test_total, test_passed, md);
-	if (md & MODULE_SUM_ALL)
+	if (md & TM_SUM_ALL)
 		print_string(" ");
 	module_sum_percent(test_total, test_passed, md);
 	module_sbm(m->submodules_list, md);
@@ -34,40 +34,40 @@ static void	module_display_tests_infos(t_module *m, t_display_mode md)
 
 static void	module_print(t_module *m, t_display_mode md, int depth)
 {
-	if (md & MODULE_PRINT_NONE && !((md & MODULE_PRINT_LAST) && !m->parent))
+	if (md & TM_NONE && !((md & TM_PRINT_LAST) && !m->parent))
 		return ;
 	print_padding(depth);
-	if (md & MODULE_INF_NAME)
+	if (md & TM_INF_NAME)
 		print_string(m->name);
-	if (md & MODULE_INF_ALL)
+	if (md & TM_INF_ALL)
 		print_string("\t");
-	if (md & MODULE_INF_DESC)
+	if (md & TM_INF_DESC)
 		print_string(m->description);
 }
 
 void	module_display_fwrd(t_module *m, t_display_mode md, int depth)
 {
-	if ((md & MODULE_PRINT_NONE && !((md & MODULE_PRINT_LAST) && !m->parent))
-		|| (md & MODULE_INF_ALL) == 0)
+	if ((md & TM_NONE && !((md & TM_PRINT_LAST) && !m->parent))
+		|| (md & TM_INF_ALL) == 0)
 		return ;
 	module_print(m, md, depth);
-	if (md & MODULE_INF_ALL)
+	if (md & TM_INF_ALL)
 		print_string("\n");
 }
 
 void	module_display_bwrd(t_module *m, t_display_mode md, int depth)
 {
-	if (md & MODULE_PRINT_NONE && !((md & MODULE_PRINT_LAST) && !m->parent)
+	if (md & TM_NONE && !((md & TM_PRINT_LAST) && !m->parent)
 		|| (md & _MODULE_FIELDS_MASK) == 0
-		|| (md & MODULE_PRINT_SBM_SPLIT && !m->submodules_list))
+		|| (md & TM_SBM_SPLIT && !m->submodules_list))
 		return ;
-	if (md & MODULE_INF_ALL && !(md & MODULE_PRINT_SBM) &&
-		m->tests_passed - m->tests_count == 0)
+	if (md & TM_INF_ALL && !(md & TM_PRINT_SBM)
+		&& m->tests_passed - m->tests_count == 0)
 		return ;
-	module_print(m, md & (~MODULE_INF_DESC), depth);
-	if ((md & (MODULE_SUM_ALL | MODULE_PRINT_SBM_SPLIT)) == 0)
+	module_print(m, md & (~TM_INF_DESC), depth);
+	if ((md & (TM_SUM_ALL | TM_SBM_SPLIT)) == 0)
 		return ((void)print_string("\n"));
-	if (md & MODULE_INF_ALL && md & MODULE_SUM_ALL && !(md & MODULE_PRINT_NONE))
+	if (md & TM_INF_ALL && md & TM_SUM_ALL && !(md & TM_NONE))
 		print_string("\t");
 	module_display_tests_infos(m, md);
 	print_string("\n");

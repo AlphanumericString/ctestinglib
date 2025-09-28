@@ -19,7 +19,7 @@ void	module_sbm(t_list	*sbm, t_display_mode md)
 	int			t_t;
 	int			t_s;
 
-	while (md & MODULE_PRINT_SBM && sbm)
+	while (md & TM_PRINT_SBM && sbm)
 	{
 		t_t = _collect_sbm_t_total(sbm->data);
 		t_s = _collect_sbm_t_success(sbm->data);
@@ -40,9 +40,9 @@ void	module_sum_percent(int t_t, int t_p, t_display_mode md)
 {
 	const char	*str_color[] = {"\033[31m", "\033[32m", "\033[0m"};
 
-	if (md & MODULE_SUM_PERCENT)
+	if (md & TM_SUM_PERCENT)
 	{
-		if (!t_t && !(md & MODULE_SUM_NB))
+		if (!t_t && !(md & TM_SUM_NB))
 			print_string("NaN%");
 		else if (!t_t)
 			;
@@ -61,7 +61,7 @@ void	module_sum_nb(int t_t, int t_p, t_display_mode md)
 {
 	const char	*str_color[] = {"\033[31m", "\033[32m", "\033[0m"};
 
-	if (!(md & MODULE_SUM_NB))
+	if (!(md & TM_SUM_NB))
 		return ;
 	if (t_t)
 		(print_string(str_color[t_p == t_t]),
