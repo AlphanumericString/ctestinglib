@@ -63,6 +63,9 @@ typedef enum e_display_mode
 	// only last module w all info
 	MODULE_PRINT_SBM = 1 << 7,
 	MODULE_PRINT_SBM_SPLIT = 1 << 8 | MODULE_PRINT_SBM,
+
+	_MODULE_FIELDS_MASK = MODULE_INF_ALL | MODULE_SUM_ALL | MODULE_PRINT_SBM
+		| MODULE_PRINT_LAST | MODULE_PRINT_NONE,
 	//
 	// T NAME : default: only test name is printed
 	TESTS_SILENT = 1 << 10, // dont print the tests names when printing

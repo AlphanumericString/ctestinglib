@@ -47,7 +47,8 @@ static void	module_print(t_module *m, t_display_mode md, int depth)
 
 void	module_display_fwrd(t_module *m, t_display_mode md, int depth)
 {
-	if (md & MODULE_PRINT_NONE && !((md & MODULE_PRINT_LAST) && !m->parent))
+	if ((md & MODULE_PRINT_NONE && !((md & MODULE_PRINT_LAST) && !m->parent))
+		|| (md & MODULE_INF_ALL) == 0)
 		return ;
 	module_print(m, md, depth);
 	if (md & MODULE_INF_ALL)
@@ -56,10 +57,15 @@ void	module_display_fwrd(t_module *m, t_display_mode md, int depth)
 
 void	module_display_bwrd(t_module *m, t_display_mode md, int depth)
 {
-	if (md & MODULE_PRINT_NONE && !((md & MODULE_PRINT_LAST) && !m->parent))
+	if (md & MODULE_PRINT_NONE && !((md & MODULE_PRINT_LAST) && !m->parent)
+		|| (md & _MODULE_FIELDS_MASK) == 0
+		|| (md & MODULE_PRINT_SBM_SPLIT && !m->submodules_list))
+		return ;
+	if (md & MODULE_INF_ALL && !(md & MODULE_PRINT_SBM) &&
+		m->tests_passed - m->tests_count == 0)
 		return ;
 	module_print(m, md & (~MODULE_INF_DESC), depth);
-	if ((md & MODULE_SUM_ALL) == 0)
+	if ((md & (MODULE_SUM_ALL | MODULE_PRINT_SBM_SPLIT)) == 0)
 		return ((void)print_string("\n"));
 	if (md & MODULE_INF_ALL && md & MODULE_SUM_ALL && !(md & MODULE_PRINT_NONE))
 		print_string("\t");
