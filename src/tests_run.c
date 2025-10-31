@@ -11,10 +11,12 @@
 /* ************************************************************************** */
 
 #include "sys/wait.h"
-#include "tests_fxtr.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#define INTERNAL_TESTINGLIB
+#include "tests_fxtr.h"
 
 static t_module	*climb_to_root(const t_module *module)
 {
@@ -44,14 +46,16 @@ static int	fork_tests(t_test *t, t_module *m)
 		exit(f());
 	}
 	waitpid(t->pid, &t->return_value, 0);
-	if (WIFEXITED(t->return_value)
-		&& WEXITSTATUS(t->return_value) == EXIT_SUCCESS)
+	if (WIFEXITED(t->return_value))
+		t->return_value = WEXITSTATUS(t->return_value);
+	if (t->return_value == EXIT_SUCCESS)
 		m->tests_passed++;
 	return (EXIT_SUCCESS);
 }
 
 #else
 
+// defining symbol to avoid compilation issues
 static int	fork_tests(t_test *t, t_module *m)
 {
 	(void)t;
@@ -64,8 +68,8 @@ static int	innner_run_test(t_test *test, t_module *m)
 {
 	if (FORK_TESTS)
 		return (fork_tests(test, m));
-	test->return_value = test->test_func();
 	test->pid = -1;
+	test->return_value = test->test_func();
 	return (test->return_value);
 }
 
@@ -78,8 +82,8 @@ int	run_test(t_module *module)
 	t_ls = module->tests_list;
 	while (t_ls)
 	{
-		if (innner_run_test(t_ls->data, module) == EXIT_FAILURE)
-			return (EXIT_FAILURE);
+		if (innner_run_test(t_ls->data, module) != EXIT_SUCCESS)
+			ret = EXIT_FAILURE;
 		t_ls = t_ls->next;
 	}
 	return (ret);

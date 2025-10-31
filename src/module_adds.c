@@ -12,21 +12,27 @@
 
 #define INTERNAL_TESTINGLIB
 #include "tests_fxtr.h"
-#include "memutils.h"
 
-void	add_submodule(t_module *module, t_module *sub_module)
+bool	add_submodule(t_module *module, t_module *sub_module)
 {
+	if (!sub_module || !module)
+		return (false);
 	list_push(&module->submodules_list, (void *)sub_module);
 	sub_module->parent = (const t_module *)module;
 	module->module_count++;
+	return (true);
 }
 
 void	add_test_f(t_module *m, int (*f)(void), const char *s)
 {
 	t_test	*t;
 
+	if (!m || !f || !s)
+		return ;
 	t = safealloc(sizeof(*t));
-	self_memset(t, 0, sizeof(*t));
+	if (!t)
+		return ;
+	*t = (t_test){0};
 	t->return_value = 0;
 	t->test_func = f;
 	t->name = (char *)s;
@@ -35,6 +41,15 @@ void	add_test_f(t_module *m, int (*f)(void), const char *s)
 
 void	add_test(t_module *module, const t_test *test)
 {
+	t_test	*prev;
+
+	if (!module || !test)
+		return ;
+	prev = NULL;
+	if (module->tests_list)
+		prev = module->tests_list->data;
 	list_push(&module->tests_list, (void *)test);
-	module->tests_count++;
+	if (prev != test)
+		module->tests_count++;
+	// return false on failure?;
 }

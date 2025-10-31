@@ -55,6 +55,10 @@ void	sort_recursive(t_module *root)
 
 	if (!root)
 		return ;
+	if (root->tests_list)
+		sort_testslist(root->tests_list);
+	if (!root->submodules_list)
+		return ;
 	sort_moduleslist(root->submodules_list);
 	tmp = root->submodules_list;
 	while (tmp && tmp->data)

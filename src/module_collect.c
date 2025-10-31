@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#define INTERNAL_TESTINGLIB
 #include "tests_fxtr.h"
 
 int	_collect_sbm_t_success(t_module	*m)

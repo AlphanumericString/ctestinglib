@@ -18,7 +18,6 @@
 static t_list	*grab_min(t_list *lst)
 {
 	t_list	*min;
-	size_t	len;
 
 	min = NULL;
 	while (lst)

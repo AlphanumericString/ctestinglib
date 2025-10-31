@@ -16,11 +16,14 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <fcntl.h>
+#include <sys/wait.h>
 
 #define INTERNAL_TESTINGLIB
 #include "tests_fxtr.h"
 
-#include <sys/wait.h>
+
+// if (WCOREDUMP(t->return_value))	not iso c99 :(
+// 	print_string(" (core dumped)");
 
 static void	test_res_disp(t_test *t, t_module *m, t_display_mode md)
 {
@@ -36,8 +39,6 @@ static void	test_res_disp(t_test *t, t_module *m, t_display_mode md)
 	{
 		print_string("Signal: ");
 		print_nb(WTERMSIG(t->return_value));
-		if (WCOREDUMP(t->return_value))
-			print_string(" (core dumped)");
 	}
 	else
 		print_nb(WEXITSTATUS(t->return_value));

@@ -53,14 +53,14 @@ LOGFILE			=	makeinfo.log
 # -- Flags
 CPPFLGS			=\
 				-MMD -MP
-# WFLAGS			=\
-# 				-Wall -Wextra -Werror -Wno-unused-parameter -Wmissing-prototypes
-C_STD			=	c11
+WFLAGS			=\
+				-Wall -Wextra -Werror -Wno-unused-parameter -Wmissing-prototypes
+C_STD			=	c99
 CXX_STD			=	c++98
 INCLUDES		=	$(addprefix -I, $(INCLUDES_DIRS))
 
-# CFLAGS			:=	$(WFLAGS) -std=$(C_STD) $(INCLUDES) $(CPP_FLAGS) $(CPPFLGS)
-CFLAGS			:=	$(INCLUDES) -g3
+CFLAGS			:=	$(WFLAGS) -std=$(C_STD) $(INCLUDES) $(CPP_FLAGS) $(CPPFLGS)
+# CFLAGS			:=	$(INCLUDES) -g3
 CXXFLAGS		:=	$(WFLAGS) -std=$(CXX_STD) $(INCLUDES) $(CPP_FLAGS) $(CPPFLGS)
 LIBS_LS			=	$(addprefix -L, $(LIB_DIRS))
 LD_FLAGS		:=	$(LIBS_LS) $(addprefix -l, $(notdir $(basename $(LIBS_LIST))))
@@ -74,16 +74,16 @@ ifeq ($(TARGET_LANG),cpp)
 	FLAGS	=	$(CXXFLAGS)
 	COMP	=	$(CXX)
 	CLGD_PREAMBLE := "CompileFlags:\n"	\
-	"	- \"$(WFLAGS)\"\n" \
-	"	- \"-std=$(CXX_STD)\"\n" \
-	"	- \"-xcpp\"\n"
+	"    - \"$(WFLAGS)\"\n" \
+	"    - \"-std=$(CXX_STD)\"\n" \
+	"    - \"-xcpp\"\n"
 else ifeq ($(TARGET_LANG),c)
 	FLAGS	=	$(CFLAGS)
 	COMP	=	$(CC)
 	CLGD_PREAMBLE := "CompileFlags:\n"	\
-	"	- \"$(WFLAGS)\"\n" \
-	"	- \"-std=$(C_STD)\"\n" \
-	"	- \"-xc\"\n"
+	"    - \"$(WFLAGS)\"\n" \
+	"    - \"-std=$(C_STD)\"\n" \
+	"    - \"-xc\"\n"
 else
 	$(error "TARGET_LANG must be either 'c' or 'cpp' but was '$(TARGET_LANG)'")
 endif
@@ -104,27 +104,40 @@ TOBJS			=	$(addprefix $(BUILD_DIR)/, $(patsubst %.c, %.o, $(TESTS)))
 REQS			=	$(OBJS:.o=.d)
 TREQS			=	$(TOBJS:.o=.d)
 SRCS			=\
-				$(SRC_DIR)/memutils.c				\
-				$(SRC_DIR)/module_sort.c			\
-				$(SRC_DIR)/display_utils.c			\
-				$(SRC_DIR)/module_run.c				\
-				$(SRC_DIR)/module_display.c			\
-				$(SRC_DIR)/tests_run.c				\
-				$(SRC_DIR)/module_cre_del.c			\
-				$(SRC_DIR)/module_adds.c			\
-				$(SRC_DIR)/tests_sort.c				\
-				$(SRC_DIR)/display_results.c		\
-				$(SRC_DIR)/tests_display.c			\
-				$(SRC_DIR)/module_collect.c			\
 				$(SRC_DIR)/alloc_catcher.c			\
-				$(SRC_DIR)/module_display_utils.c	\
+				$(SRC_DIR)/capture.c				\
+				$(SRC_DIR)/cmp_alpha.c				\
+				$(SRC_DIR)/display_results.c		\
+				$(SRC_DIR)/display_utils.c			\
 				$(SRC_DIR)/list_utils.c				\
-				$(SRC_DIR)/cmp_alpha.c
+				$(SRC_DIR)/memutils.c				\
+				$(SRC_DIR)/module_adds.c			\
+				$(SRC_DIR)/module_collect.c			\
+				$(SRC_DIR)/module_cre_del.c			\
+				$(SRC_DIR)/module_display.c			\
+				$(SRC_DIR)/module_display_utils.c	\
+				$(SRC_DIR)/module_run.c				\
+				$(SRC_DIR)/module_sort.c			\
+				$(SRC_DIR)/tests_display.c			\
+				$(SRC_DIR)/tests_run.c				\
+				$(SRC_DIR)/tests_sort.c				\
 
 TESTS			=\
-				$(TST_DIR)/main_tests.c		\
-				$(TST_DIR)/dummy_modules.c	\
-				$(TST_DIR)/dummy_tests.c
+				$(TST_DIR)/dummy_modules.c			\
+				$(TST_DIR)/dummy_tests.c			\
+				$(TST_DIR)/main_tests.c				\
+				$(TST_DIR)/module_modulesetups.c	\
+				$(TST_DIR)/module_testssetups.c		\
+				$(TST_DIR)/tmodule_add.c			\
+				$(TST_DIR)/tmodule_init.c			\
+				$(TST_DIR)/tmodule_nb_passed.c		\
+				$(TST_DIR)/tmodule_nb_tests.c		\
+				$(TST_DIR)/tmodule_order.c			\
+				$(TST_DIR)/tmodule_run.c			\
+				$(TST_DIR)/ttest_add.c				\
+				$(TST_DIR)/ttest_crash_catcher.c	\
+				$(TST_DIR)/ttest_order.c			\
+				$(TST_DIR)/ttest_return_check.c		\
 
 # -- Rules
 $(BUILD_DIR)/%.o:%.c
@@ -152,7 +165,11 @@ $(NAME): $(OBJS)
 	$(PRINT) "$(KO)Fail$(RESET)\n"
 tests: $(TNAME)
 $(TNAME): $(TOBJS) $(NAME)
-	@$(COMP) $(TOBJS) -L ./ -l $(BASE_NAME) $(FLAGS) -o $(TNAME)
+	@$(PRINT) "$(LOG_MAJ)Compiling $(TNAME)...$(RESET)"	&& \
+	$(COMP) $(TOBJS) -L ./ -l $(BASE_NAME) $(FLAGS) -o $(TNAME)	&& \
+	$(PRINT) "$(OK)Success$(RESET)\n"					&& \
+	$(RM) -f $(LOGFILE)									|| \
+	$(PRINT) "$(KO)Fail$(RESET)\n"
 dbg_make:
 	@$(ECHO) -e "$(LOG_MIN)SRCS:$(RESET)" $(SRCS)
 	@$(ECHO) -e "$(LOG_MIN)OBJS:$(RESET)" $(OBJS)
@@ -190,7 +207,7 @@ tags: $(SRCS)
 	@$(PRINT) "$(LOG_MAJ)Creating .clangd file...$(RESET)"		&& \
 	$(ECHO) -n -e $(CLGD_PREAMBLE) > .clangd					&& \
 	for dir in $(INCLUDES_DIRS); do								\
-		$(ECHO) "	- \"-I"$(shell pwd)"/"$$dir"\"" >> .clangd;	\
+		$(ECHO) "     - \"-I"$(shell pwd)"/"$$dir"\"" >> .clangd;	\
 	done														&& \
 	$(PRINT) "$(OK)Success$(RESET)\n"							|| \
 	$(PRINT) "$(KO)Fail$(RESET)\n"

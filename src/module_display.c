@@ -57,9 +57,9 @@ void	module_display_fwrd(t_module *m, t_display_mode md, int depth)
 
 void	module_display_bwrd(t_module *m, t_display_mode md, int depth)
 {
-	if (md & TM_NONE && !((md & TM_PRINT_LAST) && !m->parent)
+	if (md & TM_NONE && (!((md & TM_PRINT_LAST) && !m->parent)
 		|| (md & TM_MASK) == 0
-		|| (md & TM_SBM_SPLIT && !m->submodules_list))
+		|| (md & TM_SBM_SPLIT && !m->submodules_list)))
 		return ;
 	if (md & TM_INF_ALL && !(md & TM_PRINT_SBM)
 		&& m->tests_passed - m->tests_count == 0)

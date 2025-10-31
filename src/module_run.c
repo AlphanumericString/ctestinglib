@@ -10,10 +10,12 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include "tests_fxtr.h"
 #include <stdlib.h>
 #include <stdbool.h>
+#include <unistd.h>
+
+#define INTERNAL_TESTINGLIB
+#include "tests_fxtr.h"
 
 static int	run_module_inner(t_module *module)
 {
@@ -63,7 +65,7 @@ static int	run_module_inner(t_module *module)
 // 	return (EXIT_SUCCESS);
 // }
 //
-// static int	wait_pids(int *pids, int **rets, int tests_count, 
+// static int	wait_pids(int *pids, int **rets, int tests_count,
 //		int *tests_passed)
 // {
 // 	int	i;

@@ -10,11 +10,12 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#define INTERNAL_TESTINGLIB
 #include "tests_fxtr.h"
 #include <stdlib.h>
 // module destroy
 
-void	module_destroy(t_module *m)
+static void	module_destroy_inner(t_module *m)
 {
 	const t_list	*sm_lst = m->submodules_list;
 	const t_list	*ts_lst = m->tests_list;
@@ -38,16 +39,18 @@ void	module_destroy(t_module *m)
 	return ;
 }
 
+void	module_destroy(t_module *m)
+{
+	if (!m)
+		return ;
+	module_destroy_inner(m);
+}
+
 void	init_module(t_module *module, const char *name, const char *desc)
 {
+	if (!module || !name)
+		return ;
+	*module = (t_module){0};
 	module->name = name;
 	module->description = desc;
-	module->module_passed = 0;
-	module->module_count = 0;
-	module->submodules_list = NULL;
-	module->tests_count = 0;
-	module->tests_passed = 0;
-	module->tests_list = NULL;
-	module->depth = 0;
-	module->parent = NULL;
 }

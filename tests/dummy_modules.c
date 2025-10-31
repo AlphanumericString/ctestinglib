@@ -12,7 +12,6 @@
 
 #define INTERNAL_TESTINGLIB
 #define INTERNAL_TESTINGLIB_TESTS
-#include "memutils.h"
 #include "tests_fxtr.h"
 
 t_module	*create_string_tests(void)
@@ -20,7 +19,8 @@ t_module	*create_string_tests(void)
 	t_module	*str;
 
 	str = safealloc(sizeof(*str));
-	self_memset(str, 0, sizeof(*str));
+	if (!str)
+		return (NULL);
 	init_module(str, "str", "tests for dummy string module");
 	add_test_f(str, dummy_success_test, "ss1");
 	return (str);
@@ -31,7 +31,8 @@ t_module	*create_list_tests(void)
 	t_module	*list;
 
 	list = safealloc(sizeof(*list));
-	self_memset(list, 0, sizeof(*list));
+	if (!list)
+		return (NULL);
 	init_module(list, "list", "tests for dummy list module");
 	add_test_f(list, dummy_fail_test, "lf1");
 	add_test_f(list, dummy_success_test, "ls1");
