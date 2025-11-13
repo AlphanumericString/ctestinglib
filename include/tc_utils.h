@@ -17,9 +17,9 @@
 # ifdef CTESTS_INTERNAL
 #  include "tc_structs.h"
 
-#define KO_COLOR	"\033[31m"
-#define OK_COLOR	"\033[32m"
-#define RESET_COLOR	"\033[0m"
+#  define KO_COLOR	"\033[31m"
+#  define OK_COLOR	"\033[32m"
+#  define RESET_COLOR	"\033[0m"
 
 // cmp
 int			tci_cmp_alpha(const char *s1, const char *s2);

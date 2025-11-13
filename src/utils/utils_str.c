@@ -1,24 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   module_display_chain.c                             :+:      :+:    :+:   */
+/*   utils_str.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bgoulard <bgoulard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/09 16:17:33 by bgoulard          #+#    #+#             */
-/*   Updated: 2025/11/09 16:17:33 by bgoulard         ###   ########.fr       */
+/*   Created: 2025/11/14 00:26:35 by bgoulard          #+#    #+#             */
+/*   Updated: 2025/11/14 00:32:34 by bgoulard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#define CTESTS_INTERNAL
-#include "tc_modules.h"
 #include "tc_utils.h"
 
-void	tci_mdisplay_chain(const t_module *m)
+int	tc_strncmp(const char *s, const char *s2, size_t n)
 {
-	if (m->parent)
-		tci_mdisplay_chain(m->parent);
-	tci_print_string(m->name);
-	tci_print_string(":");
+	size_t	i;
+
+	i = 0;
+	while (i < n && s[i] == s2[i] && s[i])
+		i++;
+	if (i == n)
+		return (0);
+	return ((unsigned char)s[i] - (unsigned char)s2[i]);
 }
 
+size_t	tc_strlen(const char *s)
+{
+	size_t	i;
+
+	i = 0;
+	while (s[i])
+		i++;
+	return (i);
+}

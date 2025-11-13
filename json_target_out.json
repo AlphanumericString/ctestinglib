@@ -1,0 +1,38 @@
+{
+	"name": "name_value",
+	"description": "description_value",
+	"tests": [{ ... tests objects ... }],
+	"submodules": [{ ... submodule objects ... }],
+	"self_count": {
+		"nb_tests": 0,
+		"passed_count": 0
+	},
+	"total_count": {
+		"nb_tests": 0,
+		"passed_count": 0
+	}
+}
+// if [tests|submodules] are empty place : [] instead [{}]
+// do NOT ommit fields even if they are zero or empty
+-- test object structure
+{
+	"name": "test1",
+	"result": "OK"|"KO", // maybe "crash"?
+	"return_code": 0|1|... ,
+	"signaled": false|true
+}
+-- submodule object structure
+{
+	"name": "submodule1",
+	"description": "submodule1_description",
+	"tests": [ ... test objects ... ],
+	"submodules": [ ... nested submodule objects ... ],
+	"self_count": {
+		"nb_tests": 0,
+		"passed_count": 0
+	},
+	"total_count": {
+		"nb_tests": 0,
+		"passed_count": 0
+	}
+}

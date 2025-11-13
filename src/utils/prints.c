@@ -6,25 +6,19 @@
 /*   By: bgoulard <bgoulard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/07 15:36:50 by bgoulard          #+#    #+#             */
-/*   Updated: 2025/11/07 15:36:50 by bgoulard         ###   ########.fr       */
+/*   Updated: 2025/11/14 00:26:50 by bgoulard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
+#include <unistd.h>
 #include <limits.h>
 
 #define CTESTS_INTERNAL
-#include "tc_modules.h"
 #include "tc_utils.h"
 
 void	tci_print_string(const char *str)
 {
-	size_t	i;
-
-	i = 0;
-	while (str[i])
-		i++;
-	write(STDOUT_FILENO, str, i);
+	write(STDOUT_FILENO, str, tc_strlen(str));
 }
 
 void	tci_print_charn(int depth, char c)

@@ -35,15 +35,20 @@ size_t		tci_mget_longest_name(const t_module *m);
 // module totals
 void		tci_mdisplay_sum_nb(int t_t, int t_p, t_display_mode md);
 void		tci_mdisplay_sum_percent(int t_t, int t_p, t_display_mode md);
+void		tci_mdisplay_sum_percent(int t_t, int t_p, t_display_mode md);
 // run
 int			tci_tfork(t_test *t, t_module *m);
 
 // printing
 void		tci_mdisplay_tests(const t_module *m, t_display_mode md, int depth);
-void		tci_mdisplay_chain(const t_module *m);
-void		tci_mdisplay_bwrd(const t_module *m, t_display_mode md, int depth);
-void		tci_mdisplay_fwrd(const t_module *m, t_display_mode md, int depth);
 void		tci_mdisplay_sbm(const t_list *sbm, t_display_mode md);
+void		tci_display_results_json(const t_module *m, t_display_mode md);
+void		tci_display_results_txt(const t_module *m, t_display_mode md,
+				int depth);
+
+// -- tests
+void		tci_td_name(const t_test *t, const t_module *m, t_display_mode md,
+				size_t *pass);
 
 # endif /* CTESTS_INTERNAL */
 

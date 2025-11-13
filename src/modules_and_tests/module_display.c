@@ -1,39 +1,41 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   display_results.c                                  :+:      :+:    :+:   */
+/*   module_display.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bgoulard <bgoulard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 18:26:09 by bgoulard          #+#    #+#             */
-/*   Updated: 2025/08/08 18:26:09 by bgoulard         ###   ########.fr       */
+/*   Updated: 2025/11/14 00:31:43 by bgoulard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #define CTESTS_INTERNAL
 #include "tc_modules.h"
+#include "tc_utils.h"
 
-static void	inner_display_results(const t_module *m, t_display_mode md, int depth)
+#define JSON_SILENT "ctests: json format cannot skip any field.\n"
+
+// error 1: json + any silent field mode
+static int	format_error(t_display_mode mode)
 {
-	const int	dp = depth;
-	t_list		*md_l;
-
-	md_l = m->submodules_list;
-	tci_mdisplay_fwrd(m, md, depth);
-	while (md_l)
-	{
-		inner_display_results(md_l->data, md, dp + 1);
-		md_l = md_l->next;
-	}
-	tci_mdisplay_tests(m, md, depth);
-	tci_mdisplay_bwrd(m, md, depth);
+	if ((mode & TC_FMT_MSK) == TC_FMT_JSN
+		&& (mode & TC_DM_SUMMSK) == TC_DM_SUMSILENT)
+		return (1);
+	return (0);
 }
 
 void	tc_module_display(const t_module *module, t_display_mode mode)
 {
-	const int	depth = 0;
+	const char	*err_strings[] = {"", JSON_SILENT};
 
-	if (mode == 0)
-		mode = TC_DISPLAY_DEFAULT;
-	inner_display_results(module, mode, depth);
+	if (!module || (mode & TC_FMT_MSK) == TC_FMT_SILENT)
+		return ;
+	if (format_error(mode))
+		return (tci_print_string(err_strings[format_error(mode)]), (void)0);
+	if ((mode & TC_FMT_MSK) == TC_FMT_TXT)
+		return (tci_display_results_txt(module, mode, 0), (void) 0);
+	if ((mode & TC_FMT_MSK) == TC_FMT_JSN)
+		return (tci_display_results_json(module, mode), (void)0);
+	return (tci_print_string("unsuported format\n"), (void)0);
 }

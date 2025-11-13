@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   tests_display.c                                    :+:      :+:    :+:   */
+/*   module_display_tests.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bgoulard <bgoulard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 18:31:54 by bgoulard          #+#    #+#             */
-/*   Updated: 2025/08/08 18:32:34 by bgoulard         ###   ########.fr       */
+/*   Updated: 2025/11/14 00:31:56 by bgoulard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,48 +28,76 @@
 // print_string("\t");
 // print_string(strsignal(WTERMSIG(t->return_value)));
 
-static void	test_name_display(const t_test *t, const t_module *m, t_display_mode md,
-				size_t *pass)
-{
-	size_t			len;
-	const size_t	mlen = pass[1];
-	const int		depth = (int)pass[0];
+// static void	loc_print_signal_info(int return_value) __attribute__((unused));
+// static void	loc_print_signal_info(int return_value)
+// {
+// 	if (WIFSIGNALED(return_value))
+// 	{
+// 		tci_print_string(" (signal: ");
+// 		tci_print_nb(WTERMSIG(return_value));
+// 		tci_print_string(")");
+// 	}
+// }
 
-	if ((md & TC_DM_SUMMARY_MASK) == TC_DM_SILENT)
-		tci_print_charn(depth + 1, '\t');
-	if ((md & TC_DT_NAMMASK) == TC_DT_FULLNAME)
-			tci_mdisplay_chain(m);
-	tci_print_string(t->name);
-	len = 0;
-	while (t->name[len])
-		len++;
-	tci_print_charn(mlen - len, ' ');
+static void	loc_td_res(bool test_success, t_display_mode md, int return_value)
+{
+	if ((md & TC_FMT_MSK) == TC_FMT_TXT)
+	{
+		if (test_success == true)
+			return ((void)tci_print_string(OK_COLOR "OK" RESET_COLOR "\n"));
+		tci_print_string(KO_COLOR "KO" RESET_COLOR "\t");
+		tci_print_nb(return_value);
+		tci_print_string("\n");
+		return ;
+	}
+	else if ((md & TC_FMT_MSK) == TC_FMT_JSN)
+	{
+		tci_print_string("\"result\":\"");
+		if (test_success == true)
+			tci_print_string("OK\"");
+		else
+			tci_print_string("KO\"");
+		tci_print_string(",\"return_value\":\"");
+		tci_print_nb(return_value);
+		tci_print_string("\",\"signaled\":\"");
+		if (WIFSIGNALED(return_value))
+			tci_print_string("true\"");
+		else
+			tci_print_string("false\"");
+		return (tci_print_string("}"));
+	}
 }
 
 static void	test_res_disp(const t_test *t, const t_module *m, t_display_mode md,
 			size_t	block[2])
 {
-	bool			was_test_successfull;
+	bool		was_test_successfull;
+	const int	e_s = EXIT_SUCCESS;	
 
 	was_test_successfull = false;
-	if (WIFEXITED(t->return_value) && WEXITSTATUS(t->return_value) == EXIT_SUCCESS)
+	if (WIFEXITED(t->return_value) && WEXITSTATUS(t->return_value) == e_s)
 		was_test_successfull = true;
-	if ((md & TC_DT_RESMASK) != TC_DT_OK && was_test_successfull == true)
+	if ((md & TC_DT_RESMSK) != TC_DT_OK && was_test_successfull == true)
 		return ;
-	test_name_display(t, m, md, block);
-	if (was_test_successfull == true && (md & TC_DT_RESMASK) == TC_DT_OK)
-		return ((void)tci_print_string(OK_COLOR "OK" RESET_COLOR "\n"));
-	tci_print_string(KO_COLOR "KO" RESET_COLOR "\t");
-	if (!WIFEXITED(t->return_value))
-	{
-		tci_print_string("Signal: ");
-		tci_print_nb(WTERMSIG(t->return_value));
-	}
-	else
-		tci_print_nb(WEXITSTATUS(t->return_value));
-	tci_print_string("\n");
+	tci_td_name(t, m, md, block);
+	loc_td_res(was_test_successfull, md, t->return_value);
 }
 
+static void	loc_td_open_block(t_display_mode md)
+{
+	if ((md & TC_FMT_MSK) == TC_FMT_TXT)
+		return ;
+	if ((md & TC_FMT_MSK) == TC_FMT_JSN)
+		tci_print_string("\"tests\":[");
+}
+
+static void	loc_td_close_block(t_display_mode md)
+{
+	if ((md & TC_FMT_MSK) == TC_FMT_TXT)
+		return ;
+	if ((md & TC_FMT_MSK) == TC_FMT_JSN)
+		tci_print_string("]");
+}
 
 void	tci_mdisplay_tests(const t_module *m, t_display_mode md, int depth)
 {
@@ -78,10 +106,13 @@ void	tci_mdisplay_tests(const t_module *m, t_display_mode md, int depth)
 
 	t_ls = m->tests_list;
 	mlen = tci_mget_longest_name(m) + 2;
+	loc_td_open_block(md);
 	while (t_ls)
 	{
-		// test_name_disp(t_ls->data, m, md, (size_t[]){(size_t)depth, mlen});
 		test_res_disp(t_ls->data, m, md, (size_t[2]){(size_t)depth, mlen});
+		if ((md & TC_FMT_MSK) == TC_FMT_JSN && t_ls->next)
+			tci_print_string(",");
 		t_ls = t_ls->next;
 	}
+	loc_td_close_block(md);
 }

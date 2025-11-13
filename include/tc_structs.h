@@ -55,6 +55,41 @@ typedef struct s_module
 
 }	t_module;
 
+// TODO:!	// TC_FMT_XML = 2 << 6, // outputs as xml
+
+typedef enum e_display_mode
+{
+	// test prints
+	TC_DT_KO		= 0 << 0,
+	TC_DT_OK		= 1 << 0,
+	// test names
+	TC_DT_SHRTNAME	= 0 << 1,
+	TC_DT_FULLNAME	= 1 << 1,
+	// module summaries
+	TC_DM_SUMNBS	= 0 << 2,
+	TC_DM_SUMPCT	= 1 << 2,
+	TC_DM_SUMSILENT	= 2 << 2,
+	// calc nb tests
+	TC_DSBM_MRG		= 0 << 4,
+	TC_DSBM_SEP		= 1 << 4,
+	// submodule summaries
+	TC_DSBM_SUMNBS	= 0 << 5,
+	TC_DSBM_SUMPCT	= 1 << 5,
+	// fmts
+	TC_FMT_TXT		= 0 << 6,
+	TC_FMT_JSN		= 1 << 6,
+	TC_FMT_SILENT	= 3 << 6,
+	// default
+	TC_DISPLAY_DEFAULT = 0,
+	// masks
+	TC_DT_RESMSK	= 1 << 0,
+	TC_DT_NAMEMSK	= 1 << 1,
+	TC_DM_SUMMSK	= 3 << 2,
+	TC_DSBM_GRPMSK	= 1 << 4,
+	TC_DSBM_SUMMSK	= 1 << 5,
+	TC_FMT_MSK		= 3 << 6,
+}	t_display_mode;
+
 # else /* !CTESTS_INTERNAL */
 
 // define types as anonymous structs to avoid compilation issues
@@ -62,50 +97,57 @@ typedef struct s_module		t_module;
 typedef struct s_test		t_test;
 typedef struct s_list		t_list;
 
-# endif /* CTESTS_INTERNAL */
-
-// TODO:!!! // TC_FMT_JSON = 1 << 6, // outputs as json
-// TODO:!	// TC_FMT_XML = 2 << 6, // outputs as xml
-
+/// @brief Display mode for test results
+/// @details Bits layout:
+///	- bits 0-1: test display mode
+///			- 0: display ko and crashes only (default)
+///			- 1: display ok, ko and crashes
+///			- 2: display test name as "short" (only test name) (default)
+///			- 3: display test name as "full" (module1:module2:testname)
+/// - bits 2-3: module display mode
+///			- 0: display summary (nb tests passed/total) (default)
+///			- 1: display summary in percent
+///			- 2: silent (no module infos)
+///	- bits 4-5: submodule display mode
+///			- 0: merged results (default)
+///			- 1: split results per submodule
+///			- 0: display nb tests passed/total (default)
+///			- 1: display in percent
+///	- bits 6-7: output format
+///			- 0: simple text format (cli humman readable format) (default)
+///			- 1: json format (compact)
+///			- 2: xml format (not implemented yet)
+///			- 3: silent (no output, only return value)
+///	@note: multiple options can be combined using bitwise OR eg: 
+///		TC_DT_OK | TC_DM_SUMPERCENT | TC_FMT_JSON
+///		will display all tests results (ok, ko, crashes) with module
+///		summary in percent format, outputted as json.
+///	    Some combinations are invalid, for example using JSON format
+///		with silent module display mode will result in an error message.
+/// @note: about the JSON format: the JSON format is "compacted" to turn it 
+///		into humman readable text use 'jq' or another json parsing tool of the
+///		cli.
+///	@Warning: the percent display will output "NaN%" and not "100%" if there
+///		is no tests to run (0/0) to avoid division by zero.
 typedef enum e_display_mode
 {
-	// tests
-	// test display mode
-	TC_DT_KO	= 0 << 0, // displays ko and crashes (default)
-	TC_DT_OK	= 1 << 0, // displays ko, crashes, ok
-	// test name display mode
-	TC_DT_SHORTNAME = 0 << 1, // print the test name (e.g.: "foo  KO") (default)
-	TC_DT_FULLNAME = 1 << 1, // print the test name (e.g.: "bar::foo KO")
-
-	// modules
-	// module sumary display mode
-	TC_DM_SUMARY = 0 << 2, // display sumary (e.g.: "foo 1/1") (default)
-	TC_DM_SUMPERCENT = 1 << 2, // display in percent (e.g.: "foo 100%")
-	TC_DM_SILENT = 2 << 2, // displays no module infos
-
-	// sub modules
-	// merged or split
-	TC_DSBM_MERGED = 0 << 4, // display submodules results merged aka foo 1/3 [baz:0/2] (default)
-	TC_DSBM_SPLIT = 1 << 4, // display submodules results split "foo 1/1 [baz: 1/1]"
-	// nb or percent
-	TC_DSBM_SUMNB = 0 << 5, // displays "foo 1/1 [submod:1/1]..." (default)
-	TC_DSBM_SUMPRECENT = 1 << 5, // display "foo 100% [submod:100%]..."
-
-	// format
-	// output format
-	TC_FMT_TEXT = 0 << 6, // simple text format (default)
-	TC_FMT_SILENT = 3 << 6, // no output only return value
-
-# ifdef CTESTS_INTERNAL
-	TC_DT_RESMASK = 1 << 0,
-	TC_DT_NAMMASK = 1 << 1,
-	TC_DM_SUMMARY_MASK = 3 << 2,
-	TC_DSBM_GROUPING_MASK = 1 << 4,
-	TC_DSBM_SUMMARY_MASK = 1 << 5,
-	TC_FMT_MASK = 3 << 6,
-# endif /* CTESTS_INTERNAL */
-
+	TC_DT_KO		= 0 << 0,
+	TC_DT_OK		= 1 << 0,
+	TC_DT_SHRTNAME	= 0 << 1,
+	TC_DT_FULLNAME	= 1 << 1,
+	TC_DM_SUMNBS	= 0 << 2,
+	TC_DM_SUMPCT	= 1 << 2,
+	TC_DM_SUMSILENT	= 2 << 2,
+	TC_DSBM_MRG		= 0 << 4,
+	TC_DSBM_SEP		= 1 << 4,
+	TC_DSBM_SUMNBS	= 0 << 5,
+	TC_DSBM_SUMPCT	= 1 << 5,
+	TC_FMT_TXT		= 0 << 6,
+	TC_FMT_JSN		= 1 << 6,
+	TC_FMT_SILENT	= 3 << 6,
 	TC_DISPLAY_DEFAULT = 0,
 }	t_display_mode;
+
+# endif /* CTESTS_INTERNAL */
 
 #endif /* TC_STRUCTS_H */
