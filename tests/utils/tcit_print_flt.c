@@ -24,7 +24,7 @@ int	tcit_print_flt(void)
 	t_capture	*cap;
 	char		*s;
 
-	cap	= tc_capture_create(STDOUT_FILENO);
+	cap = tc_capture_create(STDOUT_FILENO);
 	tci_print_flt(0.0f);
 	tci_print_flt(42.42f);
 	tci_print_flt(-42.42f);

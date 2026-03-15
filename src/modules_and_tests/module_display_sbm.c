@@ -27,7 +27,10 @@ static void	loc_display_sbm_txt(const t_list *sbm, t_display_mode md)
 		tci_print_string("[");
 		tci_print_string(m->name);
 		tci_print_string(": ");
-		tci_mdisplay_sum_nb(t_t, tci_collect_sbm_t_success(m), md);
+		if ((md & TC_DSBM_SUMMSK) == TC_DSBM_SUMPCT)
+			tci_mdisplay_sum_percent(t_t, tci_collect_sbm_t_success(m), md);
+		else
+			tci_mdisplay_sum_nb(t_t, tci_collect_sbm_t_success(m), md);
 		tci_print_string("]");
 	}
 	tci_print_string("\n");

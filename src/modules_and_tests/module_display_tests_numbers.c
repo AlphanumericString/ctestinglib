@@ -30,15 +30,16 @@ static void	loc_mdisplay_percent_txt_and_json(int t_t, int t_p,
 	if (!t_t)
 		return (tci_print_string("NaN%"), (void)0);
 	tci_print_string("(");
-	tci_print_string(str_color[t_p == t_t]);
+	if ((md & TC_PRTY_MSK) == TC_PRTY_COLOR)
+		tci_print_string(str_color[t_p == t_t]);
 	tci_print_flt((double)t_p / t_t * 100);
-	return (tci_print_string("\033[0m" "%)"), (void)0);
+	if ((md & TC_PRTY_MSK) == TC_PRTY_COLOR)
+		tci_print_string("\033[0m" "%)");
+	return ((void)0);
 }
 
 void	tci_mdisplay_sum_percent(int t_t, int t_p, t_display_mode md)
 {
-	if ((md & TC_DM_SUMMSK) != TC_DM_SUMPCT)
-		return ;
 	if ((md & TC_FMT_MSK) == TC_FMT_JSN
 		|| (md & TC_FMT_MSK) == TC_FMT_TXT)
 		return (loc_mdisplay_percent_txt_and_json(t_t, t_p, md));
@@ -59,15 +60,16 @@ static void	loc_mdisplay_nb_txt_and_json(int t_t, int t_p, t_display_mode md)
 	}
 	if (!t_t)
 		return (tci_print_string("empty"), (void)0);
-	tci_print_string(str_color[t_p == t_t]),
+	if ((md & TC_PRTY_MSK) == TC_PRTY_COLOR)
+		tci_print_string(str_color[t_p == t_t]);
 	tci_print_nb(t_p);
-	return (tci_print_string("\033[0m" " / "), tci_print_nb(t_t), (void)0);
+	if ((md & TC_PRTY_MSK) == TC_PRTY_COLOR)
+		tci_print_string("\033[0m");
+	return (tci_print_string(" / "), tci_print_nb(t_t), (void)0);
 }
 
 void	tci_mdisplay_sum_nb(int t_t, int t_p, t_display_mode md)
 {
-	if ((md & TC_DM_SUMMSK) != TC_DM_SUMNBS)
-		return ;
 	if ((md & TC_FMT_MSK) == TC_FMT_JSN || (md & TC_FMT_MSK) == TC_FMT_TXT)
 		return (loc_mdisplay_nb_txt_and_json(t_t, t_p, md));
 	tci_print_string("Unsupported format for percentage display\n");

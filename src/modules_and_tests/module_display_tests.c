@@ -72,7 +72,7 @@ static void	test_res_disp(const t_test *t, const t_module *m, t_display_mode md,
 			size_t	block[2])
 {
 	bool		was_test_successfull;
-	const int	e_s = EXIT_SUCCESS;	
+	const int	e_s = EXIT_SUCCESS;
 
 	was_test_successfull = false;
 	if (WIFEXITED(t->return_value) && WEXITSTATUS(t->return_value) == e_s)

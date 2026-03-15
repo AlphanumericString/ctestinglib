@@ -34,7 +34,7 @@ static void	loc_hdl_fmts(int depth, t_display_mode md)
 static void	loc_cls_fmts(const t_test *t, size_t ml, t_display_mode md)
 {
 	if ((md & TC_FMT_MSK) == TC_FMT_JSN)
-		return (tci_print_string("\""), (void)0);
+		return (tci_print_string("\","), (void)0);
 	else if ((md & TC_FMT_MSK) == TC_FMT_TXT)
 		tci_print_charn(ml - tc_strlen(t->name), ' ');
 }

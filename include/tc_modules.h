@@ -54,26 +54,31 @@ void		tci_td_name(const t_test *t, const t_module *m, t_display_mode md,
 
 # ifdef CTESTS_INTERNAL_TESTS
 
-// tests functions for modules
+// tests
+// modules handling
+// /base
 int			tcit_add(void);
 int			tcit_nb_passed(void);
 int			tcit_nb_tests(void);
 int			tcit_ordering(void);
 int			tcit_run(void);
 int			tcit_init(void);
+// /display
+int			tcit_module_display(void);
 
-// tests functions for tests
+// tests handling
+// /base
 int			tcit_tadd(void);
 int			tcit_crash_catcher(void);
 int			tcit_tordering(void);
 int			tcit_return_check(void);
 
+// dummy - used to check all func are called
 // dummy tests
 int			dummy_fail_test(void);
 int			dummy_success_test(void);
 int			dummy_sigsegv(void);
 int			dummy_capture_stdin(void);
-
 // dummy modules creators
 t_module	*create_string_tests(void);
 t_module	*create_list_tests(void);

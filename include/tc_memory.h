@@ -15,8 +15,12 @@
 
 # include <stddef.h>
 # include <stdbool.h>
+# include <stdint.h>
 
 # ifdef CTESTS_INTERNAL
+
+int64_t	*tci_failloc_get(void);
+size_t	*tci_alloc_get(void);
 
 void	push_to_cleanup(void *ptr);
 void	do_cleanup(void (*f)(void *));

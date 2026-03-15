@@ -16,6 +16,16 @@
 # include <stddef.h>
 # include <stdbool.h>
 
+# ifdef CTESTS_INTERNAL_TESTS
+
+typedef struct s_ftest
+{
+	const char	*name;
+	int			(*test_func)(void);
+}	t_ftest;
+
+# endif /* CTESTS_INTERNAL_TESTS */
+
 # ifdef CTESTS_INTERNAL
 
 typedef struct s_test
@@ -79,6 +89,8 @@ typedef enum e_display_mode
 	TC_FMT_TXT		= 0 << 6,
 	TC_FMT_JSN		= 1 << 6,
 	TC_FMT_SILENT	= 3 << 6,
+	TC_PRTY_COLOR	= 0 << 8,
+	TC_PRTY_NOCOLOR	= 1 << 8,
 	// default
 	TC_DISPLAY_DEFAULT = 0,
 	// masks
@@ -88,6 +100,7 @@ typedef enum e_display_mode
 	TC_DSBM_GRPMSK	= 1 << 4,
 	TC_DSBM_SUMMSK	= 1 << 5,
 	TC_FMT_MSK		= 3 << 6,
+	TC_PRTY_MSK		= 1 << 8,
 }	t_display_mode;
 
 # else /* !CTESTS_INTERNAL */
@@ -116,15 +129,16 @@ typedef struct s_list		t_list;
 ///	- bits 6-7: output format
 ///			- 0: simple text format (cli humman readable format) (default)
 ///			- 1: json format (compact)
-///			- 2: xml format (not implemented yet)
 ///			- 3: silent (no output, only return value)
-///	@note: multiple options can be combined using bitwise OR eg: 
+///	- bits 8 : color or no color
+///			- 0: color / no color toggle (default: color = yes)
+///	@note: multiple options can be combined using bitwise OR eg:
 ///		TC_DT_OK | TC_DM_SUMPERCENT | TC_FMT_JSON
 ///		will display all tests results (ok, ko, crashes) with module
 ///		summary in percent format, outputted as json.
 ///	    Some combinations are invalid, for example using JSON format
 ///		with silent module display mode will result in an error message.
-/// @note: about the JSON format: the JSON format is "compacted" to turn it 
+/// @note: about the JSON format: the JSON format is "compacted" to turn it
 ///		into humman readable text use 'jq' or another json parsing tool of the
 ///		cli.
 ///	@Warning: the percent display will output "NaN%" and not "100%" if there
@@ -145,6 +159,8 @@ typedef enum e_display_mode
 	TC_FMT_TXT		= 0 << 6,
 	TC_FMT_JSN		= 1 << 6,
 	TC_FMT_SILENT	= 3 << 6,
+	TC_PRTY_COLOR	= 0 << 8,
+	TC_PRTY_NOCOLOR	= 1 << 8,
 	TC_DISPLAY_DEFAULT = 0,
 }	t_display_mode;
 

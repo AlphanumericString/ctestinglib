@@ -10,24 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdint.h>
-
 #define CTESTS_INTERNAL
 #include "tc_memory.h"
-
-static int64_t	*tci_failloc_get(void)
-{
-	static int64_t	nb_before_fail = INT64_MAX;
-
-	return (&nb_before_fail);
-}
-
-static size_t	*tci_alloc_get(void)
-{
-	static size_t	nb_allocs = 0;
-
-	return (&nb_allocs);
-}
 
 // public version of tci_alloc_get, remoes the possibility of the user changing
 // the values

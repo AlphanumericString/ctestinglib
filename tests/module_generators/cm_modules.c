@@ -19,18 +19,19 @@
 #define TCMODDESCS_RUN "running functionalities"
 #define TCMODDESCS_HANDLING "handling(create/delete/addt/...) functionalities"
 
-
+// taddf(module_display_tests, tcit_display_summary, "display summary");
+//	...
+//	...
 static t_module	*create_modules_display_tests(void)
 {
-	t_module	*module_display_tests;
+	t_module	*md_display;
 	const char	*desc = TCMODDESCS_PRE TCMODDESCS_DISPLAY;
 
-	tc_module_init(&module_display_tests, "Modules Display", desc);
-	if (!module_display_tests)
+	tc_module_init(&md_display, "Modules Display", desc);
+	if (!md_display)
 		return (NULL);
-//	tc_module_taddf(module_display_tests, tcit_display_summary, "display summary");
-//	...
-	return (module_display_tests);
+	tc_module_taddf(md_display, tcit_module_display, "display module result");
+	return (md_display);
 }
 
 static t_module	*create_modules_run_tests(void)
@@ -42,7 +43,6 @@ static t_module	*create_modules_run_tests(void)
 	if (!module_run_tests)
 		return (NULL);
 	tc_module_taddf(module_run_tests, tcit_run, "running modules");
-//	...
 	return (module_run_tests);
 }
 

@@ -10,18 +10,12 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "tc_structs.h"
 #define CTESTS_INTERNAL_TESTS
+#include "tc_structs.h"
 #include "tc_modules.h"
 #include "tc_utils.h"
 
 #define TCMODDESCS "Check on handling utils functionalities"
-
-typedef struct s_ftest
-{
-	const char	*name;
-	int			(*test_func)(void);
-}	t_ftest;
 
 static t_ftest	*load_tests_list(void)
 {
