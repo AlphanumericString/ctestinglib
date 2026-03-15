@@ -6,7 +6,7 @@
 /*   By: bgoulard <bgoulard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/01 15:42:18 by bgoulard          #+#    #+#             */
-/*   Updated: 2025/11/01 15:42:18 by bgoulard         ###   ########.fr       */
+/*   Updated: 2026/01/22 13:37:35 by bgoulard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,13 @@ void	tci_set_memory_cleanup(bool val);
 bool	tci_get_memory_cleanup(void);
 
 # endif /* CTESTS_INTERNAL */
+# ifdef CTESTS_INTERNAL_TESTS
+
+int tcit_cleanup(void);
+int tcit_count(void);
+int tcit_fail(void);
+
+# endif /* CTESTS_INTERNAL_TESTS */
 
 void	*safealloc(size_t size) __attribute__((malloc));
 void	safefree(void *p);
@@ -37,8 +44,10 @@ void	tc_failloc_set(int nb);
 size_t	tc_alloc_getcount(void);
 void	tc_failloc_reset(void);
 
-// launch f once and then re-launches it while reducing the number of
-// allocations allowed before failure one by one until either a crash or 0
+/// @brief	essitmates the number of calls to malloc and then call the function
+/// f with a fail point decreasing until either a crash or 0.
+/// view this as a light funcheck.
+/// @param f	the function to call
 void	tc_auto_call(void (*f)(void));
 
 #endif /* TC_MEMORY_H */

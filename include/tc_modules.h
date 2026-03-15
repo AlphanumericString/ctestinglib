@@ -6,7 +6,7 @@
 /*   By: bgoulard <bgoulard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 18:07:54 by bgoulard          #+#    #+#             */
-/*   Updated: 2025/11/01 17:44:49 by bgoulard         ###   ########.fr       */
+/*   Updated: 2026/01/22 14:46:25 by bgoulard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ int			tcit_return_check(void);
 // dummy - used to check all func are called
 // dummy tests
 int			dummy_fail_test(void);
+int			dummy_alloc(void);
 int			dummy_success_test(void);
 int			dummy_sigsegv(void);
 int			dummy_capture_stdin(void);
@@ -87,8 +88,9 @@ t_module	*create_list_tests(void);
 t_module	*create_modules_tests(void);
 t_module	*create_tests_tests(void);
 t_module	*create_utils_tests(void);
+t_module	*create_alloc_tests(void);
 
-# endif
+# endif /* CTESTS_INTERNAL_TESTS */
 
 // user facing functions
 // add tests / modules

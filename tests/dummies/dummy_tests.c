@@ -6,7 +6,7 @@
 /*   By: bgoulard <bgoulard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 14:12:03 by bgoulard          #+#    #+#             */
-/*   Updated: 2025/09/26 14:12:03 by bgoulard         ###   ########.fr       */
+/*   Updated: 2026/01/22 14:50:24 by bgoulard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,4 +48,14 @@ int	dummy_capture_stdin(void)
 	if (tc_capture_compare(cap, "test") != 0)
 		ret = EXIT_FAILURE;
 	return (tc_capture_destroy(cap), ret);
+}
+
+int dummy_alloc(void)
+{
+	void *adress;
+
+	adress = malloc(42);
+	if (adress)
+		return (free(adress), EXIT_SUCCESS);
+	return (EXIT_FAILURE);
 }
