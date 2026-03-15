@@ -79,6 +79,6 @@ int	main(void)
 			EXIT_FAILURE);
 	ret = tc_module_run(root);
 	tc_module_sort(root);
-	tc_module_display(root, TC_DT_OK | TC_DM_SUMPCT | TC_FMT_JSN);
+	tc_module_display(root, 0);
 	return (tc_module_destroy(root), ret);
 }

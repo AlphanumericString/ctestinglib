@@ -77,7 +77,8 @@ static void	test_res_disp(const t_test *t, const t_module *m, t_display_mode md,
 	was_test_successfull = false;
 	if (WIFEXITED(t->return_value) && WEXITSTATUS(t->return_value) == e_s)
 		was_test_successfull = true;
-	if ((md & TC_DT_RESMSK) != TC_DT_OK && was_test_successfull == true)
+	if ((md & TC_DT_RESMSK) != TC_DT_OK && was_test_successfull == true
+		&& (md & TC_FMT_MSK) != TC_FMT_JSN)
 		return ;
 	tci_td_name(t, m, md, block);
 	loc_td_res(was_test_successfull, md, t->return_value);

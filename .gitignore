@@ -8,3 +8,6 @@ compile_commands.json
 tags
 *.log
 simple_tests_tester
+*.profraw
+*.profdata
+coverage/
