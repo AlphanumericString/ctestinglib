@@ -81,8 +81,8 @@ int			dummy_success_test(void);
 int			dummy_sigsegv(void);
 int			dummy_capture_stdin(void);
 // dummy modules creators
-t_module	*create_string_tests(void);
-t_module	*create_list_tests(void);
+t_module	*create_quiet_dummy(void);
+t_module	*create_dummy_module(void);
 
 // self tests
 t_module	*create_modules_tests(void);

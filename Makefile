@@ -69,7 +69,7 @@ COV_FLAGS		:=\
 LIBS_LS			=	$(addprefix -L, $(LIB_DIRS))
 LD_FLAGS		:=	$(LIBS_LS) $(addprefix -l, $(notdir $(basename $(LIBS_LIST))))
 
-DBG_FLAGS		:=	-g2 -ggdb -O0
+DBG_FLAGS		:=	-g3 -O0
 DEBUG_LEVEL		?=	0
 
 # -- pure
@@ -94,8 +94,10 @@ endif
 
 ifeq ($(DEBUG_LEVEL),0)
 	FLAGS	:=	$(FLAGS)
+	COV_FLAGS		:= $(COV_FLAGS)
 else
 	FLAGS	:=	$(FLAGS)	$(DBG_FLAGS) -DDEBUG_LEVEL=$(DEBUG_LEVEL)
+	COV_FLAGS	:=	$(COV_FLAGS)	$(DBG_FLAGS) -DDEBUG_LEVEL=$(DEBUG_LEVEL)
 endif
 
 BASE_NAME		=	simple_tests
@@ -105,7 +107,6 @@ TNAME			:=	$(BASE_NAME)_tester
 # -- sources
 SRCS			=\
 				$(shell find $(SRC_DIR) -name "*.c" -type f 2>/dev/null)
-
 TESTS			=\
 				$(shell find $(TST_DIR) -name "*.c" -type f 2>/dev/null)
 OBJS			=	$(addprefix $(BUILD_DIR)/, $(patsubst %.c, %.o, $(SRCS)))
