@@ -24,6 +24,14 @@ int	tc_assert_false_v(bool condition, const char *err_msg, va_list args);
 int	tc_assert_true_v(bool condition, const char *err_msg, va_list args);
 
 # endif /* CTESTS_INTERNAL */
+# ifdef CTESTS_INTERNAL_TESTS
+
+int tcit_true(void);
+int tcit_false(void);
+int tcit_streq(void);
+int tcit_strne(void);
+
+# endif /* CTESTS_INTERNAL_TESTS */
 
 int	tc_assert_true(bool condition, const char *err_msg, ...);
 int	tc_assert_false(bool condition, const char *err_msg, ...);

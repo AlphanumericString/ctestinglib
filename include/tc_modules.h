@@ -89,6 +89,7 @@ t_module	*create_modules_tests(void);
 t_module	*create_tests_tests(void);
 t_module	*create_utils_tests(void);
 t_module	*create_alloc_tests(void);
+t_module	*create_assert_tests(void);
 
 # endif /* CTESTS_INTERNAL_TESTS */
 
