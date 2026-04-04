@@ -18,7 +18,7 @@
 #include <stdlib.h>
 
 // TODO: maybe move the m->auto_cleanup
-int tcit_cleanup(void)
+int	tcit_cleanup(void)
 {
 	t_module	*tmp_dummy;
 
@@ -28,12 +28,12 @@ int tcit_cleanup(void)
 	return (EXIT_SUCCESS);
 }
 
-int tcit_count(void)
+int	tcit_count(void)
 {
 	return (EXIT_SUCCESS);
 }
 
-int tcit_fail(void)
+int	tcit_fail(void)
 {
 	return (EXIT_SUCCESS);
 }

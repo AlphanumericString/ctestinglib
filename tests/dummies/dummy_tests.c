@@ -50,9 +50,9 @@ int	dummy_capture_stdin(void)
 	return (tc_capture_destroy(cap), ret);
 }
 
-int dummy_alloc(void)
+int	dummy_alloc(void)
 {
-	void *adress;
+	void	*adress;
 
 	adress = malloc(42);
 	if (adress)

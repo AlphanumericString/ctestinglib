@@ -101,7 +101,5 @@ int	tcit_module_display(void)
 	tc_capture_destroy(c);
 	if (tc_memcmp(s, exp, tc_strlen(exp) + 1) != 0)
 		ret = 1;
-	safefree(s);
-	tc_module_destroy(md);
-	return (ret);
+	return (safefree(s), tc_module_destroy(md), ret);
 }

@@ -37,6 +37,6 @@ void	tc_module_display(const t_module *module, t_display_mode mode)
 		return (tci_display_results_txt(module, mode, 0), (void) 0);
 	if ((mode & TC_FMT_MSK) == TC_FMT_JSN)
 		return (tci_display_results_json(module, mode),
-		tci_print_string("\n"), (void)0);
+			tci_print_string("\n"), (void)0);
 	return (tci_print_string("unsuported format\n"), (void)0);
 }
