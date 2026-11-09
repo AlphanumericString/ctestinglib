@@ -1,18 +1,6 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   utils_str.c                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: bgoulard <bgoulard@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/14 00:26:35 by bgoulard          #+#    #+#             */
-/*   Updated: 2025/11/14 00:32:34 by bgoulard         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+#include "ct_utils.h"
 
-#include "tc_utils.h"
-
-int	tc_strncmp(const char *s, const char *s2, size_t n)
+int	ct_strncmp(const char *s, const char *s2, size_t n)
 {
 	size_t	i;
 
@@ -24,7 +12,7 @@ int	tc_strncmp(const char *s, const char *s2, size_t n)
 	return ((unsigned char)s[i] - (unsigned char)s2[i]);
 }
 
-size_t	tc_strlen(const char *s)
+size_t	ct_strlen(const char *s)
 {
 	size_t	i;
 

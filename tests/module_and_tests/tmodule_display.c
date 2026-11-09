@@ -1,25 +1,13 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   tmodule_display.c                                  :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: bgoulard <bgoulard@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/08 22:14:41 by bgoulard          #+#    #+#             */
-/*   Updated: 2026/01/08 22:14:41 by bgoulard         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-#include "tc_capture.h"
-#include "tc_memory.h"
-#include "tc_structs.h"
+#include "ct_capture.h"
+#include "ct_memory.h"
+#include "ct_structs.h"
 #include <stdio.h>
 #include <stdlib.h>
 
 #define CTESTS_INTERNAL
 #define CTESTS_INTERNAL_TESTS
-#include "tc_modules.h"
-#include "tc_utils.h"
+#include "ct_modules.h"
+#include "ct_utils.h"
 
 // text format 1
 #define T_E1_1	"str\ttests for dummy string module\nstr\t1 / 1\n"
@@ -76,7 +64,7 @@ static const char	*get_expected(void)
 	);
 }
 
-int	tcit_module_display(void)
+int	ctit_module_display(void)
 {
 	t_module	*md;
 	t_capture	*c;
@@ -85,21 +73,21 @@ int	tcit_module_display(void)
 	const char	*exp = get_expected();
 
 	md = create_quiet_dummy();
-	tc_module_run(md);
-	c = tc_capture_create(STDOUT_FILENO);
-	tc_module_sort(md);
-	tc_module_display(md, TC_DISPLAY_DEFAULT | TC_PRTY_NOCOLOR);
-	tc_module_display(md, TC_DISPLAY_DEFAULT);
-	tc_module_display(md, TC_FMT_JSN);
-	tc_module_display(md, TC_FMT_JSN | TC_DM_SUMPCT);
-	tc_module_display(md, TC_FMT_JSN | TC_DT_SHRTNAME);
-	tc_module_display(md, TC_FMT_JSN | TC_DT_FULLNAME);
-	tc_module_display(md, TC_DT_SHRTNAME | TC_DT_OK);
-	tc_module_display(md, TC_DT_FULLNAME | TC_DT_OK);
+	ct_module_run(md);
+	c = ct_capture_create(STDOUT_FILENO);
+	ct_module_sort(md);
+	ct_module_display(md, CT_DISPLAY_DEFAULT | CT_PRTY_NOCOLOR);
+	ct_module_display(md, CT_DISPLAY_DEFAULT);
+	ct_module_display(md, CT_FMT_JSN);
+	ct_module_display(md, CT_FMT_JSN | CT_DM_SUMPCT);
+	ct_module_display(md, CT_FMT_JSN | CT_DT_SHRTNAME);
+	ct_module_display(md, CT_FMT_JSN | CT_DT_FULLNAME);
+	ct_module_display(md, CT_DT_SHRTNAME | CT_DT_OK);
+	ct_module_display(md, CT_DT_FULLNAME | CT_DT_OK);
 	ret = EXIT_SUCCESS;
-	s = tc_capture_get(c);
-	tc_capture_destroy(c);
-	if (tc_memcmp(s, exp, tc_strlen(exp) + 1) != 0)
+	s = ct_capture_get(c);
+	ct_capture_destroy(c);
+	if (ct_memcmp(s, exp, ct_strlen(exp) + 1) != 0)
 		ret = 1;
-	return (safefree(s), tc_module_destroy(md), ret);
+	return (safefree(s), ct_module_destroy(md), ret);
 }

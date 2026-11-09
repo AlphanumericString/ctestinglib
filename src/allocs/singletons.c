@@ -1,26 +1,14 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   singletons.c                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: bgoulard <bgoulard@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/13 22:57:05 by bgoulard          #+#    #+#             */
-/*   Updated: 2026/01/13 22:57:05 by bgoulard         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #define CTESTS_INTERNAL
-#include "tc_memory.h"
+#include "ct_memory.h"
 
-int64_t	*tci_failloc_get(void)
+int64_t	*cti_failloc_get(void)
 {
 	static int64_t	nb_before_fail = INT64_MAX;
 
 	return (&nb_before_fail);
 }
 
-size_t	*tci_alloc_get(void)
+size_t	*cti_alloc_get(void)
 {
 	static size_t	nb_allocs = 0;
 

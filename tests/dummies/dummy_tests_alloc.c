@@ -1,20 +1,8 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   dummy_tests_alloc.c                                :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: bgoulard <bgoulard@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/04/05 16:13:47 by bgoulard          #+#    #+#             */
-/*   Updated: 2026/04/05 16:13:47 by bgoulard         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include <stdlib.h>
 #include <sys/cdefs.h>
 
 #define CTESTS_INTERNAL_TESTS
-#include "tc_modules.h"
+#include "ct_modules.h"
 
 int	dummy_alloc(void)
 {

@@ -1,18 +1,6 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   utils_mem.c                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: bgoulard <bgoulard@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/15 00:09:45 by bgoulard          #+#    #+#             */
-/*   Updated: 2025/11/14 00:32:30 by bgoulard         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+#include "ct_utils.h"
 
-#include "tc_utils.h"
-
-void	tc_memset(void *ptr, int value, size_t size)
+void	ct_memset(void *ptr, int value, size_t size)
 {
 	unsigned char	*byte_ptr;
 	size_t			i;
@@ -26,7 +14,7 @@ void	tc_memset(void *ptr, int value, size_t size)
 	}
 }
 
-int	tc_memcmp(const void *s1, const void *s2, size_t n)
+int	ct_memcmp(const void *s1, const void *s2, size_t n)
 {
 	const unsigned char	*ptr1;
 	const unsigned char	*ptr2;
@@ -48,7 +36,7 @@ int	tc_memcmp(const void *s1, const void *s2, size_t n)
 	return (0);
 }
 
-void	*tc_memcpy(void	*d, const void	*s, size_t n)
+void	*ct_memcpy(void	*d, const void	*s, size_t n)
 {
 	unsigned char		*dest;
 	const unsigned char	*src;
@@ -67,7 +55,7 @@ void	*tc_memcpy(void	*d, const void	*s, size_t n)
 	return (d);
 }
 
-void	*tc_memmove(void *d, const void *s, size_t n)
+void	*ct_memmove(void *d, const void *s, size_t n)
 {
 	char		*dest;
 	const char	*src;
@@ -78,7 +66,7 @@ void	*tc_memmove(void *d, const void *s, size_t n)
 	dest = (char *)d;
 	src = (const char *)s;
 	if (dest < src)
-		return (tc_memcpy(d, s, n));
+		return (ct_memcpy(d, s, n));
 	i = n;
 	while (i > 0)
 	{
@@ -88,7 +76,7 @@ void	*tc_memmove(void *d, const void *s, size_t n)
 	return (d);
 }
 
-void	*tc_memchr(const void *s, int c, size_t n)
+void	*ct_memchr(const void *s, int c, size_t n)
 {
 	const unsigned char	*ptr;
 	size_t				i;

@@ -1,0 +1,38 @@
+---
+Language: C
+BasedOnStyle: LLVM
+UseTab: Always
+TabWidth: 4
+IndentWidth: 4
+ContinuationIndentWidth: 4
+ColumnLimit: 80
+# -- 42-ish brace / layout style
+BreakBeforeBraces: Allman
+IndentCaseLabels: true
+IndentGotoLabels: false
+AllowShortBlocksOnASingleLine: Never
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+KeepEmptyLinesAtTheStartOfBlocks: false
+MaxEmptyLinesToKeep: 1
+# -- alignment
+PointerAlignment: Right
+AlignConsecutiveDeclarations: true
+AlignConsecutiveAssignments: false
+AlignConsecutiveMacros: false
+AlignTrailingComments: true
+AlignOperands: true
+# -- spacing
+SpaceBeforeParens: ControlStatements
+SpaceAfterCStyleCast: false
+SpaceBeforeAssignmentOperators: true
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+SpacesBeforeTrailingComments: 2
+# -- misc
+SortIncludes: false
+ReflowComments: true
+InsertNewlineAtEOF: true
+RemoveParentheses: Leave
+...

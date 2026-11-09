@@ -1,22 +1,10 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   list_utils.c                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: bgoulard <bgoulard@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/08 18:10:43 by bgoulard          #+#    #+#             */
-/*   Updated: 2025/08/08 18:10:43 by bgoulard         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #define CTESTS_INTERNAL
-#include "tc_structs.h"
-#include "tc_utils.h"
-#include "tc_memory.h"
+#include "ct_structs.h"
+#include "ct_utils.h"
+#include "ct_memory.h"
 
 // lst //
-void	tci_list_foreach(const t_list *lst, void (*f)(void *data))
+void	cti_list_foreach(const t_list *lst, void (*f)(void *data))
 {
 	if (!lst || !f)
 		return ;
@@ -27,21 +15,21 @@ void	tci_list_foreach(const t_list *lst, void (*f)(void *data))
 	}
 }
 
-void	tci_list_push(t_list **lst, void *data)
+void	cti_list_push(t_list **lst, void *data)
 {
 	t_list	*leaf;
 
 	leaf = safealloc(sizeof(*leaf));
 	if (!leaf)
 		return ;
-	tc_memset(leaf, 0, sizeof(*leaf));
+	ct_memset(leaf, 0, sizeof(*leaf));
 	leaf->data = data;
 	leaf->next = *lst;
 	*lst = leaf;
 }
 
 // pop
-void	*tci_list_pop(t_list **lst)
+void	*cti_list_pop(t_list **lst)
 {
 	t_list	*temp;
 	void	*data;

@@ -1,21 +1,9 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   module_run.c                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: bgoulard <bgoulard@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/08 18:18:13 by bgoulard          #+#    #+#             */
-/*   Updated: 2025/08/17 01:36:07 by bgoulard         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include <stdlib.h>
 #include <stdbool.h>
 #include <unistd.h>
 
 #define CTESTS_INTERNAL
-#include "tc_modules.h"
+#include "ct_modules.h"
 
 static int	run_module_inner(t_module *module)
 {
@@ -30,10 +18,10 @@ static int	run_module_inner(t_module *module)
 			module->module_passed++;
 		mod = mod->next;
 	}
-	return (tc_module_run_self_tests(module));
+	return (ct_module_run_self_tests(module));
 }
 
-int	tc_module_run(t_module *module)
+int	ct_module_run(t_module *module)
 {
 	if (!module)
 		return (EXIT_FAILURE);

@@ -1,27 +1,15 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   prints.c                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: bgoulard <bgoulard@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/07 15:36:50 by bgoulard          #+#    #+#             */
-/*   Updated: 2025/11/14 00:26:50 by bgoulard         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include <unistd.h>
 #include <limits.h>
 
 #define CTESTS_INTERNAL
-#include "tc_utils.h"
+#include "ct_utils.h"
 
-void	tci_print_string(const char *str)
+void	cti_print_string(const char *str)
 {
-	write(STDOUT_FILENO, str, tc_strlen(str));
+	write(STDOUT_FILENO, str, ct_strlen(str));
 }
 
-void	tci_print_charn(int depth, char c)
+void	cti_print_charn(int depth, char c)
 {
 	if (depth <= 0 || !c)
 		return ;
@@ -29,7 +17,7 @@ void	tci_print_charn(int depth, char c)
 		write(STDOUT_FILENO, &c, 1);
 }
 
-void	tci_print_nb(int nb)
+void	cti_print_nb(int nb)
 {
 	char	buffer[sizeof(int) * 8];
 	int		i;
@@ -51,7 +39,7 @@ void	tci_print_nb(int nb)
 }
 
 // prints float with 2 decimal points
-void	tci_print_flt(float f)
+void	cti_print_flt(float f)
 {
 	int		int_part;
 
@@ -61,12 +49,12 @@ void	tci_print_flt(float f)
 		f = -f;
 	}
 	int_part = (int)f;
-	tci_print_nb(int_part);
+	cti_print_nb(int_part);
 	write(STDOUT_FILENO, ".", 1);
 	f -= int_part;
 	f *= 100;
-	tci_print_nb((int)f / 10);
+	cti_print_nb((int)f / 10);
 	if (f - (int)f >= 0.5f)
 		f += 1.0f;
-	tci_print_nb((int)f % 10);
+	cti_print_nb((int)f % 10);
 }

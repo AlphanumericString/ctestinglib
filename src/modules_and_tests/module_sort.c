@@ -1,20 +1,8 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   module_sort.c                                      :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: bgoulard <bgoulard@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/16 21:28:49 by bgoulard          #+#    #+#             */
-/*   Updated: 2025/09/16 21:28:49 by bgoulard         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include <string.h>
 
 #define CTESTS_INTERNAL
-#include "tc_modules.h"
-#include "tc_utils.h"
+#include "ct_modules.h"
+#include "ct_utils.h"
 
 static t_list	*grab_min(t_list *lst)
 {
@@ -23,7 +11,7 @@ static t_list	*grab_min(t_list *lst)
 	min = NULL;
 	while (lst)
 	{
-		if (!min || tci_cmp_alpha(((t_module *)min->data)->name,
+		if (!min || cti_cmp_alpha(((t_module *)min->data)->name,
 				((t_module *)lst->data)->name) > 0)
 			min = lst;
 		lst = lst->next;
@@ -51,7 +39,7 @@ void	sort_moduleslist(t_list *m_ls)
 	}
 }
 
-void	tc_module_sort(t_module *root)
+void	ct_module_sort(t_module *root)
 {
 	t_list	*tmp;
 
@@ -66,7 +54,7 @@ void	tc_module_sort(t_module *root)
 	while (tmp && tmp->data)
 	{
 		sort_testslist(((t_module *)tmp->data)->tests_list);
-		tc_module_sort((t_module *)tmp->data);
+		ct_module_sort((t_module *)tmp->data);
 		tmp = tmp->next;
 	}
 }
