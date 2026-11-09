@@ -1,19 +1,7 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   cmp_alpha.c                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: bgoulard <bgoulard@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/16 23:17:27 by bgoulard          #+#    #+#             */
-/*   Updated: 2025/09/16 23:17:27 by bgoulard         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #define CTESTS_INTERNAL
-#include "tc_utils.h"
+#include "ct_utils.h"
 
-int	tci_cmp_alpha(const char *s1, const char *s2)
+int	cti_cmp_alpha(const char *s1, const char *s2)
 {
 	size_t	len1;
 	size_t	len2;

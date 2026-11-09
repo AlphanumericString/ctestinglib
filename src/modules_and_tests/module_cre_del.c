@@ -1,18 +1,6 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   module_cre_del.c                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: bgoulard <bgoulard@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/08 18:12:52 by bgoulard          #+#    #+#             */
-/*   Updated: 2025/08/08 18:14:28 by bgoulard         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #define CTESTS_INTERNAL
-#include "tc_modules.h"
-#include "tc_memory.h"
+#include "ct_modules.h"
+#include "ct_memory.h"
 
 static void	module_destroy_inner(t_module *m)
 {
@@ -22,7 +10,7 @@ static void	module_destroy_inner(t_module *m)
 
 	while (sm_lst)
 	{
-		tc_module_destroy(sm_lst->data);
+		ct_module_destroy(sm_lst->data);
 		tmp = (t_list *)sm_lst;
 		sm_lst = sm_lst->next;
 		safefree(tmp);
@@ -38,14 +26,14 @@ static void	module_destroy_inner(t_module *m)
 	return ;
 }
 
-void	tc_module_destroy(t_module *m)
+void	ct_module_destroy(t_module *m)
 {
 	if (!m)
 		return ;
 	module_destroy_inner(m);
 }
 
-void	tc_module_init(t_module **module, const char *name, const char *desc)
+void	ct_module_init(t_module **module, const char *name, const char *desc)
 {
 	t_module	*ret;
 

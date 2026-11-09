@@ -1,23 +1,11 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   compare.c                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: bgoulard <bgoulard@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/02 12:33:40 by bgoulard          #+#    #+#             */
-/*   Updated: 2025/11/02 12:33:40 by bgoulard         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-#include "tc_memory.h"
+#include "ct_memory.h"
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
 
 #define CTESTS_INTERNAL
-#include "tc_utils.h"
-#include "tc_capture.h"
+#include "ct_utils.h"
+#include "ct_capture.h"
 
 static void	append_string(char **src, const char *append)
 {
@@ -26,36 +14,36 @@ static void	append_string(char **src, const char *append)
 
 	len = 0;
 	if (src && *src)
-		len += tc_strlen(*src);
+		len += ct_strlen(*src);
 	if (append)
-		len += tc_strlen(append);
+		len += ct_strlen(append);
 	ret = safealloc(len + 1);
 	if (!ret)
 		return (safefree(*src), *src = NULL, (void)0);
 	ret[len] = 0;
 	if (src && *src)
 	{
-		tc_memcpy(ret, *src, tc_strlen(*src));
+		ct_memcpy(ret, *src, ct_strlen(*src));
 		safefree(*src);
 	}
 	if (append)
-		tc_memcpy(ret + (len - tc_strlen(append)), append, tc_strlen(append));
+		ct_memcpy(ret + (len - ct_strlen(append)), append, ct_strlen(append));
 	*src = ret;
 }
 
-char	*tc_capture_get(t_capture *c_fd)
+char	*ct_capture_get(t_capture *c_fd)
 {
-	char	buffer[TC_RBUFFSIZE + 1];
+	char	buffer[CT_RBUFFSIZE + 1];
 	int		n;
 	char	*ret;
 
 	if (!c_fd || c_fd->pipe_read == -1)
 		return (NULL);
 	ret = NULL;
-	n = TC_RBUFFSIZE;
-	while (n == TC_RBUFFSIZE)
+	n = CT_RBUFFSIZE;
+	while (n == CT_RBUFFSIZE)
 	{
-		n = read(c_fd->pipe_read, buffer, TC_RBUFFSIZE);
+		n = read(c_fd->pipe_read, buffer, CT_RBUFFSIZE);
 		if (n < 0)
 			return (safefree(ret), NULL);
 		buffer[n] = '\0';
@@ -64,30 +52,30 @@ char	*tc_capture_get(t_capture *c_fd)
 	return (ret);
 }
 
-int	tc_capture_compare(t_capture *c_fd, const char *exp)
+int	ct_capture_compare(t_capture *c_fd, const char *exp)
 {
-	char			buffer[TC_RBUFFSIZE + 1];
+	char			buffer[CT_RBUFFSIZE + 1];
 	ssize_t			n;
-	const size_t	exp_len = tc_strlen(exp);
+	const size_t	exp_len = ct_strlen(exp);
 	ssize_t			total;
 
 	if (!c_fd || !exp || exp_len == 0 || c_fd->pipe_read == -1)
 		return (-1);
-	tci_fflush_step(c_fd);
+	cti_fflush_step(c_fd);
 	total = 0;
-	n = TC_RBUFFSIZE;
-	while (n == TC_RBUFFSIZE)
+	n = CT_RBUFFSIZE;
+	while (n == CT_RBUFFSIZE)
 	{
-		n = read(c_fd->pipe_read, buffer, TC_RBUFFSIZE);
+		n = read(c_fd->pipe_read, buffer, CT_RBUFFSIZE);
 		if (n < 0)
 			return (-1);
 		total += n;
 		buffer[n] = 0;
 		if (total == (ssize_t)exp_len)
 			break ;
-		if (total >= (ssize_t)exp_len || tc_memcmp(buffer, exp, n) != 0)
+		if (total >= (ssize_t)exp_len || ct_memcmp(buffer, exp, n) != 0)
 			return (-1);
 		exp += n;
 	}
-	return (tc_memcmp(buffer, exp, n));
+	return (ct_memcmp(buffer, exp, n));
 }

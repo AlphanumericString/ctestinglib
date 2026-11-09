@@ -1,17 +1,5 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   tc_structs.h                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: bgoulard <bgoulard@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/01 09:29:28 by bgoulard          #+#    #+#             */
-/*   Updated: 2026/01/22 13:07:15 by bgoulard         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-#ifndef TC_STRUCTS_H
-# define TC_STRUCTS_H
+#ifndef CT_STRUCTS_H
+# define CT_STRUCTS_H
 
 # include <stddef.h>
 # include <stdbool.h>
@@ -65,42 +53,42 @@ typedef struct s_module
 
 }	t_module;
 
-// TODO:!	// TC_FMT_XML = 2 << 6, // outputs as xml
+// TODO:!	// CT_FMT_XML = 2 << 6, // outputs as xml
 
 typedef enum e_display_mode
 {
 	// test prints
-	TC_DT_KO		= 0 << 0,
-	TC_DT_OK		= 1 << 0,
+	CT_DT_KO		= 0 << 0,
+	CT_DT_OK		= 1 << 0,
 	// test names
-	TC_DT_SHRTNAME	= 0 << 1,
-	TC_DT_FULLNAME	= 1 << 1,
+	CT_DT_SHRTNAME	= 0 << 1,
+	CT_DT_FULLNAME	= 1 << 1,
 	// module summaries
-	TC_DM_SUMNBS	= 0 << 2,
-	TC_DM_SUMPCT	= 1 << 2,
-	TC_DM_SUMSILENT	= 2 << 2,
+	CT_DM_SUMNBS	= 0 << 2,
+	CT_DM_SUMPCT	= 1 << 2,
+	CT_DM_SUMSILENT	= 2 << 2,
 	// calc nb tests
-	TC_DSBM_MRG		= 0 << 4,
-	TC_DSBM_SEP		= 1 << 4,
+	CT_DSBM_MRG		= 0 << 4,
+	CT_DSBM_SEP		= 1 << 4,
 	// submodule summaries
-	TC_DSBM_SUMNBS	= 0 << 5,
-	TC_DSBM_SUMPCT	= 1 << 5,
+	CT_DSBM_SUMNBS	= 0 << 5,
+	CT_DSBM_SUMPCT	= 1 << 5,
 	// fmts
-	TC_FMT_TXT		= 0 << 6,
-	TC_FMT_JSN		= 1 << 6,
-	TC_FMT_SILENT	= 3 << 6,
-	TC_PRTY_COLOR	= 0 << 8,
-	TC_PRTY_NOCOLOR	= 1 << 8,
+	CT_FMT_TXT		= 0 << 6,
+	CT_FMT_JSN		= 1 << 6,
+	CT_FMT_SILENT	= 3 << 6,
+	CT_PRTY_COLOR	= 0 << 8,
+	CT_PRTY_NOCOLOR	= 1 << 8,
 	// default
-	TC_DISPLAY_DEFAULT = 0,
+	CT_DISPLAY_DEFAULT = 0,
 	// masks
-	TC_DT_RESMSK	= 1 << 0,
-	TC_DT_NAMEMSK	= 1 << 1,
-	TC_DM_SUMMSK	= 3 << 2,
-	TC_DSBM_GRPMSK	= 1 << 4,
-	TC_DSBM_SUMMSK	= 1 << 5,
-	TC_FMT_MSK		= 3 << 6,
-	TC_PRTY_MSK		= 1 << 8,
+	CT_DT_RESMSK	= 1 << 0,
+	CT_DT_NAMEMSK	= 1 << 1,
+	CT_DM_SUMMSK	= 3 << 2,
+	CT_DSBM_GRPMSK	= 1 << 4,
+	CT_DSBM_SUMMSK	= 1 << 5,
+	CT_FMT_MSK		= 3 << 6,
+	CT_PRTY_MSK		= 1 << 8,
 }	t_display_mode;
 
 # else /* !CTESTS_INTERNAL */
@@ -133,7 +121,7 @@ typedef struct s_list		t_list;
 ///	- bits 8 : color or no color
 ///			- 0: color / no color toggle (default: color = yes)
 ///	@note: multiple options can be combined using bitwise OR eg:
-///		TC_DT_OK | TC_DM_SUMPERCENT | TC_FMT_JSON
+///		CT_DT_OK | CT_DM_SUMPERCENT | CT_FMT_JSON
 ///		will display all tests results (ok, ko, crashes) with module
 ///		summary in percent format, outputted as json.
 ///	    Some combinations are invalid, for example using JSON format
@@ -145,25 +133,25 @@ typedef struct s_list		t_list;
 ///		is no tests to run (0/0) to avoid division by zero.
 typedef enum e_display_mode
 {
-	TC_DT_KO		= 0 << 0,
-	TC_DT_OK		= 1 << 0,
-	TC_DT_SHRTNAME	= 0 << 1,
-	TC_DT_FULLNAME	= 1 << 1,
-	TC_DM_SUMNBS	= 0 << 2,
-	TC_DM_SUMPCT	= 1 << 2,
-	TC_DM_SUMSILENT	= 2 << 2,
-	TC_DSBM_MRG		= 0 << 4,
-	TC_DSBM_SEP		= 1 << 4,
-	TC_DSBM_SUMNBS	= 0 << 5,
-	TC_DSBM_SUMPCT	= 1 << 5,
-	TC_FMT_TXT		= 0 << 6,
-	TC_FMT_JSN		= 1 << 6,
-	TC_FMT_SILENT	= 3 << 6,
-	TC_PRTY_COLOR	= 0 << 8,
-	TC_PRTY_NOCOLOR	= 1 << 8,
-	TC_DISPLAY_DEFAULT = 0,
+	CT_DT_KO		= 0 << 0,
+	CT_DT_OK		= 1 << 0,
+	CT_DT_SHRTNAME	= 0 << 1,
+	CT_DT_FULLNAME	= 1 << 1,
+	CT_DM_SUMNBS	= 0 << 2,
+	CT_DM_SUMPCT	= 1 << 2,
+	CT_DM_SUMSILENT	= 2 << 2,
+	CT_DSBM_MRG		= 0 << 4,
+	CT_DSBM_SEP		= 1 << 4,
+	CT_DSBM_SUMNBS	= 0 << 5,
+	CT_DSBM_SUMPCT	= 1 << 5,
+	CT_FMT_TXT		= 0 << 6,
+	CT_FMT_JSN		= 1 << 6,
+	CT_FMT_SILENT	= 3 << 6,
+	CT_PRTY_COLOR	= 0 << 8,
+	CT_PRTY_NOCOLOR	= 1 << 8,
+	CT_DISPLAY_DEFAULT = 0,
 }	t_display_mode;
 
 # endif /* CTESTS_INTERNAL */
 
-#endif /* TC_STRUCTS_H */
+#endif /* CT_STRUCTS_H */
