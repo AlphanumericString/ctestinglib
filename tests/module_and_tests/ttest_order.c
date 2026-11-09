@@ -59,7 +59,7 @@ int	tcit_tordering(void)
 	tc_module_sort(t);
 	if (leaf_ordering_check(t))
 		return (tc_module_destroy(t), 1);
-	sub = create_string_tests();
+	sub = create_quiet_dummy();
 	if (!sub)
 		return (tc_module_destroy(t), EXIT_FAILURE);
 	tc_module_add_sub(t, sub);

@@ -6,7 +6,7 @@
 /*   By: bgoulard <bgoulard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/14 00:06:13 by bgoulard          #+#    #+#             */
-/*   Updated: 2025/11/14 00:06:13 by bgoulard         ###   ########.fr       */
+/*   Updated: 2026/01/22 13:05:40 by bgoulard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,9 @@ static void	loc_hdl_fmts(int depth, t_display_mode md)
 {
 	if ((md & TC_DM_SUMMSK) != TC_DM_SUMSILENT
 		&& (md & TC_FMT_MSK) == TC_FMT_TXT)
-		tci_print_charn(depth + 1, '\t');
+		return (tci_print_charn(depth + 1, '\t'));
 	if ((md & TC_FMT_MSK) == TC_FMT_JSN)
-		tci_print_string("{\"test_name\":\"");
+		return (tci_print_string("{\"test_name\":\""));
 }
 
 static void	loc_cls_fmts(const t_test *t, size_t ml, t_display_mode md)

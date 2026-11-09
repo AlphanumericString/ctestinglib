@@ -21,10 +21,10 @@ int	tcit_add(void)
 	t_module	*test_root;
 
 	tc_module_init(&test_root, "root", "root for tests");
-	tc_module_add_sub(test_root, create_list_tests());
+	tc_module_add_sub(test_root, create_dummy_module());
 	if (test_root->module_count != 1 || test_root->submodules_list == NULL)
 		return (tc_module_destroy(test_root), 1);
-	tc_module_add_sub(test_root, create_string_tests());
+	tc_module_add_sub(test_root, create_quiet_dummy());
 	if (test_root->module_count != 2 || test_root->submodules_list == NULL)
 		return (tc_module_destroy(test_root), 2);
 	tc_module_add_sub(test_root, NULL);

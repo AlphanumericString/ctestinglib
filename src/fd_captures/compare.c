@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "tc_memory.h"
+#include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
 
@@ -44,7 +45,7 @@ static void	append_string(char **src, const char *append)
 
 char	*tc_capture_get(t_capture *c_fd)
 {
-	char	buffer[TC_RBUFFSIZE];
+	char	buffer[TC_RBUFFSIZE + 1];
 	int		n;
 	char	*ret;
 

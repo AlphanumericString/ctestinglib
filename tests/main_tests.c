@@ -6,7 +6,7 @@
 /*   By: bgoulard <bgoulard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 15:50:18 by bgoulard          #+#    #+#             */
-/*   Updated: 2025/08/06 15:50:18 by bgoulard         ###   ########.fr       */
+/*   Updated: 2026/01/22 12:59:32 by bgoulard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,11 +74,13 @@ int	main(void)
 
 	tc_module_init(&root, "ctestinglib", RDESC);
 	if (!add_modules(root, (t_module *(*[])(void)){create_modules_tests,
-		create_tests_tests, create_utils_tests, NULL}))
+		create_alloc_tests, create_tests_tests, create_utils_tests,
+		create_assert_tests, create_capture_tests,
+		NULL}))
 		return (tc_module_destroy(root), tci_print_string(FSET_SBM),
 			EXIT_FAILURE);
 	ret = tc_module_run(root);
 	tc_module_sort(root);
-	tc_module_display(root, TC_DT_OK | TC_DM_SUMPCT | TC_FMT_JSN);
+	tc_module_display(root, 0);
 	return (tc_module_destroy(root), ret);
 }

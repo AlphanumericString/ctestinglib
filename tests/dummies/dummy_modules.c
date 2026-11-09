@@ -13,7 +13,7 @@
 #define CTESTS_INTERNAL_TESTS
 #include "tc_modules.h"
 
-t_module	*create_string_tests(void)
+t_module	*create_quiet_dummy(void)
 {
 	t_module	*str;
 
@@ -22,7 +22,7 @@ t_module	*create_string_tests(void)
 	return (str);
 }
 
-t_module	*create_list_tests(void)
+t_module	*create_dummy_module(void)
 {
 	t_module	*list;
 
