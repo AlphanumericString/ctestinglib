@@ -77,6 +77,7 @@ int			tcit_return_check(void);
 // dummy tests
 int			dummy_fail_test(void);
 int			dummy_alloc(void);
+int			dummy_leak(void);
 int			dummy_success_test(void);
 int			dummy_sigsegv(void);
 int			dummy_capture_stdin(void);

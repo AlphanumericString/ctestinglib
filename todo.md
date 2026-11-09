@@ -1,0 +1,21 @@
+# C-Tests
+- [ ] coverage
+ - [ ] alloc
+ - [x] assert
+ - [ ] fd_capture
+ - [ ] modules_and_tests
+ - [ ] utils
+- [ ] fixes
+ - [ ] rm 42's logo
+ - [ ] norming w clangd
+ - [ ] json valid
+- [ ] doc
+ - [ ] doxygen
+- [ ] impl
+ - [ ] new functionalities
+  - [ ] launch only from module path eg './my_tests module1:module1_3' repports module1:module1_3 only
+  - [ ] wrappers to malloc fail using -W,l--wrap=malloc/calloc/realloc/free : no need to include test header in every project file with alloc. tc_auto_call is good, but take an arg god damnit, way fricking easier for users to call func with their stuff then.
+  - [ ] capture feels un-finished, add polish or more stuff idk
+  - [ ] why is tc_util re-implementing linux base stuff?? rm that sh!t and use std.
+  - [ ] the `CTESTS_INTERNAL_TESTS` macro was made to split tests and "clean up" the header ends up feeling like a amalgamation of piled up stuff on top of each other. Move to separate file/header.
+  - [ ] rename tc_* to ct_* (for C-Tests and not Test-C)

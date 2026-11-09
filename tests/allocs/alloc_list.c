@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include <stdbool.h>
+#include <stdio.h>
 #define CTESTS_INTERNAL
 #define CTESTS_INTERNAL_TESTS
 #include "tc_memory.h"
@@ -24,7 +25,13 @@ int	tcit_cleanup(void)
 
 	tc_module_init(&tmp_dummy, "module_dummy", "dummy module to test cleanups");
 	tc_module_taddf(tmp_dummy, dummy_alloc, "alloc");
+	// tc_module_taddf(tmp_dummy, dummy_leak, "leak");
 	tmp_dummy->auto_cleanup = true;
+	tc_module_run(tmp_dummy);
+	printf("\n\n\n");
+	tc_module_display(tmp_dummy, TC_DISPLAY_DEFAULT);
+	printf("\n\n\n");
+	tc_module_destroy(tmp_dummy);
 	return (EXIT_SUCCESS);
 }
 

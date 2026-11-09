@@ -74,7 +74,8 @@ int	main(void)
 
 	tc_module_init(&root, "ctestinglib", RDESC);
 	if (!add_modules(root, (t_module *(*[])(void)){create_modules_tests,
-		create_tests_tests, create_utils_tests, create_assert_tests,
+		create_alloc_tests, create_tests_tests, create_utils_tests,
+		create_assert_tests,
 		NULL}))
 		return (tc_module_destroy(root), tci_print_string(FSET_SBM),
 			EXIT_FAILURE);

@@ -166,7 +166,7 @@ coverage: $(TNAME)
 	llvm-cov show -format=html								\
 	-instr-profile=$(TNAME).profdata						\
 	-ignore-filename-regex=./$(TST_DIR)/*					\
-	--show-branches=count									\
+	--show-branches=count	--show-directory-coverage		\
 	./$(TNAME) -output-dir=$(COVERAGE_DIR)					&& \
 	$(PRINT) "$(OK)Success$(RESET)\n"						|| \
 	$(PRINT) "$(KO)Failed$(RESET)\n"

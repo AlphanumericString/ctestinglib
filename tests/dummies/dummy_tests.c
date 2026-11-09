@@ -49,13 +49,3 @@ int	dummy_capture_stdin(void)
 		ret = EXIT_FAILURE;
 	return (tc_capture_destroy(cap), ret);
 }
-
-int	dummy_alloc(void)
-{
-	void	*adress;
-
-	adress = malloc(42);
-	if (adress)
-		return (free(adress), EXIT_SUCCESS);
-	return (EXIT_FAILURE);
-}
