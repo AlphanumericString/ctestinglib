@@ -1,5 +1,6 @@
 #include <signal.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #define CTESTS_INTERNAL_TESTS
 #include "ct_modules.h"
@@ -7,26 +8,32 @@
 #include "ct_capture.h"
 
 // smol populate
-int	dummy_fail_test(void)
+int dummy_fail_test(void)
 {
 	return (EXIT_FAILURE);
 }
 
-int	dummy_success_test(void)
+int dummy_success_test(void)
 {
 	return (EXIT_SUCCESS);
 }
 
-int	dummy_sigsegv(void)
+int dummy_sigsegv(void)
 {
 	raise(SIGSEGV);
 	return (EXIT_FAILURE);
 }
 
-int	dummy_capture_stdin(void)
+int dummy_timeout(void)
 {
-	t_capture	*cap;
-	int			ret;
+	sleep(10);
+	return (EXIT_SUCCESS);
+}
+
+int dummy_capture_stdin(void)
+{
+	t_capture *cap;
+	int		   ret;
 
 	ret = EXIT_SUCCESS;
 	cap = ct_capture_create(STDOUT_FILENO);

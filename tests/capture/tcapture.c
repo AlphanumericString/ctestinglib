@@ -9,12 +9,12 @@
 #include "ct_modules.h"
 #include "ct_utils.h"
 
-#define BIG_READ	8192
-#define MID_READ	5000
+#define BIG_READ 8192
+#define MID_READ 5000
 
-static int	init_errors(void)
+static int init_errors(void)
 {
-	t_capture	cap;
+	t_capture cap;
 
 	ct_memset(&cap, 0xFF, sizeof(cap));
 	if (ct_capture_init(-1, &cap) != false)
@@ -34,12 +34,12 @@ static int	init_errors(void)
 	return (EXIT_SUCCESS);
 }
 
-static int	compare_errors(void)
+static int compare_errors(void)
 {
-	t_capture	*c;
-	int			pf[2];
-	t_capture	bad;
-	char		*s;
+	t_capture *c;
+	int		   pf[2];
+	t_capture  bad;
+	char	  *s;
 
 	c = ct_capture_create(STDOUT_FILENO);
 	if (!c)
@@ -66,11 +66,11 @@ static int	compare_errors(void)
 	return (EXIT_SUCCESS);
 }
 
-static int	big_compare(void)
+static int big_compare(void)
 {
-	t_capture	*c;
-	char		*exp;
-	char		*written;
+	t_capture *c;
+	char	  *exp;
+	char	  *written;
 
 	c = ct_capture_create(STDOUT_FILENO);
 	if (!c)
@@ -86,14 +86,14 @@ static int	big_compare(void)
 	if (ct_capture_compare(c, exp) != 0)
 		return (safefree(exp), safefree(written), ct_capture_destroy(c), 3);
 	return (safefree(exp), safefree(written), ct_capture_destroy(c),
-		EXIT_SUCCESS);
+			EXIT_SUCCESS);
 }
 
-static int	big_get(void)
+static int big_get(void)
 {
-	t_capture	*c;
-	char		*in;
-	char		*out;
+	t_capture *c;
+	char	  *in;
+	char	  *out;
 
 	c = ct_capture_create(STDOUT_FILENO);
 	if (!c)
@@ -112,10 +112,10 @@ static int	big_get(void)
 	return (EXIT_SUCCESS);
 }
 
-static int	stderr_capture(void)
+static int stderr_capture(void)
 {
-	t_capture	*c;
-	char		*s;
+	t_capture *c;
+	char	  *s;
 
 	c = ct_capture_create(STDERR_FILENO);
 	if (!c)
@@ -134,12 +134,12 @@ static int	stderr_capture(void)
 	return (safefree(s), ct_capture_destroy(c), EXIT_SUCCESS);
 }
 
-static int	release_paths(void)
+static int release_paths(void)
 {
-	t_capture	cap;
-	t_capture	bad;
-	int			pf[2];
-	t_capture	other;
+	t_capture cap;
+	t_capture bad;
+	int		  pf[2];
+	t_capture other;
 
 	if (pipe(pf) == -1)
 		return (1);
@@ -164,9 +164,9 @@ static int	release_paths(void)
 	return (EXIT_SUCCESS);
 }
 
-int	ctit_capture(void)
+int ctit_capture(void)
 {
-	int	ret;
+	int ret;
 
 	ret = init_errors();
 	if (ret != EXIT_SUCCESS)

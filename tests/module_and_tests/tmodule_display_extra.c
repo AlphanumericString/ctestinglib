@@ -4,9 +4,9 @@
 #define CTESTS_INTERNAL_TESTS
 #include "ct_modules.h"
 
-static int	display_empty(void)
+static int display_empty(void)
 {
-	t_module	*empty;
+	t_module *empty;
 
 	ct_module_init(&empty, "empty", "no tests");
 	ct_module_display(empty, CT_DM_SUMPCT);
@@ -17,9 +17,9 @@ static int	display_empty(void)
 	return (EXIT_SUCCESS);
 }
 
-static int	display_results(void)
+static int display_results(void)
 {
-	t_module	*fail;
+	t_module *fail;
 
 	ct_module_init(&fail, "fail", "failing results");
 	ct_module_taddf(fail, dummy_fail_test, "ko");
@@ -32,11 +32,11 @@ static int	display_results(void)
 	return (EXIT_SUCCESS);
 }
 
-static int	display_submodules(void)
+static int display_submodules(void)
 {
-	t_module	*root;
-	t_module	*sub1;
-	t_module	*sub2;
+	t_module *root;
+	t_module *sub1;
+	t_module *sub2;
 
 	ct_module_init(&root, "root", "root description");
 	sub1 = create_quiet_dummy();
@@ -66,10 +66,10 @@ static int	display_submodules(void)
 	return (ct_module_destroy(root), EXIT_SUCCESS);
 }
 
-static int	display_internal(void)
+static int display_internal(void)
 {
-	t_module	*root;
-	t_module	*sub;
+	t_module *root;
+	t_module *sub;
 
 	ct_module_init(&root, "root", "root description");
 	sub = create_quiet_dummy();
@@ -84,9 +84,9 @@ static int	display_internal(void)
 	return (EXIT_SUCCESS);
 }
 
-static int	display_guards(void)
+static int display_guards(void)
 {
-	t_module	*root;
+	t_module *root;
 
 	root = create_quiet_dummy();
 	ct_module_display(NULL, CT_DISPLAY_DEFAULT);
@@ -99,9 +99,9 @@ static int	display_guards(void)
 	return (EXIT_SUCCESS);
 }
 
-int	ctit_module_display_extra(void)
+int ctit_module_display_extra(void)
 {
-	int	ret;
+	int ret;
 
 	ret = display_empty();
 	if (ret != EXIT_SUCCESS)

@@ -2,10 +2,10 @@
 #define CTESTS_INTERNAL
 #include "ct_memory.h"
 
-void	ct_capture_destroy(t_capture *c)
+void ct_capture_destroy(t_capture *c)
 {
 	if (!c)
-		return ;
+		return;
 	ct_capture_release(c);
 	safefree(c);
 }

@@ -7,18 +7,18 @@
 #include "ct_modules.h"
 #include "ct_utils.h"
 
-static int	g_custom_free_calls;
+static int g_custom_free_calls;
 
-static void	custom_free(void *p)
+static void custom_free(void *p)
 {
 	g_custom_free_calls++;
 	free(p);
 }
 
-static void	auto_call_helper(void)
+static void auto_call_helper(void)
 {
-	void	*a;
-	void	*b;
+	void *a;
+	void *b;
 
 	a = malloc(8);
 	b = malloc(8);
@@ -28,11 +28,11 @@ static void	auto_call_helper(void)
 		free(b);
 }
 
-int	ctit_cleanup(void)
+int ctit_cleanup(void)
 {
-	t_module	*tmp_dummy;
-	void		*a;
-	void		*b;
+	t_module *tmp_dummy;
+	void	 *a;
+	void	 *b;
 
 	cti_set_memory_cleanup(true);
 	a = malloc(32);
@@ -60,10 +60,10 @@ int	ctit_cleanup(void)
 	return (EXIT_SUCCESS);
 }
 
-int	ctit_count(void)
+int ctit_count(void)
 {
-	size_t	before;
-	void	*p;
+	size_t before;
+	void  *p;
 
 	before = ct_alloc_getcount();
 	p = malloc(64);
@@ -77,9 +77,9 @@ int	ctit_count(void)
 	return (EXIT_SUCCESS);
 }
 
-int	ctit_fail(void)
+int ctit_fail(void)
 {
-	void	*p;
+	void *p;
 
 	ct_failloc_reset();
 	ct_failloc_set(0);

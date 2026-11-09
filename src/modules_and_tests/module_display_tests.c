@@ -27,16 +27,21 @@
 // 	}
 // }
 
-static void	loc_td_res(bool test_success, t_display_mode md, int return_value)
+static void loc_td_res(const t_test *t, bool test_success, t_display_mode md)
 {
 	if ((md & CT_FMT_MSK) == CT_FMT_TXT)
 	{
 		if (test_success == true)
 			return ((void)cti_print_string(OK_COLOR "OK" RESET_COLOR "\n"));
 		cti_print_string(KO_COLOR "KO" RESET_COLOR "\t");
-		cti_print_nb(return_value);
-		cti_print_string("\n");
-		return ;
+		if (t->timed_out == true)
+			cti_print_string("TIMEOUT\n");
+		else
+		{
+			cti_print_nb(t->return_value);
+			cti_print_string("\n");
+		}
+		return;
 	}
 	else if ((md & CT_FMT_MSK) == CT_FMT_JSN)
 	{
@@ -46,9 +51,14 @@ static void	loc_td_res(bool test_success, t_display_mode md, int return_value)
 		else
 			cti_print_string("KO\"");
 		cti_print_string(",\"return_value\":\"");
-		cti_print_nb(return_value);
-		cti_print_string("\",\"signaled\":\"");
-		if (WIFSIGNALED(return_value))
+		cti_print_nb(t->return_value);
+		cti_print_string("\",\"timed_out\":\"");
+		if (t->timed_out == true)
+			cti_print_string("true\"");
+		else
+			cti_print_string("false\"");
+		cti_print_string(",\"signaled\":\"");
+		if (WIFSIGNALED(t->return_value))
 			cti_print_string("true\"");
 		else
 			cti_print_string("false\"");
@@ -56,41 +66,41 @@ static void	loc_td_res(bool test_success, t_display_mode md, int return_value)
 	}
 }
 
-static void	test_res_disp(const t_test *t, const t_module *m, t_display_mode md,
-			size_t	block[2])
+static void test_res_disp(const t_test *t, const t_module *m, t_display_mode md,
+						  size_t block[2])
 {
-	bool		was_test_successfull;
-	const int	e_s = EXIT_SUCCESS;
+	bool	  was_test_successfull;
+	const int e_s = EXIT_SUCCESS;
 
 	was_test_successfull = false;
 	if (WIFEXITED(t->return_value) && WEXITSTATUS(t->return_value) == e_s)
 		was_test_successfull = true;
-	if ((md & CT_DT_RESMSK) != CT_DT_OK && was_test_successfull == true
-		&& (md & CT_FMT_MSK) != CT_FMT_JSN)
-		return ;
+	if ((md & CT_DT_RESMSK) != CT_DT_OK && was_test_successfull == true &&
+		(md & CT_FMT_MSK) != CT_FMT_JSN)
+		return;
 	cti_td_name(t, m, md, block);
-	loc_td_res(was_test_successfull, md, t->return_value);
+	loc_td_res(t, was_test_successfull, md);
 }
 
-static void	loc_td_open_block(t_display_mode md)
+static void loc_td_open_block(t_display_mode md)
 {
 	if ((md & CT_FMT_MSK) == CT_FMT_TXT)
-		return ;
+		return;
 	if ((md & CT_FMT_MSK) == CT_FMT_JSN)
 		cti_print_string("\"tests\":[");
 }
 
-static void	loc_td_close_block(t_display_mode md)
+static void loc_td_close_block(t_display_mode md)
 {
 	if ((md & CT_FMT_MSK) == CT_FMT_TXT)
-		return ;
+		return;
 	if ((md & CT_FMT_MSK) == CT_FMT_JSN)
 		cti_print_string("]");
 }
 
-void	cti_mdisplay_tests(const t_module *m, t_display_mode md, int depth)
+void cti_mdisplay_tests(const t_module *m, t_display_mode md, int depth)
 {
-	t_list	*t_ls;
+	t_list *t_ls;
 	size_t	mlen;
 
 	t_ls = m->tests_list;

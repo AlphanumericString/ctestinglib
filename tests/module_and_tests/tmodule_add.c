@@ -4,9 +4,9 @@
 #define CTESTS_INTERNAL_TESTS
 #include "ct_modules.h"
 
-int	ctit_add(void)
+int ctit_add(void)
 {
-	t_module	*test_root;
+	t_module *test_root;
 
 	ct_module_init(&test_root, "root", "root for tests");
 	ct_module_add_sub(test_root, create_dummy_module());

@@ -3,14 +3,14 @@
 #define CTESTS_INTERNAL_TESTS
 #include "include/ct_assert.h"
 
-#define EXP_TRUE	"24"
-#define EXP_FALSE	"13"
-#define EXP_PRINT_ARG	"12 - blue - ff\n"
+#define EXP_TRUE "24"
+#define EXP_FALSE "13"
+#define EXP_PRINT_ARG "12 - blue - ff\n"
 
-int	ctit_true(void)
+int ctit_true(void)
 {
-	t_capture	*cap;
-	int			ret;
+	t_capture *cap;
+	int		   ret;
 
 	ret = 0;
 	if (ct_assert_true(false, NULL) == 0 || ct_assert_true(true, NULL) != 0)
@@ -26,10 +26,10 @@ int	ctit_true(void)
 	return (ct_capture_destroy(cap), 0);
 }
 
-int	ctit_false(void)
+int ctit_false(void)
 {
-	t_capture	*cap;
-	int			ret;
+	t_capture *cap;
+	int		   ret;
 
 	ret = 0;
 	if (ct_assert_false(true, NULL) == 0 || ct_assert_false(false, NULL) != 0)

@@ -3,7 +3,7 @@
 #define CTESTS_INTERNAL
 #include "ct_assert.h"
 
-int	ct_assert_true_v(bool condition, const char *err_msg, va_list args)
+int ct_assert_true_v(bool condition, const char *err_msg, va_list args)
 {
 	if (!condition)
 	{
@@ -14,7 +14,7 @@ int	ct_assert_true_v(bool condition, const char *err_msg, va_list args)
 	return (0);
 }
 
-int	ct_assert_false_v(bool condition, const char *err_msg, va_list args)
+int ct_assert_false_v(bool condition, const char *err_msg, va_list args)
 {
 	if (condition)
 	{

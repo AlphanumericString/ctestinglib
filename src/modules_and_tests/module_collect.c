@@ -2,9 +2,9 @@
 #define CTESTS_INTERNAL
 #include "ct_modules.h"
 
-int	cti_collect_sbm_t_success(const t_module	*m)
+int cti_collect_sbm_t_success(const t_module *m)
 {
-	t_list	*md_l;
+	t_list *md_l;
 	int		nb;
 
 	nb = 0;
@@ -17,9 +17,9 @@ int	cti_collect_sbm_t_success(const t_module	*m)
 	return (nb + m->tests_passed);
 }
 
-int	cti_collect_sbm_t_total(const t_module *m)
+int cti_collect_sbm_t_total(const t_module *m)
 {
-	t_list	*md_l;
+	t_list *md_l;
 	int		nb;
 
 	nb = 0;
@@ -32,9 +32,9 @@ int	cti_collect_sbm_t_total(const t_module *m)
 	return (nb + m->tests_count);
 }
 
-size_t	cti_mget_longest_name(const t_module *m)
+size_t cti_mget_longest_name(const t_module *m)
 {
-	t_list	*tl;
+	t_list *tl;
 	size_t	i;
 	size_t	tmp;
 

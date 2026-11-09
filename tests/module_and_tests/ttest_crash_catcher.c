@@ -5,10 +5,10 @@
 #define CTESTS_INTERNAL_TESTS
 #include "ct_modules.h"
 
-int	ctit_crash_catcher(void)
+int ctit_crash_catcher(void)
 {
-	t_module	*t;
-	int			ret;
+	t_module *t;
+	int		  ret;
 
 	ct_module_init(&t, "dummy", "dummy for tests");
 	ct_module_taddf(t, dummy_sigsegv, "crash_test");

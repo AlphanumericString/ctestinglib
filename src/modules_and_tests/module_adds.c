@@ -3,7 +3,7 @@
 #include "ct_memory.h"
 #include "ct_utils.h"
 
-bool	ct_module_add_sub(t_module *module, t_module *sub_module)
+bool ct_module_add_sub(t_module *module, t_module *sub_module)
 {
 	if (!sub_module || !module)
 		return (false);
@@ -13,9 +13,9 @@ bool	ct_module_add_sub(t_module *module, t_module *sub_module)
 	return (true);
 }
 
-bool	ct_module_taddf(t_module *m, int (*f)(void), const char *s)
+bool ct_module_taddf(t_module *m, int (*f)(void), const char *s)
 {
-	t_test	*t;
+	t_test *t;
 
 	if (!m || !f || !s)
 		return (false);
@@ -31,9 +31,18 @@ bool	ct_module_taddf(t_module *m, int (*f)(void), const char *s)
 	return (true);
 }
 
-bool	ct_module_tadd(t_module *module, const t_test *test)
+bool ct_module_taddf_timeout(t_module *m, int (*f)(void), const char *s,
+							 unsigned int seconds)
 {
-	t_test	*prev;
+	if (ct_module_taddf(m, f, s) == false)
+		return (false);
+	((t_test *)m->tests_list->data)->timeout = seconds;
+	return (true);
+}
+
+bool ct_module_tadd(t_module *module, const t_test *test)
+{
+	t_test *prev;
 
 	if (!module || !test)
 		return (false);

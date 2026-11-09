@@ -1,9 +1,9 @@
 #include "ct_utils.h"
 
-void	ct_memset(void *ptr, int value, size_t size)
+void ct_memset(void *ptr, int value, size_t size)
 {
-	unsigned char	*byte_ptr;
-	size_t			i;
+	unsigned char *byte_ptr;
+	size_t		   i;
 
 	byte_ptr = (unsigned char *)ptr;
 	i = 0;
@@ -14,11 +14,11 @@ void	ct_memset(void *ptr, int value, size_t size)
 	}
 }
 
-int	ct_memcmp(const void *s1, const void *s2, size_t n)
+int ct_memcmp(const void *s1, const void *s2, size_t n)
 {
-	const unsigned char	*ptr1;
-	const unsigned char	*ptr2;
-	size_t				i;
+	const unsigned char *ptr1;
+	const unsigned char *ptr2;
+	size_t				 i;
 
 	if (s1 == s2 || !n)
 		return (0);
@@ -36,11 +36,11 @@ int	ct_memcmp(const void *s1, const void *s2, size_t n)
 	return (0);
 }
 
-void	*ct_memcpy(void	*d, const void	*s, size_t n)
+void *ct_memcpy(void *d, const void *s, size_t n)
 {
 	unsigned char		*dest;
-	const unsigned char	*src;
-	size_t				i;
+	const unsigned char *src;
+	size_t				 i;
 
 	if (!d || !s)
 		return (NULL);
@@ -55,10 +55,10 @@ void	*ct_memcpy(void	*d, const void	*s, size_t n)
 	return (d);
 }
 
-void	*ct_memmove(void *d, const void *s, size_t n)
+void *ct_memmove(void *d, const void *s, size_t n)
 {
-	char		*dest;
-	const char	*src;
+	char	   *dest;
+	const char *src;
 	size_t		i;
 
 	if (!d || !s)
@@ -76,10 +76,10 @@ void	*ct_memmove(void *d, const void *s, size_t n)
 	return (d);
 }
 
-void	*ct_memchr(const void *s, int c, size_t n)
+void *ct_memchr(const void *s, int c, size_t n)
 {
-	const unsigned char	*ptr;
-	size_t				i;
+	const unsigned char *ptr;
+	size_t				 i;
 
 	ptr = (const unsigned char *)s;
 	i = 0;

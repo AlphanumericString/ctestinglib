@@ -11,10 +11,10 @@
 
 #define TEST_STRING "this\nis\va\rtEst\"tsT\'on_@prINTing!STRINgs"
 
-int	ctit_print_string(void)
+int ctit_print_string(void)
 {
-	t_capture	*cap;
-	char		*s;
+	t_capture *cap;
+	char	  *s;
 
 	cap = ct_capture_create(STDOUT_FILENO);
 	cti_print_string(TEST_STRING);

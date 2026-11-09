@@ -4,9 +4,9 @@
 #define CTESTS_INTERNAL_TESTS
 #include "ct_modules.h"
 
-int	dummy_alloc(void)
+int dummy_alloc(void)
 {
-	void	*adress;
+	void *adress;
 
 	adress = malloc(42);
 	if (adress)
@@ -14,9 +14,9 @@ int	dummy_alloc(void)
 	return (EXIT_FAILURE);
 }
 
-int	dummy_leak(void)
+int dummy_leak(void)
 {
-	void __attribute_maybe_unused__	*adress;
+	void __attribute_maybe_unused__ *adress;
 
 	adress = malloc(42);
 	return (EXIT_SUCCESS);

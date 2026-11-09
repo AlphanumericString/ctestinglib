@@ -7,10 +7,10 @@
 #define CTESTS_INTERNAL_TESTS
 #include "ct_utils.h"
 
-int	ctit_print_flt(void)
+int ctit_print_flt(void)
 {
-	t_capture	*cap;
-	char		*s;
+	t_capture *cap;
+	char	  *s;
 
 	cap = ct_capture_create(STDOUT_FILENO);
 	cti_print_flt(0.0f);

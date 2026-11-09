@@ -4,11 +4,11 @@
 #define CTESTS_INTERNAL_TESTS
 #include "ct_modules.h"
 
-int	ctit_module_errors(void)
+int ctit_module_errors(void)
 {
-	t_module	*m;
-	t_module	*sub;
-	t_test		t;
+	t_module *m;
+	t_module *sub;
+	t_test	  t;
 
 	ct_module_sort(NULL);
 	ct_module_destroy(NULL);

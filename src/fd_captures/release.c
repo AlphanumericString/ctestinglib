@@ -3,9 +3,9 @@
 #define CTESTS_INTERNAL
 #include "ct_capture.h"
 
-bool	ct_capture_release(t_capture *capture)
+bool ct_capture_release(t_capture *capture)
 {
-	bool	successful_reset_of_fd;
+	bool successful_reset_of_fd;
 
 	if (!capture)
 		return (false);

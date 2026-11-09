@@ -2,27 +2,27 @@
 #include "ct_memory.h"
 #include "ct_utils.h"
 
-extern void	__libc_free(void *ptr);
+extern void __libc_free(void *ptr);
 
-static t_list	**cleanup_list(void)
+static t_list **cleanup_list(void)
 {
-	static t_list	*list = NULL;
+	static t_list *list = NULL;
 
 	return (&list);
 }
 
-void	push_to_cleanup(void *ptr)
+void push_to_cleanup(void *ptr)
 {
-	t_list	**ptr_list;
+	t_list **ptr_list;
 
 	ptr_list = cleanup_list();
 	return (cti_list_push(ptr_list, ptr));
 }
 
-void	do_cleanup(void (*f)(void *))
+void do_cleanup(void (*f)(void *))
 {
-	t_list	*leaf;
-	t_list	*nxt;
+	t_list *leaf;
+	t_list *nxt;
 
 	if (!f)
 		f = __libc_free;

@@ -2,9 +2,9 @@
 #include "ct_modules.h"
 #include "ct_memory.h"
 
-t_module	*create_alloc_tests(void)
+t_module *create_alloc_tests(void)
 {
-	t_module	*re;
+	t_module *re;
 
 	ct_module_init(&re, "alloc", "desc");
 	if (!re)

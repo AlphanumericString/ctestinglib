@@ -5,10 +5,10 @@
 #define CTESTS_INTERNAL_TESTS
 #include "ct_utils.h"
 
-static int	normal_list_pop(void)
+static int normal_list_pop(void)
 {
-	t_list	*lst;
-	void	*data;
+	t_list *lst;
+	void   *data;
 
 	lst = NULL;
 	if (cti_list_pop(&lst) != NULL)
@@ -26,10 +26,10 @@ static int	normal_list_pop(void)
 	return (EXIT_SUCCESS);
 }
 
-static int	err_check(void)
+static int err_check(void)
 {
-	t_list	*lst;
-	void	*data;
+	t_list *lst;
+	void   *data;
 
 	lst = NULL;
 	data = cti_list_pop(NULL);
@@ -41,9 +41,9 @@ static int	err_check(void)
 	return (EXIT_SUCCESS);
 }
 
-int	ctit_listpop(void)
+int ctit_listpop(void)
 {
-	int	ret;
+	int ret;
 
 	ret = normal_list_pop();
 	if (ret != EXIT_SUCCESS)

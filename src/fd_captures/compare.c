@@ -7,10 +7,10 @@
 #include "ct_utils.h"
 #include "ct_capture.h"
 
-static void	append_string(char **src, const char *append)
+static void append_string(char **src, const char *append)
 {
-	char	*ret;
-	size_t	len;
+	char  *ret;
+	size_t len;
 
 	len = 0;
 	if (src && *src)
@@ -31,11 +31,11 @@ static void	append_string(char **src, const char *append)
 	*src = ret;
 }
 
-char	*ct_capture_get(t_capture *c_fd)
+char *ct_capture_get(t_capture *c_fd)
 {
-	char	buffer[CT_RBUFFSIZE + 1];
-	int		n;
-	char	*ret;
+	char  buffer[CT_RBUFFSIZE + 1];
+	int	  n;
+	char *ret;
 
 	if (!c_fd || c_fd->pipe_read == -1)
 		return (NULL);
@@ -52,12 +52,12 @@ char	*ct_capture_get(t_capture *c_fd)
 	return (ret);
 }
 
-int	ct_capture_compare(t_capture *c_fd, const char *exp)
+int ct_capture_compare(t_capture *c_fd, const char *exp)
 {
-	char			buffer[CT_RBUFFSIZE + 1];
-	ssize_t			n;
-	const size_t	exp_len = ct_strlen(exp);
-	ssize_t			total;
+	char		 buffer[CT_RBUFFSIZE + 1];
+	ssize_t		 n;
+	const size_t exp_len = ct_strlen(exp);
+	ssize_t		 total;
 
 	if (!c_fd || !exp || exp_len == 0 || c_fd->pipe_read == -1)
 		return (-1);
@@ -72,7 +72,7 @@ int	ct_capture_compare(t_capture *c_fd, const char *exp)
 		total += n;
 		buffer[n] = 0;
 		if (total == (ssize_t)exp_len)
-			break ;
+			break;
 		if (total >= (ssize_t)exp_len || ct_memcmp(buffer, exp, n) != 0)
 			return (-1);
 		exp += n;

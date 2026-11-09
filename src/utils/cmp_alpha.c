@@ -1,10 +1,10 @@
 #define CTESTS_INTERNAL
 #include "ct_utils.h"
 
-int	cti_cmp_alpha(const char *s1, const char *s2)
+int cti_cmp_alpha(const char *s1, const char *s2)
 {
-	size_t	len1;
-	size_t	len2;
+	size_t len1;
+	size_t len2;
 
 	if (s1 == s2)
 		return (0);
