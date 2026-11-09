@@ -65,6 +65,16 @@ int			tcit_run(void);
 int			tcit_init(void);
 // /display
 int			tcit_module_display(void);
+int			tcit_module_display_extra(void);
+
+// /handling
+int			tcit_module_errors(void);
+
+// /run
+int			tcit_module_hooks(void);
+
+// capture
+int			tcit_capture(void);
 
 // tests handling
 // /base
@@ -91,6 +101,7 @@ t_module	*create_tests_tests(void);
 t_module	*create_utils_tests(void);
 t_module	*create_alloc_tests(void);
 t_module	*create_assert_tests(void);
+t_module	*create_capture_tests(void);
 
 # endif /* CTESTS_INTERNAL_TESTS */
 

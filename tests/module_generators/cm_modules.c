@@ -31,6 +31,8 @@ static t_module	*create_modules_display_tests(void)
 	if (!md_display)
 		return (NULL);
 	tc_module_taddf(md_display, tcit_module_display, "display module result");
+	tc_module_taddf(md_display, tcit_module_display_extra,
+		"display all formats");
 	return (md_display);
 }
 
@@ -43,6 +45,7 @@ static t_module	*create_modules_run_tests(void)
 	if (!module_run_tests)
 		return (NULL);
 	tc_module_taddf(module_run_tests, tcit_run, "running modules");
+	tc_module_taddf(module_run_tests, tcit_module_hooks, "setup/teardown hooks");
 	return (module_run_tests);
 }
 
@@ -59,6 +62,8 @@ static t_module	*create_modules_handling_tests(void)
 	tc_module_taddf(module_handling_tests, tcit_nb_passed, "passed count");
 	tc_module_taddf(module_handling_tests, tcit_ordering, "sorting");
 	tc_module_taddf(module_handling_tests, tcit_init, "initializing modules");
+	tc_module_taddf(module_handling_tests, tcit_module_errors,
+		"error handling guards");
 	return (module_handling_tests);
 }
 
