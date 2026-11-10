@@ -26,6 +26,12 @@ void sort_moduleslist(t_list *m_ls);
 int	   cti_collect_sbm_t_success(const t_module *m);
 int	   cti_collect_sbm_t_total(const t_module *m);
 size_t cti_mget_longest_name(const t_module *m);
+// module resolution
+// resolves a ':' separated module path against root, the first name may be
+// the root module itself. Prints a cli error to stderr and returns NULL when
+// the path is empty, holds an empty segment, targets an unknown module or
+// targets a test (single tests can not be run)
+t_module *cti_module_resolve(t_module *root, const char *path);
 // module totals
 void cti_mdisplay_sum_nb(int t_t, int t_p, t_display_mode md);
 void cti_mdisplay_sum_percent(int t_t, int t_p, t_display_mode md);
@@ -37,6 +43,8 @@ int cti_tfork(t_test *t, t_module *m);
 void cti_mdisplay_tests(const t_module *m, t_display_mode md, int depth);
 void cti_mdisplay_sbm(const t_list *sbm, t_display_mode md);
 void cti_display_results_json(const t_module *m, t_display_mode md);
+void cti_display_results_json_list(t_module **modules, size_t count,
+								   t_display_mode md);
 void cti_display_results_txt(const t_module *m, t_display_mode md, int depth);
 
 // -- tests
@@ -65,6 +73,7 @@ int ctit_module_errors(void);
 
 // /run
 int ctit_module_hooks(void);
+int ctit_run_args(void);
 
 // capture
 int ctit_capture(void);
@@ -120,6 +129,19 @@ unsigned int ct_test_get_timeout(const t_test *test);
 // run tests / modules
 int ct_module_run(t_module *module);
 int ct_module_run_self_tests(t_module *module);
+
+// run the modules selected from the cli:
+// - module paths are given either as positional arguments ("m1 m2 ...") or
+//   as '--run-module=m1 --run-module=m2' flags, both forms can be mixed
+// - a path is a ':' separated chain of module names resolved from root,
+//   the first name may be the root module itself
+// - every selected module runs with its own submodules, then the selection
+//   is sorted and reported (json mode wraps several modules in an array)
+// - overlapping selections are deduplicated: the broadest module wins
+// - single tests can not be selected, only whole modules
+// - when no module is provided root and its submodules are run
+int ct_module_run_args(t_module *root, int argc, char **argv,
+					   t_display_mode mode);
 
 // module utils
 void ct_module_sort(t_module *root);

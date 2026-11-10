@@ -28,3 +28,25 @@ void ct_module_display(const t_module *module, t_display_mode mode)
 				(void)0);
 	return (cti_print_string("unsuported format\n"), (void)0);
 }
+
+// reports a module selection as one json array so the output stays valid
+// json when several modules are selected
+void cti_display_results_json_list(t_module **modules, size_t count,
+								   t_display_mode md)
+{
+	size_t i;
+
+	if ((md & CT_FMT_MSK) == CT_FMT_SILENT)
+		return;
+	if (format_error(md))
+		return (cti_print_string(JSON_SILENT), (void)0);
+	cti_print_string("[");
+	i = 0;
+	while (i < count)
+	{
+		cti_display_results_json(modules[i], md);
+		if (++i < count)
+			cti_print_string(",");
+	}
+	cti_print_string("]\n");
+}

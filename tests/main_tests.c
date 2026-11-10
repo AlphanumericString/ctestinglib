@@ -55,7 +55,7 @@ static bool add_modules(t_module *root, t_module *(**f)(void))
 	return (true);
 }
 
-int main(void)
+int main(int argc, char **argv)
 {
 	t_module *root;
 	int		  ret;
@@ -68,8 +68,6 @@ int main(void)
 						 create_assert_tests, create_capture_tests, NULL}))
 		return (ct_module_destroy(root), cti_print_string(FSET_SBM),
 				EXIT_FAILURE);
-	ret = ct_module_run(root);
-	ct_module_sort(root);
-	ct_module_display(root, 0);
+	ret = ct_module_run_args(root, argc, argv, 0);
 	return (ct_module_destroy(root), ret);
 }
