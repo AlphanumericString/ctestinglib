@@ -35,6 +35,7 @@ static t_module *create_modules_run_tests(void)
 	ct_module_taddf(module_run_tests, ctit_run, "running modules");
 	ct_module_taddf(module_run_tests, ctit_module_hooks,
 					"setup/teardown hooks");
+	ct_module_taddf(module_run_tests, ctit_run_args, "run modules from cli");
 	return (module_run_tests);
 }
 

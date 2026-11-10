@@ -37,6 +37,21 @@ unsigned int ct_test_get_timeout(const t_test *test);
 int ct_module_run(t_module *module);
 int ct_module_run_self_tests(t_module *module);
 
+// run the modules selected from the cli:
+// - module paths are given either as positional arguments ("m1 m2 ...") or
+//   as '--run-module=m1 --run-module=m2' flags, both forms can be mixed
+// - a path is a ':' separated chain of module names resolved from root,
+//   the first name may be the root module itself
+// - every selected module runs with its own submodules, then the selection
+//   is sorted and reported (json mode wraps several modules in an array)
+// - overlapping selections are deduplicated: the broadest module wins
+// - single tests can not be selected, only whole modules
+// - when no module is provided root and its submodules are run
+// - '-h' or '--help' prints the usage on stdout and returns EXIT_SUCCESS
+//   without running anything (help wins over any other argument)
+int ct_module_run_args(t_module *root, int argc, char **argv,
+					   t_display_mode mode);
+
 // module utils
 void ct_module_sort(t_module *root);
 void ct_module_display(const t_module *module, t_display_mode mode);

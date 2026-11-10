@@ -3,7 +3,7 @@
 #include <unistd.h>
 
 #define CTESTS_INTERNAL
-#include "ct_internal.h"
+#include "ct_modules.h"
 
 static int run_module_inner(t_module *module)
 {

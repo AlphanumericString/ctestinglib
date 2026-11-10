@@ -27,6 +27,13 @@
 
 #ifdef CTESTS_INTERNAL
 
+// module resolution
+// resolves a ':' separated module path against root, the first name may be
+// the root module itself. Prints a cli error to stderr and returns NULL when
+// the path is empty, holds an empty segment, targets an unknown module or
+// targets a test (single tests can not be run)
+t_module *cti_module_resolve(t_module *root, const char *path);
+
 // cmp / sorts
 void sort_testslist(t_list *t_ls);
 void sort_moduleslist(t_list *m_ls);
@@ -40,6 +47,7 @@ size_t cti_mget_longest_name(const t_module *m);
 typedef void (*t_display_hook)(const t_module *m, t_display_mode md, int depth);
 typedef void (*t_display_sum_hook)(int total, int passed, t_display_mode md);
 typedef void (*t_display_sbm_hook)(const t_list *sbm, t_display_mode md);
+typedef void (*t_display_list)(t_module **m, size_t count, t_display_mode md);
 
 typedef struct s_display_fmt
 {
@@ -53,6 +61,7 @@ typedef struct s_display_fmt
 	t_display_sum_hook sum_nb;
 	t_display_sum_hook sum_percent;
 	t_display_sbm_hook sbm_recap;
+	t_display_list	   md_list_displayer;
 	// legacy text output prints a module's submodules before its own tests.
 	bool submodules_first;
 } t_display_fmt;
@@ -60,9 +69,12 @@ typedef struct s_display_fmt
 extern const t_display_fmt g_cti_fmt_txt;
 extern const t_display_fmt g_cti_fmt_json;
 
+// main hooks
 const t_display_fmt *cti_display_fmt_get(t_display_mode md);
 void				 cti_display_run(const t_module *m, t_display_mode md);
 void cti_display_module(const t_module *m, t_display_mode md, int depth);
+void cti_selection_display(t_module **selection, int count,
+						   t_display_mode mode);
 
 // module summaries
 void cti_mdisplay_sum_nb(int t_t, int t_p, t_display_mode md);
@@ -71,8 +83,6 @@ void cti_mdisplay_sum_percent(int t_t, int t_p, t_display_mode md);
 // module display
 void cti_mdisplay_module_summary(const t_module *m, t_display_mode md);
 void cti_mdisplay_sbm_recap(const t_list *sbm, t_display_mode md);
-void cti_display_results_txt(const t_module *m, t_display_mode md, int depth);
-void cti_display_results_json(const t_module *m, t_display_mode md);
 
 // tests display
 bool cti_test_succeeded(const t_test *t);
@@ -111,6 +121,10 @@ int ct_assert_true_v(bool condition, const char *err_msg, va_list args);
 
 // captures
 void cti_fflush_step(t_capture *c);
+
+// deprecated - used by test-suite
+void cti_display_results_txt(const t_module *m, t_display_mode md, int depth);
+void cti_display_results_json(const t_module *m, t_display_mode md);
 
 #endif /* CTESTS_INTERNAL */
 
@@ -197,6 +211,58 @@ int ctit_print_cn(void);
 int ctit_print_nb(void);
 int ctit_print_flt(void);
 int ctit_print_string(void);
+
+// tests
+// modules handling
+// /base
+int ctit_add(void);
+int ctit_nb_passed(void);
+int ctit_nb_tests(void);
+int ctit_ordering(void);
+int ctit_run(void);
+int ctit_init(void);
+// /display
+int ctit_module_display(void);
+int ctit_module_display_extra(void);
+
+// /handling
+int ctit_module_errors(void);
+
+// /run
+int ctit_module_hooks(void);
+int ctit_run_args(void);
+
+// capture
+int ctit_capture(void);
+
+// tests handling
+// /base
+int ctit_tadd(void);
+int ctit_crash_catcher(void);
+int ctit_tordering(void);
+int ctit_return_check(void);
+int ctit_timeout(void);
+
+// dummy - used to check all func are called
+// dummy tests
+int dummy_fail_test(void);
+int dummy_alloc(void);
+int dummy_leak(void);
+int dummy_success_test(void);
+int dummy_sigsegv(void);
+int dummy_capture_stdin(void);
+int dummy_timeout(void);
+// dummy modules creators
+t_module *create_quiet_dummy(void);
+t_module *create_dummy_module(void);
+
+// self tests
+t_module *create_modules_tests(void);
+t_module *create_tests_tests(void);
+t_module *create_utils_tests(void);
+t_module *create_alloc_tests(void);
+t_module *create_assert_tests(void);
+t_module *create_capture_tests(void);
 
 #endif /* CTESTS_INTERNAL_TESTS */
 

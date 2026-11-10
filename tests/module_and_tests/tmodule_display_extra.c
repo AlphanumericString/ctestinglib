@@ -392,13 +392,15 @@ int ctit_module_display_extra(void)
 		return (ret);
 	ret = display_results();
 	if (ret != EXIT_SUCCESS)
-		return (ret);
+		return (ret + 20);
 	ret = display_submodules();
 	if (ret != EXIT_SUCCESS)
-		return (ret);
+		return (ret + 40);
 	ret = display_internal();
 	if (ret != EXIT_SUCCESS)
-		return (ret);
+		return (ret + 60);
 	ret = display_guards();
+	if (ret != EXIT_SUCCESS)
+		return (ret + 80);
 	return (ret);
 }

@@ -3,6 +3,8 @@
 #define CTESTS_INTERNAL
 #include "ct_internal.h"
 
+#define JSON_SILENT "ctests: json format cannot skip any field.\n"
+
 static void loc_fmt_json_open(const t_module *m, t_display_mode md, int depth)
 {
 	cti_print_string("{\"module_name\":\"");
@@ -114,6 +116,43 @@ static void loc_nb_json(int t_t, int t_p, t_display_mode md)
 	cti_print_string("\"");
 }
 
+static bool format_is(t_display_mode mode, t_display_mode format)
+{
+	return ((mode & CT_FMT_MSK) == format);
+}
+
+// json needs every field to be printed to be parsable.
+static const char *format_error(t_display_mode mode)
+{
+	if (format_is(mode, CT_FMT_JSN) && (mode & CT_DM_SUMMSK) == CT_DM_SUMSILENT)
+		return (JSON_SILENT);
+	if (cti_display_fmt_get(mode) == NULL)
+		return (NULL);
+	return (NULL);
+}
+
+// reports a module selection as one json array so the output stays valid
+// json when several modules are selected
+static void loc_display_results_json_list(t_module **modules, size_t count,
+										  t_display_mode md)
+{
+	size_t i;
+	if ((md & CT_FMT_MSK) == CT_FMT_SILENT)
+		return;
+	if (format_error(md))
+		return (cti_print_string(JSON_SILENT), (void)0);
+
+	cti_print_string("[");
+	i = 0;
+	while (i < count)
+	{
+		cti_display_module(modules[i], md, 0);
+		if (++i < count)
+			cti_print_string(",");
+	}
+	cti_print_string("]\n");
+}
+
 const t_display_fmt g_cti_fmt_json = {
 	.open = loc_fmt_json_open,
 	.tests = loc_fmt_json_tests,
@@ -123,4 +162,5 @@ const t_display_fmt g_cti_fmt_json = {
 	.last_close = loc_fmt_json_last_close,
 	.sum_nb = loc_nb_json,
 	.sum_percent = loc_percent_json,
+	.md_list_displayer = loc_display_results_json_list,
 };
