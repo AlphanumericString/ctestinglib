@@ -2,10 +2,10 @@
 #include "ct_modules.h"
 #include "ct_utils.h"
 
-static void	module_display_tests_infos(const t_module *m, t_display_mode md)
+static void module_display_tests_infos(const t_module *m, t_display_mode md)
 {
-	int	test_total;
-	int	test_passed;
+	int test_total;
+	int test_passed;
 
 	test_total = cti_collect_sbm_t_total(m);
 	test_passed = cti_collect_sbm_t_success(m);
@@ -20,7 +20,7 @@ static void	module_display_tests_infos(const t_module *m, t_display_mode md)
 		cti_mdisplay_sum_percent(test_total, test_passed, md);
 }
 
-static void	loc_md_json_fwrd(const t_module *m, t_display_mode md)
+static void loc_md_json_fwrd(const t_module *m, t_display_mode md)
 {
 	(void)md;
 	cti_print_string("{\"module_name\":\"");
@@ -30,15 +30,15 @@ static void	loc_md_json_fwrd(const t_module *m, t_display_mode md)
 	cti_print_string("\",");
 }
 
-static void	loc_md_json_bwrd(const t_module *m, t_display_mode md)
+static void loc_md_json_bwrd(const t_module *m, t_display_mode md)
 {
 	module_display_tests_infos(m, md);
 	cti_print_string("}");
 }
 
-void	cti_display_results_json(const t_module *m, t_display_mode md)
+void cti_display_results_json(const t_module *m, t_display_mode md)
 {
-	t_list		*md_l;
+	t_list *md_l;
 
 	md_l = m->submodules_list;
 	loc_md_json_fwrd(m, md);

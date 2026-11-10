@@ -5,17 +5,17 @@
 #define CTESTS_INTERNAL_TESTS
 #include "ct_utils.h"
 
-static void	ctit_lfe_helper(void *data)
+static void ctit_lfe_helper(void *data)
 {
-	int	*val;
+	int *val;
 
 	val = (int *)data;
 	*val += 1;
 }
 
-static int	normal_listforeach(void)
+static int normal_listforeach(void)
 {
-	t_list	*lst;
+	t_list *lst;
 	int		val1;
 	int		val2;
 	int		val3;
@@ -29,13 +29,13 @@ static int	normal_listforeach(void)
 	cti_list_push(&lst, &val3);
 	cti_list_foreach(lst, ctit_lfe_helper);
 	if (val1 != 1 || val2 != 1 || val3 != 1)
-		return (safefree(lst->next->next), safefree(lst->next),
-			safefree(lst), 1);
-	return (safefree(lst->next->next), safefree(lst->next),
-		safefree(lst), EXIT_SUCCESS);
+		return (safefree(lst->next->next), safefree(lst->next), safefree(lst),
+				1);
+	return (safefree(lst->next->next), safefree(lst->next), safefree(lst),
+			EXIT_SUCCESS);
 }
 
-static int	err_check(void)
+static int err_check(void)
 {
 	cti_list_foreach(NULL, ctit_lfe_helper);
 	cti_list_foreach(NULL, NULL);
@@ -43,9 +43,9 @@ static int	err_check(void)
 	return (EXIT_SUCCESS);
 }
 
-int	ctit_listforeach(void)
+int ctit_listforeach(void)
 {
-	int	ret;
+	int ret;
 
 	ret = normal_listforeach();
 	if (ret != EXIT_SUCCESS)

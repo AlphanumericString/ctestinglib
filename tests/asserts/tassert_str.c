@@ -4,9 +4,9 @@
 #define CTESTS_INTERNAL_TESTS
 #include "include/ct_assert.h"
 
-int	ctit_streq(void)
+int ctit_streq(void)
 {
-	t_capture	*cap;
+	t_capture *cap;
 
 	cap = ct_capture_create(STDOUT_FILENO);
 	ct_assert_str_eq("a", "b", "1\n");
@@ -18,9 +18,9 @@ int	ctit_streq(void)
 	return (ct_capture_destroy(cap), 0);
 }
 
-int	ctit_strne(void)
+int ctit_strne(void)
 {
-	t_capture	*cap;
+	t_capture *cap;
 
 	cap = ct_capture_create(STDOUT_FILENO);
 	ct_assert_str_neq("a", "b", "1\n");

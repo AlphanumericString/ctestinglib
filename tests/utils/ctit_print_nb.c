@@ -8,9 +8,9 @@
 #define CTESTS_INTERNAL_TESTS
 #include "ct_utils.h"
 
-int	ctit_print_nb(void)
+int ctit_print_nb(void)
 {
-	t_capture	*cap;
+	t_capture *cap;
 
 	cap = ct_capture_create(STDOUT_FILENO);
 	cti_print_nb(0);

@@ -3,10 +3,10 @@
 #define CTESTS_INTERNAL_TESTS
 #include "ct_utils.h"
 
-int	ctit_strncmp(void)
+int ctit_strncmp(void)
 {
-	if (ct_strncmp("Hello", "Hello", 5) != 0
-		|| ct_strncmp("Hello", "Hell", 4) != 0)
+	if (ct_strncmp("Hello", "Hello", 5) != 0 ||
+		ct_strncmp("Hello", "Hell", 4) != 0)
 		return (1);
 	if (ct_strncmp("Hello", "Hell", 5) <= 0)
 		return (2);

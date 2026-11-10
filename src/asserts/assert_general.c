@@ -1,9 +1,9 @@
 #define CTESTS_INTERNAL
 #include "ct_assert.h"
 
-int	ct_assert_true(bool condition, const char *err_msg, ...)
+int ct_assert_true(bool condition, const char *err_msg, ...)
 {
-	va_list	args;
+	va_list args;
 	int		ret;
 
 	va_start(args, err_msg);
@@ -12,9 +12,9 @@ int	ct_assert_true(bool condition, const char *err_msg, ...)
 	return (ret);
 }
 
-int	ct_assert_false(bool condition, const char *err_msg, ...)
+int ct_assert_false(bool condition, const char *err_msg, ...)
 {
-	va_list	args;
+	va_list args;
 	int		ret;
 
 	va_start(args, err_msg);

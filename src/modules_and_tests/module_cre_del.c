@@ -2,11 +2,11 @@
 #include "ct_modules.h"
 #include "ct_memory.h"
 
-static void	module_destroy_inner(t_module *m)
+static void module_destroy_inner(t_module *m)
 {
-	const t_list	*sm_lst = m->submodules_list;
-	const t_list	*ts_lst = m->tests_list;
-	t_list			*tmp;
+	const t_list *sm_lst = m->submodules_list;
+	const t_list *ts_lst = m->tests_list;
+	t_list		 *tmp;
 
 	while (sm_lst)
 	{
@@ -23,25 +23,25 @@ static void	module_destroy_inner(t_module *m)
 		safefree(tmp);
 	}
 	safefree(m);
-	return ;
+	return;
 }
 
-void	ct_module_destroy(t_module *m)
+void ct_module_destroy(t_module *m)
 {
 	if (!m)
-		return ;
+		return;
 	module_destroy_inner(m);
 }
 
-void	ct_module_init(t_module **module, const char *name, const char *desc)
+void ct_module_init(t_module **module, const char *name, const char *desc)
 {
-	t_module	*ret;
+	t_module *ret;
 
 	if (!module || !name)
-		return ;
+		return;
 	ret = safealloc(sizeof(t_module));
 	if (!ret)
-		return ;
+		return;
 	*ret = (t_module){0};
 	ret->name = name;
 	ret->description = desc;

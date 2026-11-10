@@ -3,7 +3,7 @@
 #define CTESTS_INTERNAL_TESTS
 #include "ct_utils.h"
 
-int	ctit_strlen(void)
+int ctit_strlen(void)
 {
 	if (ct_strlen("") != 0)
 		return (1);

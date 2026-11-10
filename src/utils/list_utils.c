@@ -4,10 +4,10 @@
 #include "ct_memory.h"
 
 // lst //
-void	cti_list_foreach(const t_list *lst, void (*f)(void *data))
+void cti_list_foreach(const t_list *lst, void (*f)(void *data))
 {
 	if (!lst || !f)
-		return ;
+		return;
 	while (lst)
 	{
 		f(lst->data);
@@ -15,13 +15,13 @@ void	cti_list_foreach(const t_list *lst, void (*f)(void *data))
 	}
 }
 
-void	cti_list_push(t_list **lst, void *data)
+void cti_list_push(t_list **lst, void *data)
 {
-	t_list	*leaf;
+	t_list *leaf;
 
 	leaf = safealloc(sizeof(*leaf));
 	if (!leaf)
-		return ;
+		return;
 	ct_memset(leaf, 0, sizeof(*leaf));
 	leaf->data = data;
 	leaf->next = *lst;
@@ -29,10 +29,10 @@ void	cti_list_push(t_list **lst, void *data)
 }
 
 // pop
-void	*cti_list_pop(t_list **lst)
+void *cti_list_pop(t_list **lst)
 {
-	t_list	*temp;
-	void	*data;
+	t_list *temp;
+	void   *data;
 
 	if (!lst || !*lst)
 		return (NULL);

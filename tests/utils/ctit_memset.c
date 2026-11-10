@@ -3,10 +3,10 @@
 #define CTESTS_INTERNAL_TESTS
 #include "ct_utils.h"
 
-int	ctit_memset(void)
+int ctit_memset(void)
 {
-	char	str[10];
-	char	str2[10];
+	char str[10];
+	char str2[10];
 
 	ct_memcpy(str, "123456789", 10);
 	ct_memcpy(str2, "123456789", 10);

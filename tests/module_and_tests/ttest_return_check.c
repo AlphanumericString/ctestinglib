@@ -4,17 +4,17 @@
 #define CTESTS_INTERNAL_TESTS
 #include "ct_modules.h"
 
-static int	specific_return_check(void)
+static int specific_return_check(void)
 {
 	return (42);
 }
 
-int	ctit_return_check(void)
+int ctit_return_check(void)
 {
-	const int	expected_returns[] = {42, EXIT_FAILURE, EXIT_SUCCESS};
-	t_list		*it;
-	t_module	*t;
-	int			i;
+	const int expected_returns[] = {42, EXIT_FAILURE, EXIT_SUCCESS};
+	t_list	 *it;
+	t_module *t;
+	int		  i;
 
 	ct_module_init(&t, "dummy", "dummy for tests");
 	ct_module_taddf(t, dummy_success_test, "success_test");

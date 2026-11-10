@@ -2,10 +2,10 @@
 #include "ct_modules.h"
 #include "ct_utils.h"
 
-static void	loc_display_sbm_txt(const t_list *sbm, t_display_mode md)
+static void loc_display_sbm_txt(const t_list *sbm, t_display_mode md)
 {
-	t_module	*m;
-	int			t_t;
+	t_module *m;
+	int		  t_t;
 
 	while ((md & CT_DM_SUMMSK) != CT_DM_SUMSILENT && sbm)
 	{
@@ -26,7 +26,7 @@ static void	loc_display_sbm_txt(const t_list *sbm, t_display_mode md)
 
 // json doesn't have one as they "print in place" and dont do a recap
 // for each sub module but simple nests them in their parents
-void	cti_mdisplay_sbm(const t_list *sbm, t_display_mode md)
+void cti_mdisplay_sbm(const t_list *sbm, t_display_mode md)
 {
 	if ((md & CT_FMT_MSK) == CT_FMT_TXT)
 		return (loc_display_sbm_txt(sbm, md));

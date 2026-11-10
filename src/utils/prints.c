@@ -4,23 +4,23 @@
 #define CTESTS_INTERNAL
 #include "ct_utils.h"
 
-void	cti_print_string(const char *str)
+void cti_print_string(const char *str)
 {
 	write(STDOUT_FILENO, str, ct_strlen(str));
 }
 
-void	cti_print_charn(int depth, char c)
+void cti_print_charn(int depth, char c)
 {
 	if (depth <= 0 || !c)
-		return ;
+		return;
 	while (depth--)
 		write(STDOUT_FILENO, &c, 1);
 }
 
-void	cti_print_nb(int nb)
+void cti_print_nb(int nb)
 {
-	char	buffer[sizeof(int) * 8];
-	int		i;
+	char buffer[sizeof(int) * 8];
+	int	 i;
 
 	if (nb == 0)
 		return (write(STDOUT_FILENO, "0", 1), (void)0);
@@ -39,9 +39,9 @@ void	cti_print_nb(int nb)
 }
 
 // prints float with 2 decimal points
-void	cti_print_flt(float f)
+void cti_print_flt(float f)
 {
-	int		int_part;
+	int int_part;
 
 	if (f < 0)
 	{

@@ -3,10 +3,10 @@
 #define CTESTS_INTERNAL_TESTS
 #include "ct_modules.h"
 
-int	ctit_run(void)
+int ctit_run(void)
 {
-	t_module	*t;
-	int			r;
+	t_module *t;
+	int		  r;
 
 	ct_module_init(&t, "test", "module for tests to run on");
 	r = ct_module_run(NULL);

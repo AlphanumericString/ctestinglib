@@ -10,37 +10,38 @@
 // taddf(module_display_tests, ctit_display_summary, "display summary");
 //	...
 //	...
-static t_module	*create_modules_display_tests(void)
+static t_module *create_modules_display_tests(void)
 {
-	t_module	*md_display;
-	const char	*desc = TCMODDESCS_PRE TCMODDESCS_DISPLAY;
+	t_module   *md_display;
+	const char *desc = TCMODDESCS_PRE TCMODDESCS_DISPLAY;
 
 	ct_module_init(&md_display, "Modules Display", desc);
 	if (!md_display)
 		return (NULL);
 	ct_module_taddf(md_display, ctit_module_display, "display module result");
 	ct_module_taddf(md_display, ctit_module_display_extra,
-		"display all formats");
+					"display all formats");
 	return (md_display);
 }
 
-static t_module	*create_modules_run_tests(void)
+static t_module *create_modules_run_tests(void)
 {
-	t_module	*module_run_tests;
-	const char	*desc = TCMODDESCS_PRE TCMODDESCS_RUN;
+	t_module   *module_run_tests;
+	const char *desc = TCMODDESCS_PRE TCMODDESCS_RUN;
 
 	ct_module_init(&module_run_tests, "Modules Run", desc);
 	if (!module_run_tests)
 		return (NULL);
 	ct_module_taddf(module_run_tests, ctit_run, "running modules");
-	ct_module_taddf(module_run_tests, ctit_module_hooks, "setup/teardown hooks");
+	ct_module_taddf(module_run_tests, ctit_module_hooks,
+					"setup/teardown hooks");
 	return (module_run_tests);
 }
 
-static t_module	*create_modules_handling_tests(void)
+static t_module *create_modules_handling_tests(void)
 {
-	t_module		*module_handling_tests;
-	const char		*desc = TCMODDESCS_PRE TCMODDESCS_HANDLING;
+	t_module   *module_handling_tests;
+	const char *desc = TCMODDESCS_PRE TCMODDESCS_HANDLING;
 
 	ct_module_init(&module_handling_tests, "Modules Handling", desc);
 	if (!module_handling_tests)
@@ -51,16 +52,16 @@ static t_module	*create_modules_handling_tests(void)
 	ct_module_taddf(module_handling_tests, ctit_ordering, "sorting");
 	ct_module_taddf(module_handling_tests, ctit_init, "initializing modules");
 	ct_module_taddf(module_handling_tests, ctit_module_errors,
-		"error handling guards");
+					"error handling guards");
 	return (module_handling_tests);
 }
 
-t_module	*create_modules_tests(void)
+t_module *create_modules_tests(void)
 {
-	t_module	*module_tests;
-	t_module	*sub;
-	t_module	*(*sub_creators[5])();
-	size_t		i;
+	t_module *module_tests;
+	t_module *sub;
+	t_module *(*sub_creators[5])();
+	size_t i;
 
 	ct_module_init(&module_tests, "Modules", TCMODDESCS);
 	if (!module_tests)

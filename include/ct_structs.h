@@ -22,6 +22,9 @@ typedef struct s_test
 	int (*test_func)(void);
 	int return_value;
 	int pid;
+
+	unsigned int timeout;
+	bool		 timed_out;
 } t_test;
 
 typedef struct s_list
@@ -50,6 +53,8 @@ typedef struct s_module
 	void (*clean_up_function)(void *);
 	void (*setup_function)(void);
 	void (*teardown_function)(void);
+
+	unsigned int timeout;
 
 } t_module;
 

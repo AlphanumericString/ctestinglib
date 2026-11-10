@@ -4,9 +4,9 @@
 #define CTESTS_INTERNAL_TESTS
 #include "ct_modules.h"
 
-int	ctit_nb_passed(void)
+int ctit_nb_passed(void)
 {
-	t_module	*t;
+	t_module *t;
 
 	ct_module_init(&t, "test", "module for tests to run on");
 	ct_module_taddf(t, dummy_success_test, "ok1");

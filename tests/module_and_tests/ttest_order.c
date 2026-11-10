@@ -5,11 +5,12 @@
 #define CTESTS_INTERNAL_TESTS
 #include "ct_modules.h"
 
-static int	leaf_ordering_check(t_module *t)
+static int leaf_ordering_check(t_module *t)
 {
-	const void	*expected_forder[] = {dummy_success_test, (void *)0xDEAF,
-		(void *)0xCAFE, dummy_fail_test, (void *)0xDEAD};
-	t_list		*leaf;
+	const void *expected_forder[] = {dummy_success_test, (void *)0xDEAF,
+									 (void *)0xCAFE, dummy_fail_test,
+									 (void *)0xDEAD};
+	t_list	   *leaf;
 	size_t		i;
 
 	i = 0;
@@ -23,9 +24,9 @@ static int	leaf_ordering_check(t_module *t)
 	return (i - t->tests_count);
 }
 
-static t_module	*local_dummy_module_create(void)
+static t_module *local_dummy_module_create(void)
 {
-	t_module	*t;
+	t_module *t;
 
 	ct_module_init(&t, "dummy", "module created for testing purposes");
 	ct_module_taddf(t, dummy_success_test, "aaa");
@@ -36,10 +37,10 @@ static t_module	*local_dummy_module_create(void)
 	return (t);
 }
 
-int	ctit_tordering(void)
+int ctit_tordering(void)
 {
-	t_module	*t;
-	t_module	*sub;
+	t_module *t;
+	t_module *sub;
 
 	t = local_dummy_module_create();
 	if (!t)

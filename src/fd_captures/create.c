@@ -7,9 +7,9 @@
 #include "ct_utils.h"
 
 // Set non-blocking mode
-static int __attribute__((unused))	cti_capture_nonblock(t_capture *c)
+static int __attribute__((unused)) cti_capture_nonblock(t_capture *c)
 {
-	int	f;
+	int f;
 
 	f = fcntl(c->pipe_read, F_GETFL, 0);
 	if (f == -1)
@@ -22,9 +22,9 @@ static int __attribute__((unused))	cti_capture_nonblock(t_capture *c)
 // to enable capture nonblock you can pop these lines at the back
 // if (cti_capture_nonblock(capture) == -1)
 // 	return (ct_capture_release(capture), false);
-bool	ct_capture_init(int source_fd, t_capture *capture)
+bool ct_capture_init(int source_fd, t_capture *capture)
 {
-	int	pipe_fds[2];
+	int pipe_fds[2];
 
 	if (!capture || source_fd < 0)
 		return (false);
@@ -39,15 +39,15 @@ bool	ct_capture_init(int source_fd, t_capture *capture)
 	capture->pipe_write = pipe_fds[1];
 	if (dup2(capture->pipe_write, source_fd) == -1)
 		return (close(capture->original_fd), close(capture->pipe_read),
-			close(capture->pipe_write), false);
+				close(capture->pipe_write), false);
 	close(capture->pipe_write);
 	capture->pipe_write = -1;
 	return (true);
 }
 
-t_capture	*ct_capture_create(int fd)
+t_capture *ct_capture_create(int fd)
 {
-	t_capture	*tmp;
+	t_capture *tmp;
 
 	tmp = safealloc(sizeof(*tmp));
 	if (!tmp)

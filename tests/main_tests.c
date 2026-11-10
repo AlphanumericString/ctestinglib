@@ -14,9 +14,9 @@
 #include "ct_modules.h"
 #include "ct_utils.h"
 
-#define FSETUP	"Failed to setup tests"
-#define FSET_SBM	"Failed to setup tests"
-#define RDESC	"The library for which the tests are running"
+#define FSETUP "Failed to setup tests"
+#define FSET_SBM "Failed to setup tests"
+#define RDESC "The library for which the tests are running"
 
 // static void	__attribute__((unused))	display_diff_formats(t_module *th)
 // {
@@ -42,9 +42,9 @@
 // 	ct_module_display(th, ONELINE | TM_PRINT_LAST | TM_PRINT_SBM);
 // }
 
-static bool	add_modules(t_module *root, t_module *(**f)(void))
+static bool add_modules(t_module *root, t_module *(**f)(void))
 {
-	size_t	i;
+	size_t i;
 
 	if (!f || !root)
 		return (false);
@@ -55,18 +55,19 @@ static bool	add_modules(t_module *root, t_module *(**f)(void))
 	return (true);
 }
 
-int	main(void)
+int main(void)
 {
-	t_module	*root;
-	int			ret;
+	t_module *root;
+	int		  ret;
 
 	ct_module_init(&root, "ctestinglib", RDESC);
-	if (!add_modules(root, (t_module *(*[])(void)){create_modules_tests,
-		create_alloc_tests, create_tests_tests, create_utils_tests,
-		create_assert_tests, create_capture_tests,
-		NULL}))
+	if (!add_modules(root,
+					 (t_module * (*[])(void)){
+						 create_modules_tests, create_alloc_tests,
+						 create_tests_tests, create_utils_tests,
+						 create_assert_tests, create_capture_tests, NULL}))
 		return (ct_module_destroy(root), cti_print_string(FSET_SBM),
-			EXIT_FAILURE);
+				EXIT_FAILURE);
 	ret = ct_module_run(root);
 	ct_module_sort(root);
 	ct_module_display(root, 0);

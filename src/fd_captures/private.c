@@ -4,7 +4,7 @@
 #define CTESTS_INTERNAL
 #include "ct_capture.h"
 
-void	cti_fflush_step(t_capture *c)
+void cti_fflush_step(t_capture *c)
 {
 	if (c->source_fd == STDOUT_FILENO)
 		fflush(stdout);

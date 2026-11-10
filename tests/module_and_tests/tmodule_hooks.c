@@ -4,22 +4,22 @@
 #define CTESTS_INTERNAL_TESTS
 #include "ct_modules.h"
 
-static int	g_setup;
-static int	g_teardown;
+static int g_setup;
+static int g_teardown;
 
-static void	hook_setup(void)
+static void hook_setup(void)
 {
 	g_setup++;
 }
 
-static void	hook_teardown(void)
+static void hook_teardown(void)
 {
 	g_teardown++;
 }
 
-int	ctit_module_hooks(void)
+int ctit_module_hooks(void)
 {
-	t_module	*m;
+	t_module *m;
 
 	g_setup = 0;
 	g_teardown = 0;

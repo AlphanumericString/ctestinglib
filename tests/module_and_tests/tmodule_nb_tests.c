@@ -8,9 +8,9 @@
 // can we add tests?
 // does the add_test_f work as intended?
 // what about add_test?
-static int	test_add_test(t_module *t)
+static int test_add_test(t_module *t)
 {
-	t_test	*tmp;
+	t_test *tmp;
 	int		pre_total;
 
 	tmp = safealloc(sizeof(*tmp));
@@ -26,7 +26,7 @@ static int	test_add_test(t_module *t)
 	return (EXIT_SUCCESS);
 }
 
-static int	test_add_test_f(t_module *t)
+static int test_add_test_f(t_module *t)
 {
 	ct_module_taddf(t, dummy_success_test, "ok1");
 	ct_module_taddf(t, dummy_fail_test, "ko1");
@@ -36,10 +36,10 @@ static int	test_add_test_f(t_module *t)
 	return (EXIT_SUCCESS);
 }
 
-int	ctit_nb_tests(void)
+int ctit_nb_tests(void)
 {
-	t_module	*t;
-	int			r;
+	t_module *t;
+	int		  r;
 
 	ct_module_init(&t, "test", "module for tests to run on");
 	r = test_add_test_f(t);
