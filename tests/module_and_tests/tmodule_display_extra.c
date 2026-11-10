@@ -30,9 +30,10 @@
 //	ct_module_display(fail, CT_DT_OK);
 #define ERR_CALL1                                                              \
 	"fail\tfailing results\n"                                                  \
-	"\tcrash  \033[31mKO\033[0m\t139\n"                                        \
-	"\tko     \033[31mKO\033[0m\t1\n"                                          \
-	"fail\t\033[31m0\033[0m / 2\n"
+	"\tcrash    \033[31mKO\033[0m\t139\n"                                      \
+	"\tko       \033[31mKO\033[0m\t1\n"                                        \
+	"\ttimeout  \033[31mKO\033[0m\tTIMEOUT\n"                                  \
+	"fail\t\033[31m0\033[0m / 3\n"
 
 //	ct_module_display(fail, CT_FMT_JSN);
 #define ERR_CALL2                                                              \
@@ -40,8 +41,10 @@
 	"results\",\"tests\":[{\"test_name\":\"crash\",\"result\":\"KO\","         \
 	"\"return_value\":\"139\",\"timed_out\":\"false\",\"signaled\":\"true\"}," \
 	"{\"test_name\":\"ko\",\"result\":\"KO\",\"return_value\":\"1\",\"timed_"  \
-	"out\":\"false\",\"signaled\":\"true\"}],\"submodules\":[],\"nb_tests_"    \
-	"passed\":\"0\",\"nb_tests_total\":\"2\"}\n"
+	"out\":\"false\",\"signaled\":\"true\"},{\"test_name\":\"timeout\","       \
+	"\"result\":\"KO\",\"return_value\":\"9\",\"timed_out\":\"true\","         \
+	"\"signaled\":\"true\"}],\"submodules\":[],\"nb_tests_"                    \
+	"passed\":\"0\",\"nb_tests_total\":\"3\"}\n"
 
 //	ct_module_display(fail, CT_FMT_JSN | CT_DT_OK);
 #define ERR_CALL3                                                              \
@@ -49,8 +52,10 @@
 	"results\",\"tests\":[{\"test_name\":\"crash\",\"result\":\"KO\","         \
 	"\"return_value\":\"139\",\"timed_out\":\"false\",\"signaled\":\"true\"}," \
 	"{\"test_name\":\"ko\",\"result\":\"KO\",\"return_value\":\"1\",\"timed_"  \
-	"out\":\"false\",\"signaled\":\"true\"}],\"submodules\":[],\"nb_tests_"    \
-	"passed\":\"0\",\"nb_tests_total\":\"2\"}\n"
+	"out\":\"false\",\"signaled\":\"true\"},{\"test_name\":\"timeout\","       \
+	"\"result\":\"KO\",\"return_value\":\"9\",\"timed_out\":\"true\","         \
+	"\"signaled\":\"true\"}],\"submodules\":[],\"nb_tests_"                    \
+	"passed\":\"0\",\"nb_tests_total\":\"3\"}\n"
 
 //	ct_module_display(root, CT_DISPLAY_DEFAULT);
 #define SUB_CALL1                                                              \
@@ -275,6 +280,7 @@ static int display_results(void)
 	int		   ret;
 
 	ct_module_init(&fail, "fail", "failing results");
+	ct_module_taddf_timeout(fail, dummy_timeout, "timeout", 1);
 	ct_module_taddf(fail, dummy_fail_test, "ko");
 	ct_module_taddf(fail, dummy_sigsegv, "crash");
 	ct_module_run(fail);
