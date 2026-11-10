@@ -352,13 +352,53 @@ static int ra_cli_errors(void)
 	if (ok->tests_passed != 0 || nest->tests_passed != 0)
 		return (ct_capture_destroy(cap), ct_module_destroy(root), 6);
 	if (ct_capture_compare(cap, "ctests: unknown option: '--nope'\n"
+								"ctests: try '-h' or '--help' for usage\n"
 								"ctests: missing module path after "
 								"'--run-module'\n"
-								"ctests: unknown option: '--bad'\n") != 0)
+								"ctests: unknown option: '--bad'\n"
+								"ctests: try '-h' or '--help' for usage\n") != 0)
 		return (ct_capture_destroy(cap), ct_module_destroy(root), 7);
 	ct_capture_destroy(cap);
 	ct_module_destroy(root);
 	return (EXIT_SUCCESS);
+}
+
+// -h and --help print the usage on stdout and run nothing: help wins over
+// module selections, the exit status is success whatever the display mode
+static int ra_help(void)
+{
+	char	  *short_h[] = {RA_PROG, "-h", NULL};
+	char	  *long_h[] = {RA_PROG, "--help", NULL};
+	char	  *mixed[] = {RA_PROG, "okmod", "-h", NULL};
+	t_capture *cap;
+	t_module  *root;
+	t_module  *ok;
+	t_module  *ko;
+	t_module  *nest;
+	char	  *out;
+
+	root = ra_tree();
+	if (!root || ra_refs(root, &ok, &ko, &nest) == false)
+		return (ct_module_destroy(root), 1);
+	cap = ct_capture_create(STDOUT_FILENO);
+	if (!cap)
+		return (ct_module_destroy(root), 2);
+	if (ct_module_run_args(root, 2, short_h, CT_FMT_SILENT) != EXIT_SUCCESS)
+		return (ct_capture_destroy(cap), ct_module_destroy(root), 3);
+	if (ct_module_run_args(root, 2, long_h, CT_FMT_SILENT) != EXIT_SUCCESS)
+		return (ct_capture_destroy(cap), ct_module_destroy(root), 4);
+	if (ct_module_run_args(root, 3, mixed, CT_FMT_SILENT) != EXIT_SUCCESS)
+		return (ct_capture_destroy(cap), ct_module_destroy(root), 5);
+	if (ok->tests_passed != 0 || nest->tests_passed != 0)
+		return (ct_capture_destroy(cap), ct_module_destroy(root), 6);
+	out = ct_capture_get(cap);
+	if (!out || ra_count(out, "Usage: " RA_PROG) != 3 ||
+		ra_count(out, "-h, --help") != 3 ||
+		ra_count(out, "--run-module=") != 6)
+		return (safefree(out), ct_capture_destroy(cap),
+				ct_module_destroy(root), 7);
+	return (safefree(out), ct_capture_destroy(cap), ct_module_destroy(root),
+			EXIT_SUCCESS);
 }
 
 // the selection is reported: only the selected module and its submodules
@@ -451,6 +491,9 @@ int ctit_run_args(void)
 	if (ret != EXIT_SUCCESS)
 		return (ret);
 	ret = ra_cli_errors();
+	if (ret != EXIT_SUCCESS)
+		return (ret);
+	ret = ra_help();
 	if (ret != EXIT_SUCCESS)
 		return (ret);
 	ret = ra_display();

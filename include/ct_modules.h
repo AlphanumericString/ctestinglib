@@ -140,6 +140,8 @@ int ct_module_run_self_tests(t_module *module);
 // - overlapping selections are deduplicated: the broadest module wins
 // - single tests can not be selected, only whole modules
 // - when no module is provided root and its submodules are run
+// - '-h' or '--help' prints the usage on stdout and returns EXIT_SUCCESS
+//   without running anything (help wins over any other argument)
 int ct_module_run_args(t_module *root, int argc, char **argv,
 					   t_display_mode mode);
 
