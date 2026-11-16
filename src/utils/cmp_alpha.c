@@ -1,5 +1,5 @@
 #define CTESTS_INTERNAL
-#include "ct_utils.h"
+#include "ct_internal.h"
 
 int cti_cmp_alpha(const char *s1, const char *s2)
 {

@@ -1,5 +1,5 @@
 #define CTESTS_INTERNAL
-#include "ct_assert.h"
+#include "ct_internal.h"
 
 int ct_assert_true(bool condition, const char *err_msg, ...)
 {

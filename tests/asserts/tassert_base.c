@@ -1,7 +1,6 @@
-#include "ct_capture.h"
 #include <unistd.h>
 #define CTESTS_INTERNAL_TESTS
-#include "include/ct_assert.h"
+#include "ct_internal.h"
 
 #define EXP_TRUE "24"
 #define EXP_FALSE "13"

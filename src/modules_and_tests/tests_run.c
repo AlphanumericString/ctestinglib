@@ -10,7 +10,7 @@
 #include <string.h>
 
 #define CTESTS_INTERNAL
-#include "ct_modules.h"
+#include "ct_internal.h"
 
 static t_module *climb_to_root(const t_module *module)
 {

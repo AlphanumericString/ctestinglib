@@ -2,7 +2,7 @@
 #include <sys/cdefs.h>
 
 #define CTESTS_INTERNAL_TESTS
-#include "ct_modules.h"
+#include "ct_internal.h"
 
 int dummy_alloc(void)
 {

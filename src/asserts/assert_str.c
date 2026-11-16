@@ -1,6 +1,5 @@
 #define CTESTS_INTERNAL
-#include "ct_utils.h"
-#include "ct_assert.h"
+#include "ct_internal.h"
 
 int ct_assert_str_eq(const char *s1, const char *s2, const char *err_msg, ...)
 {

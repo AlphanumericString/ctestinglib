@@ -1,8 +1,6 @@
-#include "ct_structs.h"
 
 #define CTESTS_INTERNAL_TESTS
-#include "ct_assert.h"
-#include "ct_modules.h"
+#include "ct_internal.h"
 
 #define ASRT_DSC "Assertion module to check conditions and print on fail"
 

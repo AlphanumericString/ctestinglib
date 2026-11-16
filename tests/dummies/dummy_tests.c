@@ -3,9 +3,7 @@
 #include <unistd.h>
 
 #define CTESTS_INTERNAL_TESTS
-#include "ct_modules.h"
-
-#include "ct_capture.h"
+#include "ct_internal.h"
 
 // smol populate
 int dummy_fail_test(void)

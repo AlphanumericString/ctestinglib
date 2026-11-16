@@ -1,8 +1,7 @@
 #include <string.h>
 
 #define CTESTS_INTERNAL
-#include "ct_modules.h"
-#include "ct_utils.h"
+#include "ct_internal.h"
 
 static t_list *grab_min(t_list *lst)
 {

@@ -2,8 +2,7 @@
 #include <stdlib.h>
 
 #define CTESTS_INTERNAL
-#include "ct_memory.h"
-#include "ct_modules.h"
+#include "ct_internal.h"
 
 static int innner_run_test(t_test *test, t_module *m)
 {

@@ -1,4 +1,5 @@
-#include "ct_utils.h"
+#define CTESTS_INTERNAL
+#include "ct_internal.h"
 
 int ct_strncmp(const char *s, const char *s2, size_t n)
 {

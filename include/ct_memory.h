@@ -5,26 +5,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#ifdef CTESTS_INTERNAL
-
-int64_t *cti_failloc_get(void);
-size_t	*cti_alloc_get(void);
-
-void push_to_cleanup(void *ptr);
-void do_cleanup(void (*f)(void *));
-
-void cti_set_memory_cleanup(bool val);
-bool cti_get_memory_cleanup(void);
-
-#endif /* CTESTS_INTERNAL */
-#ifdef CTESTS_INTERNAL_TESTS
-
-int ctit_cleanup(void);
-int ctit_count(void);
-int ctit_fail(void);
-
-#endif /* CTESTS_INTERNAL_TESTS */
-
 void *safealloc(size_t size) __attribute__((malloc));
 void  safefree(void *p);
 

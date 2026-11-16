@@ -1,5 +1,5 @@
 #define CTESTS_INTERNAL
-#include "ct_memory.h"
+#include "ct_internal.h"
 
 int64_t *cti_failloc_get(void)
 {

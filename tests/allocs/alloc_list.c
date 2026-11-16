@@ -3,9 +3,7 @@
 
 #define CTESTS_INTERNAL
 #define CTESTS_INTERNAL_TESTS
-#include "ct_memory.h"
-#include "ct_modules.h"
-#include "ct_utils.h"
+#include "ct_internal.h"
 
 static int g_custom_free_calls;
 

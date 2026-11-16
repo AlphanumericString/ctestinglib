@@ -1,11 +1,9 @@
-#include "ct_memory.h"
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
 
 #define CTESTS_INTERNAL
-#include "ct_utils.h"
-#include "ct_capture.h"
+#include "ct_internal.h"
 
 static void append_string(char **src, const char *append)
 {

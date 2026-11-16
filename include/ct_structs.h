@@ -108,13 +108,13 @@ typedef struct s_list	t_list;
 ///			- 1: display ok, ko and crashes
 ///			- 2: display test name as "short" (only test name) (default)
 ///			- 3: display test name as "full" (module1:module2:testname)
-/// - bits 2-3: module display mode
-///			- 0: display summary (nb tests passed/total) (default)
+/// - bits 2-3: sub-module display summary mode
+///			- 0: display summary (default)
 ///			- 1: display summary in percent
 ///			- 2: silent (no module infos)
 ///	- bits 4-5: submodule display mode
-///			- 0: merged results (default)
-///			- 1: split results per submodule
+///			- 0: merged results (default) (self + childrend modules)
+///			- 1: split results per submodule (self only)
 ///			- 0: display nb tests passed/total (default)
 ///			- 1: display in percent
 ///	- bits 6-7: output format

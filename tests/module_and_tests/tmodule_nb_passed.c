@@ -2,7 +2,7 @@
 
 #define CTESTS_INTERNAL
 #define CTESTS_INTERNAL_TESTS
-#include "ct_modules.h"
+#include "ct_internal.h"
 
 int ctit_nb_passed(void)
 {

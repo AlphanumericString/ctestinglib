@@ -1,6 +1,5 @@
 #define CTESTS_INTERNAL_TESTS
-#include "ct_modules.h"
-#include "ct_memory.h"
+#include "ct_internal.h"
 
 t_module *create_alloc_tests(void)
 {

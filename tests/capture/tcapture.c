@@ -4,10 +4,7 @@
 
 #define CTESTS_INTERNAL
 #define CTESTS_INTERNAL_TESTS
-#include "ct_capture.h"
-#include "ct_memory.h"
-#include "ct_modules.h"
-#include "ct_utils.h"
+#include "ct_internal.h"
 
 #define BIG_READ 8192
 #define MID_READ 5000

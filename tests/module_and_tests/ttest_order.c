@@ -3,7 +3,7 @@
 
 #define CTESTS_INTERNAL
 #define CTESTS_INTERNAL_TESTS
-#include "ct_modules.h"
+#include "ct_internal.h"
 
 static int leaf_ordering_check(t_module *t)
 {

@@ -1,7 +1,5 @@
 #define CTESTS_INTERNAL
-#include "ct_structs.h"
-#include "ct_utils.h"
-#include "ct_memory.h"
+#include "ct_internal.h"
 
 // lst //
 void cti_list_foreach(const t_list *lst, void (*f)(void *data))

@@ -1,4 +1,3 @@
-#include "ct_structs.h"
 #include <stdlib.h>
 
 /* *********************** */
@@ -11,8 +10,7 @@
 
 #define CTESTS_INTERNAL
 #define CTESTS_INTERNAL_TESTS
-#include "ct_modules.h"
-#include "ct_utils.h"
+#include "ct_internal.h"
 
 #define FSETUP "Failed to setup tests"
 #define FSET_SBM "Failed to setup tests"

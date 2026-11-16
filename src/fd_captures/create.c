@@ -2,9 +2,7 @@
 #include <unistd.h>
 
 #define CTESTS_INTERNAL
-#include "ct_capture.h"
-#include "ct_memory.h"
-#include "ct_utils.h"
+#include "ct_internal.h"
 
 // Set non-blocking mode
 static int __attribute__((unused)) cti_capture_nonblock(t_capture *c)

@@ -1,7 +1,5 @@
 #define CTESTS_INTERNAL
-#include "ct_modules.h"
-#include "ct_memory.h"
-#include "ct_utils.h"
+#include "ct_internal.h"
 
 bool ct_module_add_sub(t_module *module, t_module *sub_module)
 {

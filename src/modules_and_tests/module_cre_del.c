@@ -1,6 +1,5 @@
 #define CTESTS_INTERNAL
-#include "ct_modules.h"
-#include "ct_memory.h"
+#include "ct_internal.h"
 
 static void module_destroy_inner(t_module *m)
 {

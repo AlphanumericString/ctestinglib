@@ -1,5 +1,5 @@
 #define CTESTS_INTERNAL
-#include "ct_memory.h"
+#include "ct_internal.h"
 
 extern void *__libc_malloc(size_t size);
 extern void	 __libc_free(void *p);

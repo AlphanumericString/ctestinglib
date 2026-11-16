@@ -1,5 +1,5 @@
 #define CTESTS_INTERNAL
-#include "ct_modules.h"
+#include "ct_internal.h"
 
 void ct_module_set_timeout(t_module *module, unsigned int seconds)
 {

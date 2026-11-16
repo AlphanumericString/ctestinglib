@@ -1,6 +1,5 @@
-#include "ct_utils.h"
 #define CTESTS_INTERNAL
-#include "ct_modules.h"
+#include "ct_internal.h"
 
 int cti_collect_sbm_t_success(const t_module *m)
 {

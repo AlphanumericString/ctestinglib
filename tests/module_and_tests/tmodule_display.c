@@ -1,13 +1,9 @@
-#include "ct_capture.h"
-#include "ct_memory.h"
-#include "ct_structs.h"
 #include <stdio.h>
 #include <stdlib.h>
 
 #define CTESTS_INTERNAL
 #define CTESTS_INTERNAL_TESTS
-#include "ct_modules.h"
-#include "ct_utils.h"
+#include "ct_internal.h"
 
 // text format 1
 #define T_E1_1 "str\ttests for dummy string module\nstr\t1 / 1\n"

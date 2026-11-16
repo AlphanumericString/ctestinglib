@@ -2,8 +2,7 @@
 
 #define CTESTS_INTERNAL
 #define CTESTS_INTERNAL_TESTS
-#include "ct_modules.h"
-#include "ct_memory.h"
+#include "ct_internal.h"
 
 // can we add tests?
 // does the add_test_f work as intended?

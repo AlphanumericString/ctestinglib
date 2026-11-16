@@ -1,5 +1,5 @@
 #define CTESTS_INTERNAL_TESTS
-#include "ct_modules.h"
+#include "ct_internal.h"
 
 #define CAPTURE_DSC "Check on fd capture functionalities"
 

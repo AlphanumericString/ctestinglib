@@ -1,5 +1,5 @@
 #define CTESTS_INTERNAL_TESTS
-#include "ct_modules.h"
+#include "ct_internal.h"
 
 #define TCMODDESCS "Check on handling tests functionalities"
 

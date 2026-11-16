@@ -1,11 +1,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "ct_capture.h"
-
 #define CTESTS_INTERNAL
 #define CTESTS_INTERNAL_TESTS
-#include "ct_utils.h"
+#include "ct_internal.h"
 
 int ctit_print_cn(void)
 {

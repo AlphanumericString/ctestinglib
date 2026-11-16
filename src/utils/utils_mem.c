@@ -1,4 +1,5 @@
-#include "ct_utils.h"
+#define CTESTS_INTERNAL
+#include "ct_internal.h"
 
 void ct_memset(void *ptr, int value, size_t size)
 {

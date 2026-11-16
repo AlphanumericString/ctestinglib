@@ -1,8 +1,7 @@
-#include "ct_capture.h"
 #include <stdio.h>
 #include <unistd.h>
 #define CTESTS_INTERNAL_TESTS
-#include "include/ct_assert.h"
+#include "ct_internal.h"
 
 int ctit_streq(void)
 {

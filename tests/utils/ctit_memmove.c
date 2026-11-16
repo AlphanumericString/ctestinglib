@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 #define CTESTS_INTERNAL_TESTS
-#include "ct_utils.h"
+#include "ct_internal.h"
 
 int ctit_memmove(void)
 {

@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 #define CTESTS_INTERNAL
-#include "ct_assert.h"
+#include "ct_internal.h"
 
 int ct_assert_true_v(bool condition, const char *err_msg, va_list args)
 {

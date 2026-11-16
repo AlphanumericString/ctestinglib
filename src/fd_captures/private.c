@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 #define CTESTS_INTERNAL
-#include "ct_capture.h"
+#include "ct_internal.h"
 
 void cti_fflush_step(t_capture *c)
 {

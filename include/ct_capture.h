@@ -18,8 +18,6 @@ typedef struct s_capture
 	int pipe_write;
 } t_capture;
 
-void cti_fflush_step(t_capture *c);
-
 #else
 
 typedef struct s_capture t_capture;

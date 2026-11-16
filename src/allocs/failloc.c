@@ -1,5 +1,5 @@
 #define CTESTS_INTERNAL
-#include "ct_memory.h"
+#include "ct_internal.h"
 
 // public version of cti_alloc_get, remoes the possibility of the user changing
 // the values

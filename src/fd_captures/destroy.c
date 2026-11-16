@@ -1,6 +1,5 @@
-#include "ct_capture.h"
 #define CTESTS_INTERNAL
-#include "ct_memory.h"
+#include "ct_internal.h"
 
 void ct_capture_destroy(t_capture *c)
 {

@@ -1,7 +1,7 @@
 #include <unistd.h>
 
 #define CTESTS_INTERNAL
-#include "ct_capture.h"
+#include "ct_internal.h"
 
 bool ct_capture_release(t_capture *capture)
 {

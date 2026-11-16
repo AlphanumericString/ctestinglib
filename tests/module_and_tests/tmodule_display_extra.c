@@ -1,11 +1,8 @@
-#include "ct_capture.h"
-#include "ct_memory.h"
 #include <stdlib.h>
 
 #define CTESTS_INTERNAL
 #define CTESTS_INTERNAL_TESTS
-#include "ct_modules.h"
-#include "ct_utils.h"
+#include "ct_internal.h"
 
 // ct_module_display(empty, CT_DM_SUMPCT);
 #define EMPTY_CALL1                                                            \
@@ -190,7 +187,7 @@
 // cti_mdisplay_sum_percent(1, 1, CT_FMT_SILENT);
 #define INTER_CALL3 "Unsupported format for percentage display\n"
 
-// cti_mdisplay_sbm(root->submodules_list, CT_FMT_JSN);
+// cti_mdisplay_sbm_recap(root->submodules_list, CT_FMT_JSN);
 #define INTER_CALL4 "Unsupported format for submodule display\n"
 
 // collated expected output for empty tests
@@ -359,7 +356,7 @@ static int display_internal(void)
 	cti_display_results_json(root, CT_FMT_JSN | CT_DM_SUMSILENT);
 	cti_mdisplay_sum_nb(1, 1, CT_FMT_SILENT);
 	cti_mdisplay_sum_percent(1, 1, CT_FMT_SILENT);
-	cti_mdisplay_sbm(root->submodules_list, CT_FMT_JSN);
+	cti_mdisplay_sbm_recap(root->submodules_list, CT_FMT_JSN);
 	ret = check_capture(c, E_INTERNAL);
 	ct_module_destroy(root);
 	return (ret);

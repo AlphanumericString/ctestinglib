@@ -2,7 +2,7 @@
 #include <limits.h>
 
 #define CTESTS_INTERNAL
-#include "ct_utils.h"
+#include "ct_internal.h"
 
 void cti_print_string(const char *str)
 {
