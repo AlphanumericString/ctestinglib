@@ -203,9 +203,28 @@ static int loc_run_selection(t_module **selection, int count,
 	return (ret);
 }
 
-// runs the modules selected from the cli (see ct_modules.h for details),
-// '-h' / '--help' prints the usage on stdout and returns success without
-// running anything
+/// @brief Run the modules selected on the command line.
+/// @details Arguments are parsed as follows:
+/// - module paths are given either as positional arguments (@c "m1" @c "m2"
+///   ...) or as @c --run-module=m1 @c --run-module=m2 flags, both forms can
+///   be mixed;
+/// - a path is a @c ':' separated chain of module names resolved from
+///   @p root, the first name may be the root module itself;
+/// - every selected module runs with its own submodules, then the selection is
+///   sorted and reported (in JSON mode, several modules are wrapped in an
+///   array);
+/// - overlapping selections are deduplicated: the broadest module wins;
+/// - single tests can not be selected, only whole modules;
+/// - when no module is given, @p root and its submodules are run.
+///
+/// @c -h and @c --help print the usage on stdout and return EXIT_SUCCESS
+/// without running anything; help wins over any other argument.
+/// @param root Root module of the test tree.
+/// @param argc Argument count, as passed to main().
+/// @param argv Argument vector, as passed to main().
+/// @param mode Display mode used for the report.
+/// @return EXIT_SUCCESS when every selected test passed, EXIT_FAILURE
+/// otherwise, or when the arguments are invalid.
 int ct_module_run_args(t_module *root, int argc, char **argv,
 					   t_display_mode mode)
 {

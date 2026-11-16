@@ -6,13 +6,25 @@
 
 #include "ct_structs.h"
 
+/**
+ * @file ct_modules.h
+ * @brief Build, run and report a tree of test modules.
+ *
+ * A test binary creates a root module with ct_module_init(), attaches tests
+ * with ct_module_taddf() and submodules with ct_module_add_sub(), then runs
+ * the tree with ct_module_run() or ct_module_run_args(). The tree is released
+ * with ct_module_destroy().
+ */
+
 #ifndef FORK_TESTS
+/// @brief Whether every test runs in a forked child (1) or in the current
+/// process (0). Defaults to 1.
 #define FORK_TESTS 1
 #endif
 
-// default timeout (in seconds) applied to every test when neither the test
-// nor its module defines one. 0 disables the timeout (plain waitpid).
 #ifndef CT_DEFAULT_TIMEOUT
+/// @brief Default timeout, in seconds, applied to every test when neither the
+/// test nor its module defines one. 0 disables the timeout (plain waitpid).
 #define CT_DEFAULT_TIMEOUT 0
 #endif
 
@@ -42,18 +54,7 @@ unsigned int ct_test_get_timeout(const t_test *test);
 int ct_module_run(t_module *module);
 int ct_module_run_self_tests(t_module *module);
 
-// run the modules selected from the cli:
-// - module paths are given either as positional arguments ("m1 m2 ...") or
-//   as '--run-module=m1 --run-module=m2' flags, both forms can be mixed
-// - a path is a ':' separated chain of module names resolved from root,
-//   the first name may be the root module itself
-// - every selected module runs with its own submodules, then the selection
-//   is sorted and reported (json mode wraps several modules in an array)
-// - overlapping selections are deduplicated: the broadest module wins
-// - single tests can not be selected, only whole modules
-// - when no module is provided root and its submodules are run
-// - '-h' or '--help' prints the usage on stdout and returns EXIT_SUCCESS
-//   without running anything (help wins over any other argument)
+// cli entry point, see the definition for the supported arguments
 int ct_module_run_args(t_module *root, int argc, char **argv,
 					   t_display_mode mode);
 

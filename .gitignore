@@ -11,4 +11,5 @@ simple_tests_tester
 *.profraw
 *.profdata
 coverage/
+doxygen/
 *.md

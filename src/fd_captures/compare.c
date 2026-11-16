@@ -74,6 +74,14 @@ static char *cti_capture_read(t_capture *capture, size_t *len)
 	return (data);
 }
 
+/// @brief Consume the output written since the last call.
+/// @details Reads everything currently available on the capture pipe without
+/// blocking. The returned string is NUL terminated and is truncated at the
+/// first NUL byte.
+/// @param capture Capture handle, NULL is accepted.
+/// @return A malloc'ed string to free with free() or safefree(), an empty
+/// string when nothing was written, or NULL on error or when @p capture is
+/// NULL.
 char *ct_capture_get(t_capture *capture)
 {
 	size_t len;
@@ -84,6 +92,11 @@ char *ct_capture_get(t_capture *capture)
 	return (cti_capture_read(capture, &len));
 }
 
+/// @brief Consume the captured output and compare it to @p expected.
+/// @param capture Capture handle, NULL is accepted.
+/// @param expected Exact output the code under test should have produced.
+/// @return 0 when the output matches, -1 on mismatch, on error or when an
+/// argument is NULL.
 int ct_capture_compare(t_capture *capture, const char *expected)
 {
 	char  *actual;
