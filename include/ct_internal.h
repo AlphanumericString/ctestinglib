@@ -91,6 +91,7 @@ void cti_mdisplay_test_name(const t_test *t, const t_module *m,
 							t_display_mode md);
 
 // run
+int cti_test_call(const t_test *t);
 int cti_tfork(t_test *t, t_module *m);
 
 // utils
@@ -158,6 +159,7 @@ int ctit_crash_catcher(void);
 int ctit_tordering(void);
 int ctit_return_check(void);
 int ctit_timeout(void);
+int ctit_tparam(void);
 
 // dummy - used to check all func are called
 // dummy tests
@@ -232,6 +234,7 @@ int ctit_crash_catcher(void);
 int ctit_tordering(void);
 int ctit_return_check(void);
 int ctit_timeout(void);
+int ctit_tparam(void);
 
 // dummy - used to check all func are called
 // dummy tests

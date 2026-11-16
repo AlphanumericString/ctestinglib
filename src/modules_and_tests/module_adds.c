@@ -22,7 +22,8 @@ bool ct_module_taddf(t_module *m, int (*f)(void), const char *s)
 		return (false);
 	*t = (t_test){0};
 	t->return_value = 0;
-	t->test_func = f;
+	t->type = CT_TPURE;
+	t->test_func.pure = f;
 	t->name = (char *)s;
 	if (ct_module_tadd(m, t) == false)
 		return (safefree(t), false);
@@ -33,6 +34,36 @@ bool ct_module_taddf_timeout(t_module *m, int (*f)(void), const char *s,
 							 unsigned int seconds)
 {
 	if (ct_module_taddf(m, f, s) == false)
+		return (false);
+	((t_test *)m->tests_list->data)->timeout = seconds;
+	return (true);
+}
+
+bool ct_module_taddf_param(t_module *m, int (*f)(void *), void *param,
+						   const char *s)
+{
+	t_test *t;
+
+	if (!m || !f || !s)
+		return (false);
+	t = safealloc(sizeof(*t));
+	if (!t)
+		return (false);
+	*t = (t_test){0};
+	t->return_value = 0;
+	t->type = CT_PARAM;
+	t->test_func.param = f;
+	t->param = param;
+	t->name = (char *)s;
+	if (ct_module_tadd(m, t) == false)
+		return (safefree(t), false);
+	return (true);
+}
+
+bool ct_module_taddf_param_timeout(t_module *m, int (*f)(void *), void *param,
+								   const char *s, unsigned int seconds)
+{
+	if (ct_module_taddf_param(m, f, param, s) == false)
 		return (false);
 	((t_test *)m->tests_list->data)->timeout = seconds;
 	return (true);

@@ -13,6 +13,7 @@ t_module *create_tests_tests(void)
 	ct_module_taddf(tests_tests, ctit_tordering, "ordering");
 	ct_module_taddf(tests_tests, ctit_return_check, "return value checking");
 	ct_module_taddf(tests_tests, ctit_timeout, "test timeout");
+	ct_module_taddf(tests_tests, ctit_tparam, "parametrized tests");
 	return (tests_tests);
 }
 
