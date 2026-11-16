@@ -52,14 +52,21 @@ bool ct_capture_init(int source_fd, t_capture *capture)
 	return (true);
 }
 
-t_capture *ct_capture_create(int fd)
+/// @brief Start capturing everything written to @p source_fd.
+/// @details The descriptor is duplicated and redirected to an internal pipe.
+/// The original descriptor is restored by ct_capture_destroy().
+/// @param source_fd Descriptor to capture, usually STDOUT_FILENO or
+/// STDERR_FILENO.
+/// @return The capture handle, or NULL when the descriptor can not be
+/// redirected or the allocation fails.
+t_capture *ct_capture_create(int source_fd)
 {
 	t_capture *tmp;
 
 	tmp = safealloc(sizeof(*tmp));
 	if (!tmp)
 		return (NULL);
-	if (!ct_capture_init(fd, tmp))
+	if (!ct_capture_init(source_fd, tmp))
 		return (safefree(tmp), NULL);
 	return (tmp);
 }

@@ -38,6 +38,11 @@ void sort_moduleslist(t_list *m_ls)
 	}
 }
 
+/// @brief Sort the test tree by name.
+/// @details Recursively sorts the tests of @p root and of every submodule, and
+/// sorts the submodules of each module, so that reports are stable and
+/// predictable.
+/// @param root Root module of the tree, NULL is accepted.
 void ct_module_sort(t_module *root)
 {
 	t_list *tmp;

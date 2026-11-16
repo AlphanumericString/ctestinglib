@@ -34,6 +34,12 @@ static void teardown(t_module *m)
 	return;
 }
 
+/// @brief Run only the tests directly attached to @p module.
+/// @details The module setup hook is called before the tests and its teardown
+/// hook after them. When auto cleanup is enabled, every allocation made by the
+/// tests is released after the last test.
+/// @param module Module whose tests are run.
+/// @return EXIT_SUCCESS when every test passed, EXIT_FAILURE otherwise.
 int ct_module_run_self_tests(t_module *module)
 {
 	t_list *t_ls;

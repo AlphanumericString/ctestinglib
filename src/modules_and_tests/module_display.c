@@ -75,6 +75,13 @@ static const char *format_error(t_display_mode mode)
 	return (NULL);
 }
 
+/// @brief Display the results of a module tree.
+/// @details The output format and the amount of information printed are
+/// controlled by @p mode. Nothing is printed when @p module is NULL or when
+/// @p mode uses CT_FMT_SILENT. Invalid combinations, such as JSON output with
+/// CT_DM_SUMSILENT, print an error message instead.
+/// @param module Module tree to display.
+/// @param mode Display options, see t_display_mode.
 void ct_module_display(const t_module *module, t_display_mode mode)
 {
 	const char *error;

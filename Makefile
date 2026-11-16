@@ -8,6 +8,7 @@ CP		=	$(shell which cp)
 PRINT	=	$(shell which printf)
 AR		=	$(shell which ar)
 CC		=	$(shell which clang)
+DOXYGEN	=	$(shell which doxygen)
 CXX		=	$(shell which clang++)
 MAKE_SL =	$(shell which make) --no-print-directory
 
@@ -32,6 +33,8 @@ SRC_DIR			=	src
 TST_DIR			=	tests
 BUILD_DIR		=	build
 COVERAGE_DIR	=	coverage
+DOXYGEN_DIR		=	doxygen
+DOXYFILE		=	Doxyfile
 # -- Files
 LIBS_LIST		=	$(shell find $(LIB_DIRS) -name "*.a" -type f -or \
 							-name "*.so" -type f 2>/dev/null)
@@ -171,7 +174,7 @@ dbg_make:
 clean:
 	@$(PRINT) "$(LOG_MAJ)Cleaning build files...$(RESET)"	&& \
 	$(RM) -rf $(BUILD_DIR) $(LOGFILE) vgcore.* *.profraw	\
-	*.profdata	$(COVERAGE_DIR)								&& \
+	*.profdata	$(COVERAGE_DIR) $(DOXYGEN_DIR)				&& \
 	$(PRINT) "$(OK)Success$(RESET)\n"						|| \
 	$(PRINT) "$(KO)Fail$(RESET)\n"
 fclean: clean
@@ -191,6 +194,11 @@ tags: $(SRCS)
 	@$(PRINT) "$(LOG_MAJ)Creating tags file...$(RESET)"					&& \
 	ctags -R --languages=$(TARGET_LANG) --exclude=.git --exclude=build	\
 	 $(prepend --exclude=, $(LIB_DIRS) $(INCLUDES_DIRS))				&& \
+	$(PRINT) "$(OK)Success$(RESET)\n"									|| \
+	$(PRINT) "$(KO)Fail$(RESET)\n"
+doxygen: $(DOXYFILE)
+	@$(PRINT) "$(LOG_MAJ)Generating doxygen documentation...$(RESET)"	&& \
+	$(DOXYGEN) $(DOXYFILE)												&& \
 	$(PRINT) "$(OK)Success$(RESET)\n"									|| \
 	$(PRINT) "$(KO)Fail$(RESET)\n"
 .clangd: $(MAKE_SELF)

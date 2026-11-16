@@ -1,0 +1,57 @@
+# Doxygen configuration for the ctesting library.
+#
+# Run `make doxygen` from the project root. The generated HTML documentation
+# is written to the doxygen/ directory (ignored by git) and is only rebuilt
+# when this file changes.
+
+PROJECT_NAME           = ctesting
+PROJECT_BRIEF          = "Lightweight C test framework: modules, assertions, fd capture and allocation failure injection"
+OUTPUT_DIRECTORY       = doxygen
+OUTPUT_LANGUAGE        = English
+CREATE_SUBDIRS         = NO
+OPTIMIZE_OUTPUT_FOR_C  = YES
+MARKDOWN_SUPPORT       = YES
+AUTOLINK_SUPPORT       = YES
+
+# The public API lives in the headers (types) and in the implementation files
+# (functions), so both directories are parsed.
+INPUT                  = include src
+FILE_PATTERNS          = *.c *.h
+RECURSIVE              = YES
+EXCLUDE                = include/ct_internal.h
+
+# Only documented symbols are extracted, which keeps the internal helpers out
+# of the public documentation.
+EXTRACT_ALL            = NO
+EXTRACT_PRIVATE        = NO
+EXTRACT_STATIC         = NO
+EXTRACT_LOCAL_CLASSES  = NO
+EXTRACT_LOCAL_METHODS  = NO
+
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+HTML_COLORSTYLE        = AUTO_LIGHT
+GENERATE_TREEVIEW      = YES
+GENERATE_LATEX         = NO
+GENERATE_MAN           = NO
+GENERATE_RTF           = NO
+GENERATE_XML           = NO
+GENERATE_DOCBOOK       = NO
+
+SOURCE_BROWSER         = NO
+INLINE_SOURCES         = NO
+FULL_PATH_NAMES        = NO
+STRIP_FROM_PATH        = .
+JAVADOC_AUTOBRIEF      = NO
+QT_AUTOBRIEF           = NO
+
+QUIET                  = YES
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = NO
+WARN_IF_DOC_ERROR      = YES
+WARN_NO_PARAMDOC       = YES
+WARN_AS_ERROR          = NO
+
+HAVE_DOT               = NO
+CALL_GRAPH             = NO
+CALLER_GRAPH           = NO
