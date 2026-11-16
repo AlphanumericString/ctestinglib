@@ -36,6 +36,34 @@ int	   cti_collect_sbm_t_success(const t_module *m);
 int	   cti_collect_sbm_t_total(const t_module *m);
 size_t cti_mget_longest_name(const t_module *m);
 
+// display format hooks
+typedef void (*t_display_hook)(const t_module *m, t_display_mode md, int depth);
+typedef void (*t_display_sum_hook)(int total, int passed, t_display_mode md);
+typedef void (*t_display_sbm_hook)(const t_list *sbm, t_display_mode md);
+
+typedef struct s_display_fmt
+{
+	t_display_hook	   first_open;
+	t_display_hook	   open;
+	t_display_hook	   tests;
+	t_display_hook	   modules;
+	t_display_hook	   summary;
+	t_display_hook	   close;
+	t_display_hook	   last_close;
+	t_display_sum_hook sum_nb;
+	t_display_sum_hook sum_percent;
+	t_display_sbm_hook sbm_recap;
+	// legacy text output prints a module's submodules before its own tests.
+	bool submodules_first;
+} t_display_fmt;
+
+extern const t_display_fmt g_cti_fmt_txt;
+extern const t_display_fmt g_cti_fmt_json;
+
+const t_display_fmt *cti_display_fmt_get(t_display_mode md);
+void				 cti_display_run(const t_module *m, t_display_mode md);
+void cti_display_module(const t_module *m, t_display_mode md, int depth);
+
 // module summaries
 void cti_mdisplay_sum_nb(int t_t, int t_p, t_display_mode md);
 void cti_mdisplay_sum_percent(int t_t, int t_p, t_display_mode md);
@@ -47,11 +75,10 @@ void cti_display_results_txt(const t_module *m, t_display_mode md, int depth);
 void cti_display_results_json(const t_module *m, t_display_mode md);
 
 // tests display
-void cti_mdisplay_tests_txt(const t_module *m, t_display_mode md, int depth);
-void cti_mdisplay_tests_json(const t_module *m, t_display_mode md);
-void cti_td_name_txt(const t_test *t, const t_module *m, t_display_mode md,
-					 int depth, size_t mlen);
-void cti_td_name_json(const t_test *t, const t_module *m, t_display_mode md);
+bool cti_test_succeeded(const t_test *t);
+void cti_mdisplay_chain(const t_module *m);
+void cti_mdisplay_test_name(const t_test *t, const t_module *m,
+							t_display_mode md);
 
 // run
 int cti_tfork(t_test *t, t_module *m);
