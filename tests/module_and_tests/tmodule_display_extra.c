@@ -375,7 +375,8 @@ static int display_guards(void)
 	ct_module_display(NULL, CT_DISPLAY_DEFAULT);
 	ct_module_display(root, CT_FMT_SILENT);
 	ct_module_display(root, CT_FMT_JSN | CT_DM_SUMSILENT);
-	ct_module_display(root, (t_display_mode)(2 << 6));
+	// format slots 3 to 6 are reserved, 4 still has no renderer
+	ct_module_display(root, (t_display_mode)(4 << 6));
 	ct_module_display(root, CT_DM_SUMPCT);
 	ct_module_display(root, CT_DM_SUMPCT | CT_PRTY_NOCOLOR);
 	ret = check_capture(c, E_GUARDS);

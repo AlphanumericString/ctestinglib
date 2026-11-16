@@ -79,9 +79,11 @@ typedef enum e_display_mode
 	// fmts
 	CT_FMT_TXT = 0 << 6,
 	CT_FMT_JSN = 1 << 6,
-	CT_FMT_SILENT = 3 << 6,
-	CT_PRTY_COLOR = 0 << 8,
-	CT_PRTY_NOCOLOR = 1 << 8,
+	CT_FMT_HTML = 2 << 6,
+	// 3 << 6 to 6 << 6 are reserved for future formats (eg: xml)
+	CT_FMT_SILENT = 7 << 6,
+	CT_PRTY_COLOR = 0 << 9,
+	CT_PRTY_NOCOLOR = 1 << 9,
 	// default
 	CT_DISPLAY_DEFAULT = 0,
 	// masks
@@ -90,8 +92,8 @@ typedef enum e_display_mode
 	CT_DM_SUMMSK = 3 << 2,
 	CT_DSBM_GRPMSK = 1 << 4,
 	CT_DSBM_SUMMSK = 1 << 5,
-	CT_FMT_MSK = 3 << 6,
-	CT_PRTY_MSK = 1 << 8,
+	CT_FMT_MSK = 7 << 6,
+	CT_PRTY_MSK = 1 << 9,
 } t_display_mode;
 
 #else /* !CTESTS_INTERNAL */
@@ -117,11 +119,13 @@ typedef struct s_list	t_list;
 ///			- 1: split results per submodule (self only)
 ///			- 0: display nb tests passed/total (default)
 ///			- 1: display in percent
-///	- bits 6-7: output format
+///	- bits 6-8: output format
 ///			- 0: simple text format (cli humman readable format) (default)
 ///			- 1: json format (compact)
-///			- 3: silent (no output, only return value)
-///	- bits 8 : color or no color
+///			- 2: html format (standalone report document)
+///			- 3 to 6: reserved for future formats (eg: xml)
+///			- 7: silent (no output, only return value)
+///	- bit 9 : color or no color
 ///			- 0: color / no color toggle (default: color = yes)
 ///	@note: multiple options can be combined using bitwise OR eg:
 ///		CT_DT_OK | CT_DM_SUMPERCENT | CT_FMT_JSON
@@ -149,9 +153,11 @@ typedef enum e_display_mode
 	CT_DSBM_SUMPCT = 1 << 5,
 	CT_FMT_TXT = 0 << 6,
 	CT_FMT_JSN = 1 << 6,
-	CT_FMT_SILENT = 3 << 6,
-	CT_PRTY_COLOR = 0 << 8,
-	CT_PRTY_NOCOLOR = 1 << 8,
+	CT_FMT_HTML = 2 << 6,
+	// 3 << 6 to 6 << 6 are reserved for future formats (eg: xml)
+	CT_FMT_SILENT = 7 << 6,
+	CT_PRTY_COLOR = 0 << 9,
+	CT_PRTY_NOCOLOR = 1 << 9,
 	CT_DISPLAY_DEFAULT = 0,
 } t_display_mode;
 

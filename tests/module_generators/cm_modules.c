@@ -21,6 +21,7 @@ static t_module *create_modules_display_tests(void)
 	ct_module_taddf(md_display, ctit_module_display, "display module result");
 	ct_module_taddf(md_display, ctit_module_display_extra,
 					"display all formats");
+	ct_module_taddf(md_display, ctit_module_display_html, "display html format");
 	return (md_display);
 }
 
