@@ -68,6 +68,7 @@ typedef struct s_display_fmt
 
 extern const t_display_fmt g_cti_fmt_txt;
 extern const t_display_fmt g_cti_fmt_json;
+extern const t_display_fmt g_cti_fmt_html;
 
 // main hooks
 const t_display_fmt *cti_display_fmt_get(t_display_mode md);
@@ -142,6 +143,7 @@ int ctit_init(void);
 // /display
 int ctit_module_display(void);
 int ctit_module_display_extra(void);
+int ctit_module_display_html(void);
 
 // /handling
 int ctit_module_errors(void);
@@ -224,6 +226,7 @@ int ctit_init(void);
 // /display
 int ctit_module_display(void);
 int ctit_module_display_extra(void);
+int ctit_module_display_html(void);
 
 // /handling
 int ctit_module_errors(void);

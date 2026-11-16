@@ -12,6 +12,8 @@ const t_display_fmt *cti_display_fmt_get(t_display_mode md)
 			return (&g_cti_fmt_txt);
 		case CT_FMT_JSN:
 			return (&g_cti_fmt_json);
+		case CT_FMT_HTML:
+			return (&g_cti_fmt_html);
 		default:
 			return (NULL);
 	}
