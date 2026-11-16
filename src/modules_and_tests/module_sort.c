@@ -10,8 +10,8 @@ static t_list *grab_min(t_list *lst)
 	min = NULL;
 	while (lst)
 	{
-		if (!min || cti_cmp_alpha(((t_module *)min->data)->name,
-								  ((t_module *)lst->data)->name) > 0)
+		if (!min || strcmp(((t_module *)min->data)->name,
+						   ((t_module *)lst->data)->name) > 0)
 			min = lst;
 		lst = lst->next;
 	}

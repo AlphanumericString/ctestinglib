@@ -1,5 +1,11 @@
+#include <string.h>
+
 #define CTESTS_INTERNAL
 #include "ct_internal.h"
+
+#define KO_COLOR "\033[31m"
+#define OK_COLOR "\033[32m"
+#define RESET_COLOR "\033[0m"
 
 static void loc_md_txt_name(const t_module *m, int depth, bool description)
 {
@@ -44,7 +50,7 @@ static void loc_td_test_txt(const t_test *t, const t_module *m,
 	if ((md & CT_DM_SUMMSK) != CT_DM_SUMSILENT)
 		cti_print_charn(depth + 1, '\t');
 	cti_mdisplay_test_name(t, m, md);
-	cti_print_charn(mlen - ct_strlen(t->name), ' ');
+	cti_print_charn(mlen - strlen(t->name), ' ');
 	loc_td_res_txt(t, test_success);
 }
 

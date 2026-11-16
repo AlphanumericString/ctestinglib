@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 
 #define CTESTS_INTERNAL
 #define CTESTS_INTERNAL_TESTS
@@ -246,7 +247,7 @@ static int check_capture(t_capture *c, const char *exp)
 	if (!s)
 		return (EXIT_FAILURE);
 	ret = EXIT_SUCCESS;
-	if (ct_memcmp(s, exp, ct_strlen(exp) + 1) != 0)
+	if (strcmp(s, exp) != 0)
 		ret = EXIT_FAILURE;
 	return (safefree(s), ret);
 }

@@ -1,5 +1,6 @@
 #include <limits.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 #define CTESTS_INTERNAL
@@ -19,7 +20,7 @@ int ctit_print_string(void)
 	ct_capture_destroy(cap);
 	if (!s)
 		return (1);
-	if (ct_memcmp(s, TEST_STRING, ct_strlen(TEST_STRING)) != 0)
+	if (strcmp(s, TEST_STRING) != 0)
 		return (safefree(s), 2);
 	return (safefree(s), EXIT_SUCCESS);
 }

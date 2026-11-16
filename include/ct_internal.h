@@ -23,7 +23,6 @@
 #include "ct_memory.h"
 #include "ct_modules.h"
 #include "ct_structs.h"
-#include "ct_utils.h"
 
 #ifdef CTESTS_INTERNAL
 
@@ -95,8 +94,6 @@ void cti_mdisplay_test_name(const t_test *t, const t_module *m,
 int cti_tfork(t_test *t, t_module *m);
 
 // utils
-int cti_cmp_alpha(const char *s1, const char *s2);
-
 void  cti_list_push(t_list **lst, void *data);
 void *cti_list_pop(t_list **lst);
 void  cti_list_foreach(const t_list *list, void (*f)(void *data));
@@ -195,19 +192,9 @@ int ctit_streq(void);
 int ctit_strne(void);
 
 // utils
-int ctit_memset(void);
-int ctit_memcmp(void);
-int ctit_memcpy(void);
-int ctit_memmove(void);
-int ctit_memchr(void);
-int ctit_strncmp(void);
-int ctit_strlen(void);
-
 int ctit_listpush(void);
 int ctit_listpop(void);
 int ctit_listforeach(void);
-
-int ctit_cmpalpha(void);
 
 int ctit_print_cn(void);
 int ctit_print_nb(void);

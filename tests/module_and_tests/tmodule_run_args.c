@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 #define CTESTS_INTERNAL
@@ -7,7 +8,6 @@
 #include "ct_capture.h"
 #include "ct_memory.h"
 #include "ct_modules.h"
-#include "ct_utils.h"
 #include "ct_internal.h"
 
 #define RA_PROG "run_args"
@@ -60,16 +60,15 @@ static size_t ra_count(const char *hay, const char *needle)
 {
 	size_t hits;
 	size_t len;
-	size_t i;
 
 	hits = 0;
-	len = ct_strlen(needle);
-	i = 0;
-	while (hay[i] != '\0')
+	len = strlen(needle);
+	if (len == 0)
+		return (0);
+	while ((hay = strstr(hay, needle)) != NULL)
 	{
-		if (ct_strncmp(hay + i, needle, len) == 0)
-			hits++;
-		i++;
+		hits++;
+		hay += len;
 	}
 	return (hits);
 }
@@ -419,8 +418,7 @@ static int ra_display(void)
 		return (ct_module_destroy(root), 2);
 	ret = ct_module_run_args(root, 2, argv, CT_DT_OK | CT_PRTY_NOCOLOR);
 	out = ct_capture_get(cap);
-	if (ret != EXIT_SUCCESS || !out ||
-		ct_strncmp(out, RA_DISPLAY_EXP, ct_strlen(RA_DISPLAY_EXP) + 1) != 0)
+	if (ret != EXIT_SUCCESS || !out || strcmp(out, RA_DISPLAY_EXP) != 0)
 		return (safefree(out), ct_capture_destroy(cap), ct_module_destroy(root),
 				3);
 	return (safefree(out), ct_capture_destroy(cap), ct_module_destroy(root),
@@ -447,7 +445,7 @@ static int ra_display_json(void)
 	out = ct_capture_get(cap);
 	if (!out)
 		return (ct_capture_destroy(cap), ct_module_destroy(root), 4);
-	len = ct_strlen(out);
+	len = strlen(out);
 	if (len < 4 || out[0] != '[' || out[1] != '{' || out[len - 3] != '}' ||
 		out[len - 2] != ']' || out[len - 1] != '\n' ||
 		ra_count(out, "\"module_name\"") != 3)

@@ -1,3 +1,5 @@
+#include <string.h>
+
 #define CTESTS_INTERNAL
 #include "ct_internal.h"
 
@@ -41,7 +43,7 @@ size_t cti_mget_longest_name(const t_module *m)
 	tl = m->tests_list;
 	while (tl && tl->data)
 	{
-		tmp = ct_strlen(((const t_test *)tl->data)->name);
+		tmp = strlen(((const t_test *)tl->data)->name);
 		if (tmp > i)
 			i = tmp;
 		tl = tl->next;

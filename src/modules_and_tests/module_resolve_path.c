@@ -1,9 +1,8 @@
+#include <stdbool.h>
+#include <string.h>
+
 #define CTESTS_INTERNAL
 #include "ct_internal.h"
-#include "ct_structs.h"
-#include "ct_utils.h"
-
-#include <stdbool.h>
 
 #define ERR_PRE "ctests: "
 #define ERR_EMPTY_PATH ERR_PRE "empty module path\n"
@@ -21,24 +20,13 @@ static void loc_err_bytes(const char *str, size_t n)
 
 static void loc_err_string(const char *str)
 {
-	loc_err_bytes(str, ct_strlen(str));
-}
-
-// length of the segment between ':' separators
-static size_t loc_seglen(const char *seg)
-{
-	size_t i;
-
-	i = 0;
-	while (seg[i] != '\0' && seg[i] != ':')
-		i++;
-	return (i);
+	loc_err_bytes(str, strlen(str));
 }
 
 // exact match of a ':' delimited segment (not null terminated) against name
 static bool loc_name_eq(const char *name, const char *seg, size_t seglen)
 {
-	if (seglen == 0 || ct_strncmp(name, seg, seglen) != 0)
+	if (seglen == 0 || strncmp(name, seg, seglen) != 0)
 		return (false);
 	return (name[seglen] == '\0');
 }
@@ -124,7 +112,7 @@ t_module *cti_module_resolve(t_module *root, const char *path)
 	seg = path;
 	while (*seg != '\0')
 	{
-		seglen = loc_seglen(seg);
+		seglen = strcspn(seg, ":");
 		if (seglen == 0)
 			return (loc_resolve_empty(path));
 		if (first == false || loc_name_eq(cur->name, seg, seglen) == false)

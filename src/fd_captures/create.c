@@ -1,4 +1,5 @@
 #include "fcntl.h"
+#include <string.h>
 #include <unistd.h>
 
 #define CTESTS_INTERNAL
@@ -26,7 +27,7 @@ bool ct_capture_init(int source_fd, t_capture *capture)
 
 	if (!capture || source_fd < 0)
 		return (false);
-	ct_memset(capture, 0, sizeof(*capture));
+	memset(capture, 0, sizeof(*capture));
 	capture->source_fd = source_fd;
 	capture->original_fd = dup(source_fd);
 	if (capture->original_fd == -1)
@@ -50,7 +51,7 @@ t_capture *ct_capture_create(int fd)
 	tmp = safealloc(sizeof(*tmp));
 	if (!tmp)
 		return (NULL);
-	ct_memset(tmp, 0, sizeof(*tmp));
+	memset(tmp, 0, sizeof(*tmp));
 	if (ct_capture_init(fd, tmp) == false)
 		return (ct_capture_destroy(tmp), NULL);
 	return (tmp);

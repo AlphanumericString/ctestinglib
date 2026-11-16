@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define CTESTS_INTERNAL
 #define CTESTS_INTERNAL_TESTS
@@ -78,7 +79,7 @@ int ctit_module_display(void)
 	ret = EXIT_SUCCESS;
 	s = ct_capture_get(c);
 	ct_capture_destroy(c);
-	if (ct_memcmp(s, exp, ct_strlen(exp) + 1) != 0)
+	if (!s || strcmp(s, exp) != 0)
 		ret = 1;
 	return (safefree(s), ct_module_destroy(md), ret);
 }

@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 #define CTESTS_INTERNAL
@@ -13,7 +14,7 @@ static int init_errors(void)
 {
 	t_capture cap;
 
-	ct_memset(&cap, 0xFF, sizeof(cap));
+	memset(&cap, 0xFF, sizeof(cap));
 	if (ct_capture_init(-1, &cap) != false)
 		return (1);
 	if (ct_capture_init(STDOUT_FILENO, NULL) != false)
@@ -25,7 +26,7 @@ static int init_errors(void)
 		return (4);
 	if (ct_capture_get(NULL) != NULL)
 		return (5);
-	ct_memset(&cap, 0xFF, sizeof(cap));
+	memset(&cap, 0xFF, sizeof(cap));
 	if (ct_capture_init(999999, &cap) != false)
 		return (6);
 	return (EXIT_SUCCESS);
@@ -51,7 +52,7 @@ static int compare_errors(void)
 	ct_capture_destroy(c);
 	if (pipe(pf) == -1)
 		return (5);
-	ct_memset(&bad, 0, sizeof(bad));
+	memset(&bad, 0, sizeof(bad));
 	bad.pipe_read = pf[0];
 	close(pf[0]);
 	close(pf[1]);
@@ -76,9 +77,9 @@ static int big_compare(void)
 	written = safealloc(BIG_READ);
 	if (!exp || !written)
 		return (safefree(exp), safefree(written), ct_capture_destroy(c), 2);
-	ct_memset(exp, 'a', BIG_READ);
+	memset(exp, 'a', BIG_READ);
 	exp[BIG_READ] = 0;
-	ct_memset(written, 'a', BIG_READ);
+	memset(written, 'a', BIG_READ);
 	write(STDOUT_FILENO, written, BIG_READ);
 	if (ct_capture_compare(c, exp) != 0)
 		return (safefree(exp), safefree(written), ct_capture_destroy(c), 3);
@@ -98,10 +99,10 @@ static int big_get(void)
 	in = safealloc(MID_READ);
 	if (!in)
 		return (ct_capture_destroy(c), 2);
-	ct_memset(in, 'b', MID_READ);
+	memset(in, 'b', MID_READ);
 	write(STDOUT_FILENO, in, MID_READ);
 	out = ct_capture_get(c);
-	if (!out || ct_strlen(out) != MID_READ)
+	if (!out || strlen(out) != MID_READ)
 		return (safefree(in), safefree(out), ct_capture_destroy(c), 3);
 	safefree(in);
 	safefree(out);
@@ -126,7 +127,7 @@ static int stderr_capture(void)
 		return (3);
 	write(STDERR_FILENO, "world", 5);
 	s = ct_capture_get(c);
-	if (!s || ct_memcmp(s, "world", 6) != 0)
+	if (!s || memcmp(s, "world", 6) != 0)
 		return (safefree(s), ct_capture_destroy(c), 4);
 	return (safefree(s), ct_capture_destroy(c), EXIT_SUCCESS);
 }
@@ -140,7 +141,7 @@ static int release_paths(void)
 
 	if (pipe(pf) == -1)
 		return (1);
-	ct_memset(&cap, 0, sizeof(cap));
+	memset(&cap, 0, sizeof(cap));
 	cap.original_fd = -1;
 	cap.source_fd = -1;
 	cap.pipe_read = -1;
@@ -148,14 +149,14 @@ static int release_paths(void)
 	if (ct_capture_release(&cap) != true)
 		return (close(pf[0]), 2);
 	close(pf[0]);
-	ct_memset(&bad, 0, sizeof(bad));
+	memset(&bad, 0, sizeof(bad));
 	bad.source_fd = -1;
 	bad.original_fd = dup(STDOUT_FILENO);
 	bad.pipe_read = -1;
 	bad.pipe_write = -1;
 	if (ct_capture_release(&bad) != false)
 		return (3);
-	ct_memset(&other, 0, sizeof(other));
+	memset(&other, 0, sizeof(other));
 	other.source_fd = 42;
 	cti_fflush_step(&other);
 	return (EXIT_SUCCESS);

@@ -1,12 +1,13 @@
+#include <stdio.h>
+#include <string.h>
 #include <unistd.h>
-#include <limits.h>
 
 #define CTESTS_INTERNAL
 #include "ct_internal.h"
 
 void cti_print_string(const char *str)
 {
-	write(STDOUT_FILENO, str, ct_strlen(str));
+	write(STDOUT_FILENO, str, strlen(str));
 }
 
 void cti_print_charn(int depth, char c)
@@ -19,42 +20,27 @@ void cti_print_charn(int depth, char c)
 
 void cti_print_nb(int nb)
 {
-	char buffer[sizeof(int) * 8];
-	int	 i;
+	char buffer[16];
+	int	 len;
 
-	if (nb == 0)
-		return (write(STDOUT_FILENO, "0", 1), (void)0);
-	if (nb == INT_MIN)
-		return (write(STDOUT_FILENO, "-2147483648", 11), (void)0);
-	if (nb < 0)
-		nb = (write(STDOUT_FILENO, "-", 1), -nb);
-	i = 0;
-	while (nb != 0)
-	{
-		buffer[i++] = '0' + (nb % 10);
-		nb /= 10;
-	}
-	while (--i >= 0)
-		write(STDOUT_FILENO, &buffer[i], 1);
+	len = snprintf(buffer, sizeof(buffer), "%d", nb);
+	if (len < 0)
+		return;
+	if ((size_t)len >= sizeof(buffer))
+		len = sizeof(buffer) - 1;
+	write(STDOUT_FILENO, buffer, (size_t)len);
 }
 
 // prints float with 2 decimal points
 void cti_print_flt(float f)
 {
-	int int_part;
+	char buffer[64];
+	int	 len;
 
-	if (f < 0)
-	{
-		write(STDOUT_FILENO, "-", 1);
-		f = -f;
-	}
-	int_part = (int)f;
-	cti_print_nb(int_part);
-	write(STDOUT_FILENO, ".", 1);
-	f -= int_part;
-	f *= 100;
-	cti_print_nb((int)f / 10);
-	if (f - (int)f >= 0.5f)
-		f += 1.0f;
-	cti_print_nb((int)f % 10);
+	len = snprintf(buffer, sizeof(buffer), "%.2f", (double)f);
+	if (len < 0)
+		return;
+	if ((size_t)len >= sizeof(buffer))
+		len = sizeof(buffer) - 1;
+	write(STDOUT_FILENO, buffer, (size_t)len);
 }

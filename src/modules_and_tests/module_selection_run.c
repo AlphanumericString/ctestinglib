@@ -1,11 +1,11 @@
 #include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 #define CTESTS_INTERNAL
 #include "ct_memory.h"
 #include "ct_modules.h"
-#include "ct_utils.h"
 #include "ct_internal.h"
 
 #define MAYBE_UNUSED __attribute__((unused))
@@ -32,7 +32,7 @@ static void loc_err_bytes(const char *str, size_t n)
 
 static void loc_err_string(const char *str)
 {
-	loc_err_bytes(str, ct_strlen(str));
+	loc_err_bytes(str, strlen(str));
 }
 
 // usage printed on '-h' / '--help', the program name is prepended to the
@@ -74,9 +74,9 @@ static bool loc_is_help(const char *arg)
 {
 	if (!arg)
 		return (false);
-	if (ct_strncmp(arg, HELP_FLAG_SHORT, 3) == 0)
+	if (strcmp(arg, HELP_FLAG_SHORT) == 0)
 		return (true);
-	return (ct_strncmp(arg, HELP_FLAG_LONG, 7) == 0);
+	return (strcmp(arg, HELP_FLAG_LONG) == 0);
 }
 
 // scans argv for the help flags: help wins over any other argument, module
@@ -146,9 +146,9 @@ static t_module *loc_arg_module(t_module *root, const char *arg)
 {
 	if (!arg)
 		return (loc_err_string(ERR_EMPTY_PATH), NULL);
-	if (ct_strncmp(arg, RUN_MODULE_FLAG, RUN_MODULE_FLAG_LEN) == 0)
+	if (strncmp(arg, RUN_MODULE_FLAG, RUN_MODULE_FLAG_LEN) == 0)
 		return (cti_module_resolve(root, arg + RUN_MODULE_FLAG_LEN));
-	if (ct_strncmp(arg, RUN_MODULE_PREFIX, RUN_MODULE_PREFIX_LEN) == 0)
+	if (strncmp(arg, RUN_MODULE_PREFIX, RUN_MODULE_PREFIX_LEN) == 0)
 		return (loc_err_string(ERR_EXPECT_VAL), NULL);
 	if (arg[0] == '-')
 		return (loc_err_string(ERR_UNKNOWN_OPT_PRE), loc_err_string(arg),

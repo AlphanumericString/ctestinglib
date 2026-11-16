@@ -1,4 +1,5 @@
 #include <stddef.h>
+#include <string.h>
 
 #define CTESTS_INTERNAL
 #include "ct_internal.h"
@@ -10,8 +11,8 @@ static t_list *grab_min(t_list *lst)
 	min = NULL;
 	while (lst)
 	{
-		if (!min || cti_cmp_alpha(((t_test *)min->data)->name,
-								  ((t_test *)lst->data)->name) > 0)
+		if (!min || strcmp(((t_test *)min->data)->name,
+						   ((t_test *)lst->data)->name) > 0)
 			min = lst;
 		lst = lst->next;
 	}

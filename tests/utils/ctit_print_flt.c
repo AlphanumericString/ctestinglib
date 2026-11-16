@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 #define CTESTS_INTERNAL
@@ -18,7 +19,7 @@ int ctit_print_flt(void)
 	ct_capture_destroy(cap);
 	if (!s)
 		return (1);
-	if (ct_memcmp(s, "0.0042.42-42.42", 15) != 0)
+	if (strcmp(s, "0.0042.42-42.42") != 0)
 		return (safefree(s), 2);
 	safefree(s);
 	return (EXIT_SUCCESS);

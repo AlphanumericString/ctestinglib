@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
 
@@ -12,20 +13,20 @@ static void append_string(char **src, const char *append)
 
 	len = 0;
 	if (src && *src)
-		len += ct_strlen(*src);
+		len += strlen(*src);
 	if (append)
-		len += ct_strlen(append);
+		len += strlen(append);
 	ret = safealloc(len + 1);
 	if (!ret)
 		return (safefree(*src), *src = NULL, (void)0);
 	ret[len] = 0;
 	if (src && *src)
 	{
-		ct_memcpy(ret, *src, ct_strlen(*src));
+		memcpy(ret, *src, strlen(*src));
 		safefree(*src);
 	}
 	if (append)
-		ct_memcpy(ret + (len - ct_strlen(append)), append, ct_strlen(append));
+		memcpy(ret + (len - strlen(append)), append, strlen(append));
 	*src = ret;
 }
 
@@ -54,7 +55,7 @@ int ct_capture_compare(t_capture *c_fd, const char *exp)
 {
 	char		 buffer[CT_RBUFFSIZE + 1];
 	ssize_t		 n;
-	const size_t exp_len = ct_strlen(exp);
+	const size_t exp_len = strlen(exp);
 	ssize_t		 total;
 
 	if (!c_fd || !exp || exp_len == 0 || c_fd->pipe_read == -1)
@@ -71,9 +72,9 @@ int ct_capture_compare(t_capture *c_fd, const char *exp)
 		buffer[n] = 0;
 		if (total == (ssize_t)exp_len)
 			break;
-		if (total >= (ssize_t)exp_len || ct_memcmp(buffer, exp, n) != 0)
+		if (total >= (ssize_t)exp_len || memcmp(buffer, exp, n) != 0)
 			return (-1);
 		exp += n;
 	}
-	return (ct_memcmp(buffer, exp, n));
+	return (memcmp(buffer, exp, n));
 }

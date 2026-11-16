@@ -1,3 +1,5 @@
+#include <string.h>
+
 #define CTESTS_INTERNAL
 #include "ct_internal.h"
 
@@ -20,7 +22,7 @@ void cti_list_push(t_list **lst, void *data)
 	leaf = safealloc(sizeof(*leaf));
 	if (!leaf)
 		return;
-	ct_memset(leaf, 0, sizeof(*leaf));
+	memset(leaf, 0, sizeof(*leaf));
 	leaf->data = data;
 	leaf->next = *lst;
 	*lst = leaf;
