@@ -2,6 +2,7 @@
 #include "ct_internal.h"
 
 #define JSON_SILENT "ctests: json format cannot skip any field.\n"
+#define FMT_UNKNOWN "ctests: unknown format for display used"
 
 const t_display_fmt *cti_display_fmt_get(t_display_mode md)
 {
@@ -57,17 +58,6 @@ void cti_display_run(const t_module *m, t_display_mode md)
 	run_hook(fmt->last_close, m, md, 0);
 }
 
-// legacy entry points kept for the internal test-suite.
-void cti_display_results_txt(const t_module *m, t_display_mode md, int depth)
-{
-	cti_display_module(m, md, depth);
-}
-
-void cti_display_results_json(const t_module *m, t_display_mode md)
-{
-	cti_display_module(m, md, 0);
-}
-
 static bool format_is(t_display_mode mode, t_display_mode format)
 {
 	return ((mode & CT_FMT_MSK) == format);
@@ -78,6 +68,8 @@ static const char *format_error(t_display_mode mode)
 {
 	if (format_is(mode, CT_FMT_JSN) && (mode & CT_DM_SUMMSK) == CT_DM_SUMSILENT)
 		return (JSON_SILENT);
+	if (cti_display_fmt_get(mode) == NULL)
+		return (NULL);
 	return (NULL);
 }
 
@@ -91,4 +83,15 @@ void ct_module_display(const t_module *module, t_display_mode mode)
 	if (error)
 		return ((void)cti_print_string(error));
 	cti_display_run(module, mode);
+}
+
+// legacy hooks for internal test-suite.
+void cti_display_results_txt(const t_module *m, t_display_mode md, int depth)
+{
+	cti_display_module(m, md, depth);
+}
+
+void cti_display_results_json(const t_module *m, t_display_mode md)
+{
+	cti_display_module(m, md, 0);
 }

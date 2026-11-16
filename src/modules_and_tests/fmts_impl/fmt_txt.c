@@ -156,6 +156,13 @@ static void loc_sbm_recap_txt(const t_list *sbm, t_display_mode md)
 	}
 }
 
+static void loc_display_results_txt_list(t_module **selection, size_t nb,
+										 t_display_mode mode)
+{
+	for (size_t i = 0; i < nb; i++)
+		cti_display_module(selection[i], mode, 0);
+}
+
 const t_display_fmt g_cti_fmt_txt = {
 	.open = loc_fmt_txt_open,
 	.tests = loc_fmt_txt_tests,
@@ -165,5 +172,6 @@ const t_display_fmt g_cti_fmt_txt = {
 	.sum_nb = loc_nb_txt,
 	.sum_percent = loc_percent_txt,
 	.sbm_recap = loc_sbm_recap_txt,
+	.md_list_displayer = loc_display_results_txt_list,
 	.submodules_first = true,
 };
