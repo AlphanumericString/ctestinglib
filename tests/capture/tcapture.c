@@ -1,4 +1,6 @@
+#include <fcntl.h>
 #include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -21,6 +23,9 @@ static int init_errors(void)
 		return (2);
 	if (ct_capture_create(-1) != NULL)
 		return (3);
+	// a failed create must not close the descriptors it never owned
+	if (fcntl(STDIN_FILENO, F_GETFD) == -1)
+		return (7);
 	ct_capture_destroy(NULL);
 	if (ct_capture_release(NULL) != false)
 		return (4);
@@ -42,7 +47,8 @@ static int compare_errors(void)
 	c = ct_capture_create(STDOUT_FILENO);
 	if (!c)
 		return (1);
-	if (ct_capture_compare(c, "") != -1)
+	// nothing was written: an empty expectation matches
+	if (ct_capture_compare(c, "") != 0)
 		return (ct_capture_destroy(c), 2);
 	if (ct_capture_compare(NULL, "x") != -1)
 		return (ct_capture_destroy(c), 3);
@@ -108,6 +114,82 @@ static int big_get(void)
 	safefree(out);
 	ct_capture_destroy(c);
 	return (EXIT_SUCCESS);
+}
+
+// an exact multiple of the read buffer used to make get wait forever
+static int exact_buffer_get(void)
+{
+	t_capture *c;
+	char	  *in;
+	char	  *out;
+	size_t	   size;
+
+	size = CT_RBUFFSIZE * 2;
+	c = ct_capture_create(STDOUT_FILENO);
+	if (!c)
+		return (1);
+	in = safealloc(size);
+	if (!in)
+		return (ct_capture_destroy(c), 2);
+	memset(in, 'c', size);
+	write(STDOUT_FILENO, in, size);
+	out = ct_capture_get(c);
+	if (!out || strlen(out) != size || memcmp(out, in, size) != 0)
+		return (safefree(in), safefree(out), ct_capture_destroy(c), 3);
+	return (safefree(in), safefree(out), ct_capture_destroy(c), EXIT_SUCCESS);
+}
+
+// expecting more than was written is a mismatch, never a wait and never a
+// false success on the partial output
+static int short_output(void)
+{
+	t_capture *c;
+
+	c = ct_capture_create(STDOUT_FILENO);
+	if (!c)
+		return (1);
+	write(STDOUT_FILENO, "abc", 3);
+	if (ct_capture_compare(c, "abcdef") != -1)
+		return (ct_capture_destroy(c), 2);
+	return (ct_capture_destroy(c), EXIT_SUCCESS);
+}
+
+// nothing written: get returns an allocated empty string and the capture can
+// be reused afterwards
+static int empty_output(void)
+{
+	t_capture *c;
+	char	  *s;
+
+	c = ct_capture_create(STDOUT_FILENO);
+	if (!c)
+		return (1);
+	s = ct_capture_get(c);
+	if (!s || s[0] != '\0')
+		return (safefree(s), ct_capture_destroy(c), 2);
+	safefree(s);
+	if (ct_capture_compare(c, "") != 0)
+		return (ct_capture_destroy(c), 3);
+	write(STDOUT_FILENO, "later", 5);
+	if (ct_capture_compare(c, "later") != 0)
+		return (ct_capture_destroy(c), 4);
+	return (ct_capture_destroy(c), EXIT_SUCCESS);
+}
+
+// get must flush stdio buffers before reading the capture pipe
+static int buffered_get(void)
+{
+	t_capture *c;
+	char	  *s;
+
+	c = ct_capture_create(STDOUT_FILENO);
+	if (!c)
+		return (1);
+	printf("buffered");
+	s = ct_capture_get(c);
+	if (!s || strcmp(s, "buffered") != 0)
+		return (safefree(s), ct_capture_destroy(c), 2);
+	return (safefree(s), ct_capture_destroy(c), EXIT_SUCCESS);
 }
 
 static int stderr_capture(void)
@@ -176,6 +258,18 @@ int ctit_capture(void)
 	if (ret != EXIT_SUCCESS)
 		return (ret);
 	ret = big_get();
+	if (ret != EXIT_SUCCESS)
+		return (ret);
+	ret = exact_buffer_get();
+	if (ret != EXIT_SUCCESS)
+		return (ret);
+	ret = short_output();
+	if (ret != EXIT_SUCCESS)
+		return (ret);
+	ret = empty_output();
+	if (ret != EXIT_SUCCESS)
+		return (ret);
+	ret = buffered_get();
 	if (ret != EXIT_SUCCESS)
 		return (ret);
 	ret = stderr_capture();

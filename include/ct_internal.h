@@ -119,6 +119,24 @@ int ct_assert_false_v(bool condition, const char *err_msg, va_list args);
 int ct_assert_true_v(bool condition, const char *err_msg, va_list args);
 
 // captures
+#define CT_RBUFFSIZE 4096
+
+// State of a capture on a single file descriptor.
+// The file descriptor table is changed by init and restored by release:
+// - original_fd is a backup of the captured descriptor (-1 when unused)
+// - source_fd is the descriptor being captured (-1 once released)
+// - pipe_read reads what was written to source_fd
+// - pipe_write only exists until the redirection is complete (-1 afterwards)
+struct s_capture
+{
+	int original_fd;
+	int source_fd;
+	int pipe_read;
+	int pipe_write;
+};
+
+bool ct_capture_init(int source_fd, t_capture *capture);
+bool ct_capture_release(t_capture *capture);
 void cti_fflush_step(t_capture *c);
 
 // deprecated - used by test-suite

@@ -1,46 +1,54 @@
-#include "fcntl.h"
+#include <fcntl.h>
 #include <string.h>
 #include <unistd.h>
 
 #define CTESTS_INTERNAL
 #include "ct_internal.h"
 
-// Set non-blocking mode
-static int __attribute__((unused)) cti_capture_nonblock(t_capture *c)
+// Make reads on the capture pipe non blocking: get/compare then only consume
+// what is already there instead of waiting for output that may never come.
+static bool cti_capture_nonblock(t_capture *capture)
 {
-	int f;
+	int flags;
 
-	f = fcntl(c->pipe_read, F_GETFL, 0);
-	if (f == -1)
-		return (-1);
-	if (fcntl(c->pipe_read, F_SETFL, f | O_NONBLOCK) == -1)
-		return (-1);
-	return (0);
+	flags = fcntl(capture->pipe_read, F_GETFL, 0);
+	if (flags == -1)
+		return (false);
+	return (fcntl(capture->pipe_read, F_SETFL, flags | O_NONBLOCK) != -1);
 }
 
-// to enable capture nonblock you can pop these lines at the back
-// if (cti_capture_nonblock(capture) == -1)
-// 	return (ct_capture_release(capture), false);
+// Initialise capture on source_fd. On failure the capture is left released
+// (all descriptors set to -1) so that ct_capture_release() can be called again
+// safely.
 bool ct_capture_init(int source_fd, t_capture *capture)
 {
 	int pipe_fds[2];
 
-	if (!capture || source_fd < 0)
+	if (!capture)
 		return (false);
 	memset(capture, 0, sizeof(*capture));
+	capture->original_fd = -1;
 	capture->source_fd = source_fd;
+	capture->pipe_read = -1;
+	capture->pipe_write = -1;
+	if (source_fd < 0)
+		return (false);
 	capture->original_fd = dup(source_fd);
 	if (capture->original_fd == -1)
 		return (false);
+	// Flush stdio buffers before they are redirected: pending output belongs
+	// to the descriptor the caller had before the capture started.
+	cti_fflush_step(capture);
 	if (pipe(pipe_fds) == -1)
-		return (close(capture->original_fd), false);
+		return (ct_capture_release(capture), false);
 	capture->pipe_read = pipe_fds[0];
 	capture->pipe_write = pipe_fds[1];
 	if (dup2(capture->pipe_write, source_fd) == -1)
-		return (close(capture->original_fd), close(capture->pipe_read),
-				close(capture->pipe_write), false);
+		return (ct_capture_release(capture), false);
 	close(capture->pipe_write);
 	capture->pipe_write = -1;
+	if (!cti_capture_nonblock(capture))
+		return (ct_capture_release(capture), false);
 	return (true);
 }
 
@@ -51,8 +59,7 @@ t_capture *ct_capture_create(int fd)
 	tmp = safealloc(sizeof(*tmp));
 	if (!tmp)
 		return (NULL);
-	memset(tmp, 0, sizeof(*tmp));
-	if (ct_capture_init(fd, tmp) == false)
-		return (ct_capture_destroy(tmp), NULL);
+	if (!ct_capture_init(fd, tmp))
+		return (safefree(tmp), NULL);
 	return (tmp);
 }
