@@ -24,6 +24,13 @@ static t_module *climb_to_root(const t_module *module)
 	return ((t_module *)root);
 }
 
+int cti_test_call(const t_test *t)
+{
+	if (t->type == CT_PARAM)
+		return (t->test_func.param(t->param));
+	return (t->test_func.pure());
+}
+
 #if (defined(FORK_TESTS) && (FORK_TESTS == 1))
 
 static unsigned int resolve_timeout(const t_test *t, const t_module *m)
@@ -60,16 +67,15 @@ static void wait_with_timeout(t_test *t, unsigned int timeout)
 
 int cti_tfork(t_test *t, t_module *m)
 {
-	int (*f)(void);
-
 	t->pid = fork();
 	if (t->pid < 0)
 		return (EXIT_FAILURE);
 	else if (!t->pid)
 	{
-		f = t->test_func;
+		t_test snapshot = *t;
+
 		ct_module_destroy(climb_to_root(m));
-		exit(f());
+		exit(cti_test_call(&snapshot));
 	}
 	wait_with_timeout(t, resolve_timeout(t, m));
 	if (WIFEXITED(t->return_value))

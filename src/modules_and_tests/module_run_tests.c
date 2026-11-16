@@ -9,7 +9,7 @@ static int innner_run_test(t_test *test, t_module *m)
 	if (FORK_TESTS)
 		return (cti_tfork(test, m));
 	test->pid = -1;
-	test->return_value = test->test_func();
+	test->return_value = cti_test_call(test);
 	return (test->return_value);
 }
 

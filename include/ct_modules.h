@@ -22,6 +22,11 @@ bool ct_module_tadd(t_module *m, const t_test *test);
 bool ct_module_taddf(t_module *m, int (*f)(void), const char *s);
 bool ct_module_taddf_timeout(t_module *m, int (*f)(void), const char *s,
 							 unsigned int seconds);
+// parametrized test: f is called with param when the test runs
+bool ct_module_taddf_param(t_module *m, int (*f)(void *), void *param,
+						   const char *s);
+bool ct_module_taddf_param_timeout(t_module *m, int (*f)(void *), void *param,
+								   const char *s, unsigned int seconds);
 void ct_module_init(t_module **m_ptr, const char *name, const char *dsc);
 bool ct_module_add_sub(t_module *m, t_module *sub_module);
 

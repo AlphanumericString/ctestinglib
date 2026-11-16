@@ -16,10 +16,25 @@ typedef struct s_ftest
 
 #ifdef CTESTS_INTERNAL
 
+typedef enum e_test_type
+{
+	CT_TPURE = 0,
+	CT_PARAM,
+} t_test_type;
+
+typedef union u_test_func
+{
+	int (*pure)(void);
+	int (*param)(void *);
+} t_test_func;
+
 typedef struct s_test
 {
 	const char *name;
-	int (*test_func)(void);
+	t_test_type type;
+	t_test_func test_func;
+	void	   *param;
+
 	int return_value;
 	int pid;
 

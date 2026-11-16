@@ -16,7 +16,8 @@ static int test_add_test(t_module *t)
 	if (!tmp)
 		return (1);
 	*tmp = (t_test){0};
-	tmp->test_func = dummy_success_test;
+	tmp->type = CT_TPURE;
+	tmp->test_func.pure = dummy_success_test;
 	tmp->name = "";
 	pre_total = t->tests_count;
 	ct_module_tadd(t, tmp);
