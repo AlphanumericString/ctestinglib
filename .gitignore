@@ -12,4 +12,11 @@ simple_tests_tester
 *.profdata
 coverage/
 doxygen/
+examples/*/build/
+examples/fizzbuzz/fizzbuzz
+examples/calculator/calculator
+examples/dice/dice
+examples/calculator/test_calculator
+examples/dice/test_dice
+examples/fizzbuzz/test_fizzbuzz
 *.md

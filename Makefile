@@ -33,6 +33,7 @@ SRC_DIR			=	src
 TST_DIR			=	tests
 BUILD_DIR		=	build
 COVERAGE_DIR	=	coverage
+EXAMPLE_DIR		=	examples
 DOXYGEN_DIR		=	doxygen
 DOXYFILE		=	Doxyfile
 # -- Files
@@ -96,10 +97,10 @@ NAME			:=	lib$(BASE_NAME).a
 TNAME			:=	$(BASE_NAME)_tester
 
 # -- sources
-SRCS			=\
-				$(shell find $(SRC_DIR) -name "*.c" -type f 2>/dev/null)
-TESTS			=\
-				$(shell find $(TST_DIR) -name "*.c" -type f 2>/dev/null)
+SRCS			= $(shell find $(SRC_DIR) -name "*.c" -type f 2>/dev/null)
+TESTS			= $(shell find $(TST_DIR) -name "*.c" -type f 2>/dev/null)
+EXAMPLES		= $(shell find $(EXAMPLE_DIR)/* -maxdepth 0 -type d)
+
 OBJS			=	$(addprefix $(BUILD_DIR)/, $(patsubst %.c, %.o, $(SRCS)))
 TOBJS			=\
 				$(addprefix $(BUILD_DIR)/$(TST_DIR)/, $(patsubst %.c, %.o, $(TESTS)))	\
@@ -132,6 +133,21 @@ $(BUILD_DIR)/%.o:%.cpp
 
 all:$(NAME)
 #	$(COMP) $(OBJS) $(FLAGS) -o $(NAME) $(LD_FLAGS)		&&
+examples: $(NAME)
+	@for i in $(EXAMPLES) ; do \
+		$(PRINT) "$(LOG_MAJ)Building example $$i...$(RESET)"	&& \
+		$(MAKE_SL) -C $$i > /dev/null 2>&1						&& \
+		$(PRINT) "$(OK)Success$(RESET)\n"						|| \
+		$(PRINT) "$(KO)Fail$(RESET)\n"; \
+	done;
+# Build only the test binary of an example: make test_<example_name>
+test_examples: $(NAME)
+	@for i in $(EXAMPLES) ; do \
+		$(PRINT) "$(LOG_MAJ)Building example $$i's tests...$(RESET)"	&& \
+		$(MAKE_SL) -C $$i test > /dev/null 2>&1			&& \
+		$(PRINT) "$(OK)Success$(RESET)\n"				|| \
+		$(PRINT) "$(KO)Fail$(RESET)\n" ;				\
+	done;
 $(NAME): $(OBJS)
 	@$(PRINT) "$(LOG_MAJ)Linking $(NAME)...$(RESET)"	&& \
 	$(AR) -rcs $(NAME) $(OBJS)	2>> $(LOGFILE)			&& \
@@ -173,6 +189,9 @@ dbg_make:
 	@$(ECHO) -e "$(LOG_MIN)MAKE_SELF:$(RESET)" $(MAKE_SELF)
 clean:
 	@$(PRINT) "$(LOG_MAJ)Cleaning build files...$(RESET)"	&& \
+	for i in $(EXAMPLES) ; do								\
+		$(MAKE_SL) -C $$i clean > /dev/null 2>&1;			\
+	done													&& \
 	$(RM) -rf $(BUILD_DIR) $(LOGFILE) vgcore.* *.profraw	\
 	*.profdata	$(COVERAGE_DIR) $(DOXYGEN_DIR)				&& \
 	$(PRINT) "$(OK)Success$(RESET)\n"						|| \
@@ -220,4 +239,4 @@ dev_env: .clangd compile_commands.json tags $(MAKE_SELF)
 	$(MAKE_SL) dbg_make													&& \
 	$(PRINT) "$(OK)Success$(RESET)\n"									|| \
 	$(PRINT) "$(KO)Fail$(RESET)\n"
-.PHONY: all clean fclean re dbg_make coverage
+.PHONY: all examples clean fclean re dbg_make coverage $(EXAMPLES) test_examples
