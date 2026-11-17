@@ -36,6 +36,23 @@
  *
  * Captured output is handled as a NUL terminated string: it is truncated at
  * the first NUL byte.
+ *
+ * STDIN_FILENO can be captured too and fed the input a test should read:
+ *
+ * @code
+ * t_capture *in;
+ *
+ * in = ct_capture_stdin("42\n");
+ * if (!in)
+ *     return (EXIT_FAILURE);
+ * my_function_that_reads_stdin();
+ * ct_capture_destroy(in);
+ * @endcode
+ *
+ * ct_capture_feed() replaces the input of an existing STDIN_FILENO capture,
+ * which lets one capture be reused for several cases. ct_capture_get() and
+ * ct_capture_compare() only apply to output captures: an input capture has
+ * nothing to read back.
  */
 
 /// @brief A capture on one file descriptor.
@@ -46,10 +63,14 @@ typedef struct s_capture t_capture;
 
 t_capture *ct_capture_create(int source_fd) __attribute__((malloc));
 
+t_capture *ct_capture_stdin(const char *input) __attribute__((malloc));
+
 void ct_capture_destroy(t_capture *capture);
 
 char *ct_capture_get(t_capture *capture) __attribute__((malloc));
 
 int ct_capture_compare(t_capture *capture, const char *expected);
+
+int ct_capture_feed(t_capture *capture, const char *input);
 
 #endif /* CT_CAPTURE_H */

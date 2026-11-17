@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <unistd.h>
 
 #define CTESTS_INTERNAL
@@ -9,10 +10,12 @@
 bool ct_capture_release(t_capture *capture)
 {
 	bool restored;
+	bool was_stdin;
 
 	if (!capture)
 		return (false);
 	restored = true;
+	was_stdin = (capture->source_fd == STDIN_FILENO);
 	// Flush stdio before restoring the descriptor: output still sitting in
 	// stdio buffers belongs to the capture and must not leak to the real
 	// descriptor once it is restored. It is discarded with the capture pipe.
@@ -32,5 +35,9 @@ bool ct_capture_release(t_capture *capture)
 	capture->source_fd = -1;
 	capture->pipe_read = -1;
 	capture->pipe_write = -1;
+	// The previous case may have reached EOF or another error on stdin: the
+	// restored stream must start from a clean state.
+	if (was_stdin)
+		clearerr(stdin);
 	return (restored);
 }

@@ -11,6 +11,7 @@
 
 #define BIG_READ 8192
 #define MID_READ 5000
+#define STDIN_BIG_READ 100000
 
 static int init_errors(void)
 {
@@ -240,6 +241,104 @@ static int stderr_capture(void)
 	return (safefree(s), ct_capture_destroy(c), EXIT_SUCCESS);
 }
 
+static int feed_errors(void)
+{
+	t_capture *c;
+
+	if (ct_capture_stdin(NULL) != NULL)
+		return (1);
+	if (ct_capture_feed(NULL, "x") != -1)
+		return (2);
+	c = ct_capture_create(STDOUT_FILENO);
+	if (!c)
+		return (3);
+	if (ct_capture_feed(c, "x") != -1)
+		return (ct_capture_destroy(c), 4);
+	if (ct_capture_feed(c, NULL) != -1)
+		return (ct_capture_destroy(c), 5);
+	ct_capture_destroy(c);
+	return (EXIT_SUCCESS);
+}
+
+// stdin can be fed from a capture and reads reach EOF after the input, so a
+// case never waits for input that will not come.
+static int stdin_feed(void)
+{
+	t_capture *c;
+	char	   buf[32];
+
+	c = ct_capture_stdin("hello\n");
+	if (!c)
+		return (1);
+	if (read(STDIN_FILENO, buf, sizeof(buf)) != 6 ||
+		memcmp(buf, "hello\n", 6) != 0)
+		return (ct_capture_destroy(c), 2);
+	if (read(STDIN_FILENO, buf, sizeof(buf)) != 0)
+		return (ct_capture_destroy(c), 3);
+	// an input capture has nothing to read back
+	if (ct_capture_get(c) != NULL)
+		return (ct_capture_destroy(c), 4);
+	if (ct_capture_compare(c, "") != -1)
+		return (ct_capture_destroy(c), 5);
+	ct_capture_destroy(c);
+	if (fcntl(STDIN_FILENO, F_GETFD) == -1)
+		return (6);
+
+	// feeding an existing capture again discards the unread input of the
+	// previous case
+	c = ct_capture_create(STDIN_FILENO);
+	if (!c)
+		return (7);
+	if (ct_capture_feed(c, "abc") != 0)
+		return (ct_capture_destroy(c), 8);
+	if (read(STDIN_FILENO, buf, sizeof(buf)) != 3 || memcmp(buf, "abc", 3) != 0)
+		return (ct_capture_destroy(c), 9);
+	if (ct_capture_feed(c, "defg") != 0)
+		return (ct_capture_destroy(c), 10);
+	if (read(STDIN_FILENO, buf, sizeof(buf)) != 4 ||
+		memcmp(buf, "defg", 4) != 0)
+		return (ct_capture_destroy(c), 11);
+	if (read(STDIN_FILENO, buf, sizeof(buf)) != 0)
+		return (ct_capture_destroy(c), 12);
+	ct_capture_destroy(c);
+	return (EXIT_SUCCESS);
+}
+
+// input larger than a pipe buffer must not block while it is being fed.
+static int stdin_big(void)
+{
+	t_capture *c;
+	char	  *input;
+	char	   buf[CT_RBUFFSIZE];
+	size_t	   total;
+	ssize_t	   n;
+
+	input = safealloc(STDIN_BIG_READ + 1);
+	if (!input)
+		return (1);
+	memset(input, 'i', STDIN_BIG_READ);
+	input[STDIN_BIG_READ] = '\0';
+	c = ct_capture_stdin(input);
+	if (!c)
+		return (safefree(input), 2);
+	total = 0;
+	for (;;)
+	{
+		n = read(STDIN_FILENO, buf, sizeof(buf));
+		if (n < 0)
+			return (safefree(input), ct_capture_destroy(c), 3);
+		if (n == 0)
+			break;
+		if (memcmp(buf, input + total, (size_t)n) != 0)
+			return (safefree(input), ct_capture_destroy(c), 4);
+		total += (size_t)n;
+	}
+	safefree(input);
+	if (total != STDIN_BIG_READ)
+		return (ct_capture_destroy(c), 5);
+	return (ct_capture_destroy(c), EXIT_SUCCESS);
+}
+
 static int release_paths(void)
 {
 	t_capture cap;
@@ -302,6 +401,15 @@ int ctit_capture(void)
 	if (ret != EXIT_SUCCESS)
 		return (ret);
 	ret = stderr_capture();
+	if (ret != EXIT_SUCCESS)
+		return (ret);
+	ret = feed_errors();
+	if (ret != EXIT_SUCCESS)
+		return (ret);
+	ret = stdin_feed();
+	if (ret != EXIT_SUCCESS)
+		return (ret);
+	ret = stdin_big();
 	if (ret != EXIT_SUCCESS)
 		return (ret);
 	ret = release_paths();

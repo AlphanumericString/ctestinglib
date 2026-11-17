@@ -2,9 +2,7 @@
 #define _POSIX_C_SOURCE 200809L
 #endif
 
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <unistd.h>
 
 #include "ct_assert.h"
@@ -33,92 +31,29 @@ static int test_response(void)
 	return (ret == 0 ? EXIT_SUCCESS : 3);
 }
 
-// ct_capture only captures output descriptors. The stdin fixture is prepared
-// by the module setup hook: a temporary file is redirected on STDIN_FILENO and
-// its read end is shared by every forked test. Each test rewrites the file
-// with feed_input(); teardown restores the real stdin.
-static FILE *g_input;
-static int	 g_saved_stdin = -1;
-
-static void input_setup(void)
-{
-	g_saved_stdin = dup(STDIN_FILENO);
-	if (g_saved_stdin == -1)
-		return;
-	g_input = tmpfile();
-	if (!g_input)
-	{
-		close(g_saved_stdin);
-		g_saved_stdin = -1;
-		return;
-	}
-	if (dup2(fileno(g_input), STDIN_FILENO) == -1)
-	{
-		fclose(g_input);
-		g_input = NULL;
-		close(g_saved_stdin);
-		g_saved_stdin = -1;
-		return;
-	}
-	clearerr(stdin);
-}
-
-static void input_teardown(void)
-{
-	if (g_saved_stdin != -1)
-	{
-		(void)dup2(g_saved_stdin, STDIN_FILENO);
-		close(g_saved_stdin);
-		g_saved_stdin = -1;
-	}
-	if (g_input)
-	{
-		fclose(g_input);
-		g_input = NULL;
-	}
-	clearerr(stdin);
-}
-
-static int feed_input(const char *input)
-{
-	size_t len;
-
-	if (!g_input)
-		return (1);
-	if (ftruncate(fileno(g_input), 0) == -1)
-		return (1);
-	rewind(g_input);
-	len = strlen(input);
-	if (len != 0 && fwrite(input, 1, len, g_input) != len)
-		return (1);
-	if (fflush(g_input) != 0)
-		return (1);
-	rewind(g_input);
-	// the previous run may have reached EOF: reset the stdio error state.
-	clearerr(stdin);
-	return (0);
-}
-
+// stdin is fed through a capture: ct_capture_stdin() redirects STDIN_FILENO to
+// the input of the current case, ct_capture_destroy() restores the real stdin.
 static int run_case(const char *input, const char *expected_out,
 					const char *expected_err, int expected_ret)
 {
+	t_capture *in;
 	t_capture *out;
 	t_capture *err;
 	int		   ret;
 
+	in = ct_capture_stdin(input);
 	out = ct_capture_create(STDOUT_FILENO);
 	err = ct_capture_create(STDERR_FILENO);
 	ret = EXIT_SUCCESS;
-	if (!out || !err)
+	if (!in || !out || !err)
 		ret = 2;
-	else if (feed_input(input) != 0)
-		ret = 3;
 	else if (fizzbuzz_run() != expected_ret)
 		ret = 4;
 	else if (ct_capture_compare(out, expected_out) != 0)
 		ret = 5;
 	else if (ct_capture_compare(err, expected_err) != 0)
 		ret = 6;
+	ct_capture_destroy(in);
 	ct_capture_destroy(out);
 	ct_capture_destroy(err);
 	return (ret);
@@ -151,16 +86,20 @@ static int test_capture(void)
 
 static void auto_fizzbuzz_run(void)
 {
+	t_capture *in;
 	t_capture *out;
 	t_capture *err;
 
-	if (feed_input("7\n") != 0)
+	in = ct_capture_stdin("7\n");
+	if (!in)
 		return;
 	out = ct_capture_create(STDOUT_FILENO);
 	err = ct_capture_create(STDERR_FILENO);
-	(void)fizzbuzz_run();
+	if (out && err)
+		(void)fizzbuzz_run();
 	// ct_capture_destroy() discards output still buffered in stdio, so the
 	// captures can be released without consuming what fizzbuzz_run printed.
+	ct_capture_destroy(in);
 	ct_capture_destroy(out);
 	ct_capture_destroy(err);
 }
@@ -170,6 +109,7 @@ static void auto_fizzbuzz_run(void)
 // failure point of the run is exercised.
 static int test_alloc(void)
 {
+	t_capture *in;
 	t_capture *out;
 	t_capture *err;
 	size_t	   before;
@@ -185,14 +125,13 @@ static int test_alloc(void)
 					   "fizzbuzz_run should allocate its state once\n") != 0)
 		return (1);
 
-	ct_failloc_set(0);
-	if (feed_input("7\n") != 0)
-		return (ct_failloc_reset(), 2);
+	in = ct_capture_stdin("7\n");
 	out = ct_capture_create(STDOUT_FILENO);
 	err = ct_capture_create(STDERR_FILENO);
-	if (!out || !err)
-		return (ct_failloc_reset(), ct_capture_destroy(out),
-				ct_capture_destroy(err), 3);
+	if (!in || !out || !err)
+		return (ct_failloc_reset(), ct_capture_destroy(in),
+				ct_capture_destroy(out), ct_capture_destroy(err), 3);
+	ct_failloc_set(0);
 	ret = fizzbuzz_run();
 	ct_failloc_reset();
 	if (ret != EXIT_FAILURE)
@@ -203,6 +142,7 @@ static int test_alloc(void)
 		ret = 6;
 	else
 		ret = EXIT_SUCCESS;
+	ct_capture_destroy(in);
 	ct_capture_destroy(out);
 	ct_capture_destroy(err);
 	if (ret != EXIT_SUCCESS)
@@ -229,11 +169,9 @@ static t_module *create_run_module(void)
 {
 	t_module *m;
 
-	ct_module_init(&m, "run", "stdin fixture and captured runs");
+	ct_module_init(&m, "run", "captured stdin and runs");
 	if (!m)
 		return (NULL);
-	ct_module_set_setup(m, input_setup);
-	ct_module_set_teardown(m, input_teardown);
 	if (!ct_module_taddf(m, test_capture, "capture prompts and responses"))
 		return (ct_module_destroy(m), NULL);
 	return (m);
@@ -246,8 +184,6 @@ static t_module *create_memory_module(void)
 	ct_module_init(&m, "memory", "allocation failure showcase");
 	if (!m)
 		return (NULL);
-	ct_module_set_setup(m, input_setup);
-	ct_module_set_teardown(m, input_teardown);
 	if (!ct_module_taddf(m, test_alloc, "ct_alloc showcase"))
 		return (ct_module_destroy(m), NULL);
 	return (m);
