@@ -11,5 +11,6 @@ t_module *create_alloc_tests(void)
 	ct_module_taddf(re, ctit_cleanup, "auto clenaup test");
 	ct_module_taddf(re, ctit_count, "allocations count");
 	ct_module_taddf(re, ctit_fail, "failloc usage test");
+	ct_module_taddf(re, ctit_alloc_variants, "calloc and realloc wrappers");
 	return (re);
 }

@@ -1,19 +1,22 @@
+#include <stdlib.h>
+
 #define CTESTS_INTERNAL
 #include "ct_internal.h"
 
 /// @brief Return the number of allocations that have succeeded so far.
-/// @details The counter is incremented by every call to malloc() that goes
-/// through the library wrapper; safealloc() does not increment it.
+/// @details The counter is incremented by every call to malloc(), calloc() or
+/// realloc() that goes through the library wrappers; safealloc() does not
+/// increment it.
 /// @return Number of successful allocations since the program started.
 size_t ct_alloc_getcount(void)
 {
 	return (*cti_alloc_get());
 }
 
-/// @brief Set how many allocations may succeed before the next malloc() fails.
-/// @details The next @p nb calls to malloc() succeed and the allocation after
-/// them returns NULL. A value of 0 or less makes the next allocation fail
-/// immediately.
+/// @brief Set how many allocations may succeed before the next one fails.
+/// @details The next @p nb calls to malloc(), calloc() or realloc() succeed and
+/// the allocation after them returns NULL. A value of 0 or less makes the next
+/// allocation fail immediately.
 /// @param nb Number of allocations allowed to succeed.
 /// @note ct_failloc_reset() disables the failure injection.
 void ct_failloc_set(int nb)
@@ -22,15 +25,15 @@ void ct_failloc_set(int nb)
 }
 
 /// @brief Disable allocation failure injection.
-/// @details Resets the failure budget so that malloc() always returns memory
+/// @details Resets the failure budget so that allocations always return memory
 /// again. This is the state the library restores before running each test.
 void ct_failloc_reset(void)
 {
 	(*cti_failloc_get()) = INT64_MAX;
 }
 
-// This function is a wrapper around the standard malloc function.
-// This is designed to tests the behavior of functions in case of memory
+// These functions are wrappers around the standard allocation functions.
+// They are designed to test the behavior of functions in case of memory
 // allocation failure.
 // DO NOT USE TO DEV THE TESTING LIB!!!
 void *malloc(size_t size)
@@ -42,8 +45,46 @@ void *malloc(size_t size)
 	(*cti_alloc_get())++;
 	(*cti_failloc_get())--;
 	p = safealloc(size);
-	if (cti_get_memory_cleanup() == true)
+	if (p != NULL && cti_get_memory_cleanup() == true)
 		push_to_cleanup(p);
+	return (p);
+}
+
+void *calloc(size_t nmemb, size_t size)
+{
+	void *p;
+
+	if (*cti_failloc_get() <= 0)
+		return (NULL);
+	(*cti_alloc_get())++;
+	(*cti_failloc_get())--;
+	p = safecalloc(nmemb, size);
+	if (p != NULL && cti_get_memory_cleanup() == true)
+		push_to_cleanup(p);
+	return (p);
+}
+
+void *realloc(void *ptr, size_t size)
+{
+	void *p;
+	bool  tracked;
+
+	if (*cti_failloc_get() <= 0)
+		return (NULL);
+	(*cti_alloc_get())++;
+	(*cti_failloc_get())--;
+	p = saferealloc(ptr, size);
+	if (cti_get_memory_cleanup() == true)
+	{
+		if (p != NULL)
+		{
+			tracked = (ptr == NULL) || remove_from_cleanup(ptr);
+			if (tracked)
+				push_to_cleanup(p);
+		}
+		else if (size == 0)
+			remove_from_cleanup(ptr);
+	}
 	return (p);
 }
 

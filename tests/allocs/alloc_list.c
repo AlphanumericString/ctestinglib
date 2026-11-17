@@ -38,6 +38,14 @@ int ctit_cleanup(void)
 	if (!a || !b)
 		return (cti_set_memory_cleanup(false), 1);
 	do_cleanup(NULL);
+	cti_set_memory_cleanup(true);
+	a = malloc(32);
+	if (!a)
+		return (cti_set_memory_cleanup(false), 4);
+	b = realloc(a, 4096);
+	if (b != NULL)
+		a = b;
+	do_cleanup(NULL);
 	cti_set_memory_cleanup(false);
 	a = safealloc(32);
 	b = safealloc(32);
@@ -99,5 +107,54 @@ int ctit_fail(void)
 	ct_failloc_reset();
 	if (ct_alloc_getcount() == 0)
 		return (5);
+	return (EXIT_SUCCESS);
+}
+
+int ctit_alloc_variants(void)
+{
+	size_t		   before;
+	unsigned char *bytes;
+	void		  *a;
+	void		  *b;
+
+	before = ct_alloc_getcount();
+	a = calloc(4, 8);
+	if (!a)
+		return (1);
+	bytes = a;
+	if (ct_alloc_getcount() != before + 1)
+		return (free(a), 2);
+	if (bytes[0] != 0 || bytes[31] != 0)
+		return (free(a), 3);
+	b = realloc(a, 128);
+	if (!b)
+		return (free(a), 4);
+	if (ct_alloc_getcount() != before + 2)
+		return (free(b), 5);
+	free(b);
+	before = ct_alloc_getcount();
+	a = realloc(NULL, 16);
+	if (!a)
+		return (6);
+	if (ct_alloc_getcount() != before + 1)
+		return (free(a), 7);
+	free(a);
+	ct_failloc_reset();
+	ct_failloc_set(0);
+	if (calloc(1, 8) != NULL)
+		return (ct_failloc_reset(), 8);
+	ct_failloc_reset();
+	a = malloc(8);
+	if (!a)
+		return (9);
+	ct_failloc_set(0);
+	b = realloc(a, 16);
+	if (b != NULL)
+		return (ct_failloc_reset(), free(b), 10);
+	ct_failloc_reset();
+	b = realloc(a, 16);
+	if (!b)
+		return (free(a), 11);
+	free(b);
 	return (EXIT_SUCCESS);
 }

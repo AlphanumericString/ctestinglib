@@ -9,9 +9,11 @@
  * @file ct_memory.h
  * @brief Allocation helpers and allocation failure injection.
  *
- * The library wraps malloc() to count allocations and to make a chosen
- * allocation fail. safealloc() and safefree() bypass that wrapper and are
- * used by the library itself for its own bookkeeping.
+ * The library wraps malloc(), calloc() and realloc() to count allocations and
+ * to make a chosen allocation fail. safealloc() and safefree() bypass those
+ * wrappers and are used by the library itself for its own bookkeeping.
+ * Duplicating helpers such as strdup() and memdup() are intentionally not
+ * wrapped: they are not direct allocation-failure exploration entry points.
  *
  * ct_auto_call() exercises a function with each of its allocations failing in
  * turn, which is a lightweight way to check that it handles allocation
