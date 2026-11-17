@@ -26,8 +26,15 @@ int ctit_module_hooks(void)
 	ct_module_init(&m, "hooks", "hooks test");
 	if (!m)
 		return (1);
-	m->setup_function = hook_setup;
-	m->teardown_function = hook_teardown;
+	ct_module_set_setup(NULL, hook_setup);
+	ct_module_set_teardown(NULL, hook_teardown);
+	if (m->setup_function != NULL || m->teardown_function != NULL)
+		return (ct_module_destroy(m), 3);
+	ct_module_set_setup(m, hook_setup);
+	ct_module_set_teardown(m, hook_teardown);
+	if (m->setup_function != hook_setup ||
+		m->teardown_function != hook_teardown)
+		return (ct_module_destroy(m), 3);
 	ct_module_taddf(m, dummy_success_test, "s1");
 	ct_module_run(m);
 	if (g_setup != 1 || g_teardown != 1)

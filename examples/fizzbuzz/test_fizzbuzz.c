@@ -1,3 +1,7 @@
+#ifndef _POSIX_C_SOURCE
+#define _POSIX_C_SOURCE 200809L
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -29,34 +33,67 @@ static int test_response(void)
 	return (ret == 0 ? EXIT_SUCCESS : 3);
 }
 
-// ct_capture only captures output descriptors. Feeding stdin is therefore done
-// by hand: write the input in a pipe and dup2() its read end on STDIN_FILENO.
-static int feed_stdin(const char *input)
-{
-	int		fds[2];
-	size_t	len;
-	ssize_t written;
+// ct_capture only captures output descriptors. The stdin fixture is prepared
+// by the module setup hook: a temporary file is redirected on STDIN_FILENO and
+// its read end is shared by every forked test. Each test rewrites the file
+// with feed_input(); teardown restores the real stdin.
+static FILE *g_input;
+static int	 g_saved_stdin = -1;
 
+static void input_setup(void)
+{
+	g_saved_stdin = dup(STDIN_FILENO);
+	if (g_saved_stdin == -1)
+		return;
+	g_input = tmpfile();
+	if (!g_input)
+	{
+		close(g_saved_stdin);
+		g_saved_stdin = -1;
+		return;
+	}
+	if (dup2(fileno(g_input), STDIN_FILENO) == -1)
+	{
+		fclose(g_input);
+		g_input = NULL;
+		close(g_saved_stdin);
+		g_saved_stdin = -1;
+		return;
+	}
+	clearerr(stdin);
+}
+
+static void input_teardown(void)
+{
+	if (g_saved_stdin != -1)
+	{
+		(void)dup2(g_saved_stdin, STDIN_FILENO);
+		close(g_saved_stdin);
+		g_saved_stdin = -1;
+	}
+	if (g_input)
+	{
+		fclose(g_input);
+		g_input = NULL;
+	}
+	clearerr(stdin);
+}
+
+static int feed_input(const char *input)
+{
+	size_t len;
+
+	if (!g_input)
+		return (1);
+	if (ftruncate(fileno(g_input), 0) == -1)
+		return (1);
+	rewind(g_input);
 	len = strlen(input);
-	if (pipe(fds) == -1)
+	if (len != 0 && fwrite(input, 1, len, g_input) != len)
 		return (1);
-	if (len != 0)
-	{
-		written = write(fds[1], input, len);
-		if (written != (ssize_t)len)
-		{
-			close(fds[0]);
-			close(fds[1]);
-			return (1);
-		}
-	}
-	close(fds[1]);
-	if (dup2(fds[0], STDIN_FILENO) == -1)
-	{
-		close(fds[0]);
+	if (fflush(g_input) != 0)
 		return (1);
-	}
-	close(fds[0]);
+	rewind(g_input);
 	// the previous run may have reached EOF: reset the stdio error state.
 	clearerr(stdin);
 	return (0);
@@ -67,18 +104,14 @@ static int run_case(const char *input, const char *expected_out,
 {
 	t_capture *out;
 	t_capture *err;
-	int		   saved_stdin;
 	int		   ret;
 
-	saved_stdin = dup(STDIN_FILENO);
-	if (saved_stdin == -1)
-		return (1);
 	out = ct_capture_create(STDOUT_FILENO);
 	err = ct_capture_create(STDERR_FILENO);
 	ret = EXIT_SUCCESS;
 	if (!out || !err)
 		ret = 2;
-	else if (feed_stdin(input) != 0)
+	else if (feed_input(input) != 0)
 		ret = 3;
 	else if (fizzbuzz_run() != expected_ret)
 		ret = 4;
@@ -86,10 +119,6 @@ static int run_case(const char *input, const char *expected_out,
 		ret = 5;
 	else if (ct_capture_compare(err, expected_err) != 0)
 		ret = 6;
-	if (dup2(saved_stdin, STDIN_FILENO) == -1 && ret == EXIT_SUCCESS)
-		ret = 7;
-	close(saved_stdin);
-	clearerr(stdin);
 	ct_capture_destroy(out);
 	ct_capture_destroy(err);
 	return (ret);
@@ -115,8 +144,8 @@ static int test_capture(void)
 			return (1);
 		i++;
 	}
-	// invalid input is checked last: scanf() keeps the offending character in
-	// the stdin stream, which would leak into the following case.
+	// The fixture is reset before every case, so the invalid input can not
+	// leak into a following one: it is only kept last for readability.
 	return (run_case("nope\n", PROMPT, ERRMSG, EXIT_FAILURE));
 }
 
@@ -125,7 +154,7 @@ static void auto_fizzbuzz_run(void)
 	t_capture *out;
 	t_capture *err;
 
-	if (feed_stdin("7\n") != 0)
+	if (feed_input("7\n") != 0)
 		return;
 	out = ct_capture_create(STDOUT_FILENO);
 	err = ct_capture_create(STDERR_FILENO);
@@ -159,7 +188,7 @@ static int test_alloc(void)
 		return (1);
 
 	ct_failloc_set(0);
-	if (feed_stdin("7\n") != 0)
+	if (feed_input("7\n") != 0)
 		return (ct_failloc_reset(), 2);
 	out = ct_capture_create(STDOUT_FILENO);
 	err = ct_capture_create(STDERR_FILENO);
@@ -186,17 +215,69 @@ static int test_alloc(void)
 	return (EXIT_SUCCESS);
 }
 
+static t_module *create_response_module(void)
+{
+	t_module *m;
+
+	ct_module_init(&m, "response", "fizz/buzz/bazz responses");
+	if (!m)
+		return (NULL);
+	if (!ct_module_taddf(m, test_response, "response values"))
+		return (ct_module_destroy(m), NULL);
+	return (m);
+}
+
+static t_module *create_run_module(void)
+{
+	t_module *m;
+
+	ct_module_init(&m, "run", "stdin fixture and captured runs");
+	if (!m)
+		return (NULL);
+	ct_module_set_setup(m, input_setup);
+	ct_module_set_teardown(m, input_teardown);
+	if (!ct_module_taddf(m, test_capture, "capture prompts and responses"))
+		return (ct_module_destroy(m), NULL);
+	return (m);
+}
+
+static t_module *create_memory_module(void)
+{
+	t_module *m;
+
+	ct_module_init(&m, "memory", "allocation failure showcase");
+	if (!m)
+		return (NULL);
+	ct_module_set_setup(m, input_setup);
+	ct_module_set_teardown(m, input_teardown);
+	if (!ct_module_taddf(m, test_alloc, "ct_alloc showcase"))
+		return (ct_module_destroy(m), NULL);
+	return (m);
+}
+
 int main(int argc, char **argv)
 {
 	t_module *root;
-	int		  ret;
+	t_module *sub;
+	t_module *(*creators[])(void) = {
+		create_response_module,
+		create_run_module,
+		create_memory_module,
+	};
+	size_t i;
+	int	   ret;
 
 	ct_module_init(&root, "fizzbuzz", "tests for the fizzbuzz example");
 	if (!root)
 		return (EXIT_FAILURE);
-	ct_module_taddf(root, test_response, "response values");
-	ct_module_taddf(root, test_capture, "capture prompts and responses");
-	ct_module_taddf(root, test_alloc, "ct_alloc showcase");
+	i = 0;
+	while (i < sizeof(creators) / sizeof(creators[0]))
+	{
+		sub = creators[i]();
+		i++;
+		if (!sub || !ct_module_add_sub(root, sub))
+			return (ct_module_destroy(root), EXIT_FAILURE);
+	}
 	ret = ct_module_run_args(root, argc, argv, CT_DT_OK);
 	ct_module_destroy(root);
 	return (ret);
