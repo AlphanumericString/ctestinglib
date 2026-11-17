@@ -10,8 +10,13 @@
  * @brief Allocation helpers and allocation failure injection.
  *
  * The library wraps malloc(), calloc() and realloc() to count allocations and
- * to make a chosen allocation fail. safealloc() and safefree() bypass those
- * wrappers and are used by the library itself for its own bookkeeping.
+ * to make a chosen allocation fail. free() is wrapped as well: when automatic
+ * cleanup is enabled, freeing a pointer that is registered for cleanup is
+ * deferred to the cleanup pass, so calling free() on it repeatedly, or letting
+ * the cleanup run after it, can not double free it.
+ * safealloc() and safefree() bypass those wrappers and are used by the library
+ * itself for its own bookkeeping. safefree() is also the escape hatch for a
+ * custom cleanup function that has to release a pointer itself.
  * Duplicating helpers such as strdup() and memdup() are intentionally not
  * wrapped: they are not direct allocation-failure exploration entry points.
  *

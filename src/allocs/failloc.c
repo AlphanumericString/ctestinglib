@@ -88,6 +88,28 @@ void *realloc(void *ptr, size_t size)
 	return (p);
 }
 
+// free() wrapper: while automatic memory cleanup is enabled, pointers that are
+// registered for cleanup are left untouched so that the cleanup pass remains
+// their only owner. This makes a mid-test free() harmless: calling it several
+// times, or letting do_cleanup() run afterwards, can not double free anything.
+// Pointers outside the cleanup list (safealloc() memory, cleanup disabled, ...)
+// are released immediately, so the allocator still reports genuine double
+// frees of untracked pointers.
+// DO NOT USE TO DEV THE TESTING LIB!!!
+void free(void *ptr)
+{
+	if (ptr == NULL)
+		return;
+	if (cti_get_memory_cleanup() == true)
+	{
+		if (is_in_cleanup(ptr) == true)
+			return;
+	}
+	else
+		remove_from_cleanup(ptr);
+	safefree(ptr);
+}
+
 /// @brief Exercise a function with each of its allocations failing in turn.
 /// @details The function is first called once to measure how many allocations
 /// it performs, then called again with a decreasing allocation budget so that

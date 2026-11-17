@@ -5,11 +5,19 @@
 #define CTESTS_INTERNAL_TESTS
 #include "ct_internal.h"
 
-static int g_custom_free_calls;
+static int	g_custom_free_calls;
+static bool g_custom_free_untracked;
 
 static void custom_free(void *p)
 {
 	g_custom_free_calls++;
+	free(p);
+}
+
+static void custom_free_untracked(void *p)
+{
+	g_custom_free_calls++;
+	g_custom_free_untracked = !is_in_cleanup(p);
 	free(p);
 }
 
@@ -156,5 +164,58 @@ int ctit_alloc_variants(void)
 	if (!b)
 		return (free(a), 11);
 	free(b);
+	return (EXIT_SUCCESS);
+}
+
+int ctit_free(void)
+{
+	void *a;
+	void *b;
+
+	// free(NULL) stays a no-op while automatic cleanup is enabled.
+	cti_set_memory_cleanup(true);
+	free(NULL);
+
+	// Freeing a tracked pointer only defers the release to do_cleanup(): the
+	// pointer stays registered, so repeated free() calls can not double free.
+	a = malloc(32);
+	if (!a)
+		return (cti_set_memory_cleanup(false), 1);
+	free(a);
+	if (!is_in_cleanup(a))
+		return (cti_set_memory_cleanup(false), 2);
+	free(a);
+	if (!is_in_cleanup(a))
+		return (cti_set_memory_cleanup(false), 3);
+	do_cleanup(NULL);
+	if (is_in_cleanup(a))
+		return (4);
+
+	// A pointer that is not registered (safealloc() memory) is released right
+	// away, even while automatic cleanup is enabled.
+	a = safealloc(32);
+	if (!a)
+		return (cti_set_memory_cleanup(false), 5);
+	free(a);
+
+	// A custom cleanup function may call free() itself: do_cleanup() unlinks
+	// the node before the callback, so the pointer is not seen as tracked.
+	a = malloc(32);
+	b = malloc(32);
+	if (!a || !b)
+		return (cti_set_memory_cleanup(false), 6);
+	free(a);
+	g_custom_free_calls = 0;
+	g_custom_free_untracked = false;
+	do_cleanup(custom_free_untracked);
+	if (g_custom_free_calls != 2 || g_custom_free_untracked == false)
+		return (cti_set_memory_cleanup(false), 7);
+
+	// Without automatic cleanup, free() behaves like the standard one.
+	cti_set_memory_cleanup(false);
+	a = malloc(32);
+	if (!a)
+		return (8);
+	free(a);
 	return (EXIT_SUCCESS);
 }
