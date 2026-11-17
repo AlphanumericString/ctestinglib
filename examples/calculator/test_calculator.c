@@ -165,14 +165,16 @@ static int test_eval(void)
 // not depend on the fork order.
 static t_calc_history g_history;
 
-static void history_setup(void)
+static bool history_setup(void)
 {
 	calc_history_init(&g_history);
+	return (true);
 }
 
-static void history_teardown(void)
+static bool history_teardown(void)
 {
 	calc_history_destroy(&g_history);
+	return (true);
 }
 
 static int test_history_push(void)
@@ -241,7 +243,7 @@ static int test_history_guards(void)
 static FILE *g_repl_input;
 static FILE *g_repl_history_input;
 
-static void repl_setup(void)
+static bool repl_setup(void)
 {
 	g_repl_input = tmpfile();
 	g_repl_history_input = tmpfile();
@@ -255,9 +257,10 @@ static void repl_setup(void)
 		fputs("1 + 2\nhistory\n", g_repl_history_input);
 		rewind(g_repl_history_input);
 	}
+	return (g_repl_input != NULL && g_repl_history_input != NULL);
 }
 
-static void repl_teardown(void)
+static bool repl_teardown(void)
 {
 	if (g_repl_input)
 		fclose(g_repl_input);
@@ -265,6 +268,7 @@ static void repl_teardown(void)
 		fclose(g_repl_history_input);
 	g_repl_input = NULL;
 	g_repl_history_input = NULL;
+	return (true);
 }
 
 // The REPL writes its prompts and results on stdout and its errors on stderr.

@@ -185,17 +185,19 @@ static int capture_raw(unsigned int rolls, unsigned int sides,
 // from the same fresh options, even when it modifies them.
 static t_dice_options g_run_options;
 
-static void run_setup(void)
+static bool run_setup(void)
 {
 	g_run_options = (t_dice_options){0};
 	g_run_options.die.sides = 6;
 	g_run_options.rolls = 5;
 	g_run_options.stats = true;
+	return (true);
 }
 
-static void run_teardown(void)
+static bool run_teardown(void)
 {
 	g_run_options = (t_dice_options){0};
+	return (true);
 }
 
 // The same seed makes the stats and default runs repeat the raw run: their

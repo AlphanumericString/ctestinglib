@@ -93,6 +93,9 @@ void cti_mdisplay_test_name(const t_test *t, const t_module *m,
 // run
 int cti_test_call(const t_test *t);
 int cti_tfork(t_test *t, t_module *m);
+int cti_module_setup(t_module *m);
+int cti_module_run_tests(t_module *m);
+int cti_module_teardown(t_module *m);
 
 // utils
 void  cti_list_push(t_list **lst, void *data);

@@ -71,8 +71,9 @@ typedef struct s_module
 	// module meta data
 	bool auto_cleanup;
 	void (*clean_up_function)(void *);
-	void (*setup_function)(void);
-	void (*teardown_function)(void);
+	bool (*setup_function)(void);
+	bool (*teardown_function)(void);
+	bool hooks_wrap_submodules;
 
 	unsigned int timeout;
 

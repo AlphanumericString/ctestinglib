@@ -37,14 +37,24 @@ void ct_module_init(t_module **m_ptr, const char *name, const char *dsc);
 bool ct_module_add_sub(t_module *m, t_module *sub_module);
 
 // module fixtures
-// The setup hook runs once before the module's tests, the teardown hook once
-// after the last test (also when a test failed). Both return void, so they are
-// meant to prepare/release a fixture, not to assert on the test results.
+// The setup hook runs once before the module's tests and returns true when the
+// fixture is ready. Returning false marks the module as failed: its tests are
+// skipped (and so are its submodules when the hooks wrap them) and the teardown
+// hook is still called to release whatever was partially initialised.
+// The teardown hook runs once after the last test (also when a test failed) and
+// returns false to mark the module as failed.
 // Tests run in forked children, so the hooks run in the parent process before
 // the tests are forked: a test starts from the state left by setup, but its
 // own changes are never visible to teardown.
-void ct_module_set_setup(t_module *module, void (*setup)(void));
-void ct_module_set_teardown(t_module *module, void (*teardown)(void));
+void ct_module_set_setup(t_module *module, bool (*setup)(void));
+void ct_module_set_teardown(t_module *module, bool (*teardown)(void));
+
+// By default a module's hooks only wrap its own tests: its submodules run
+// first, then setup, the module's tests and teardown. Enabling the flag below
+// runs setup before the submodules and teardown after the module's own tests,
+// so a single fixture covers the whole subtree.
+void ct_module_set_hooks_wrap_submodules(t_module *module, bool enabled);
+bool ct_module_get_hooks_wrap_submodules(const t_module *module);
 
 // automatic memory cleanup
 // When enabled, allocations made by the module's tests through the wrapped
