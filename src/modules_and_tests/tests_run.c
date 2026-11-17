@@ -31,8 +31,6 @@ int cti_test_call(const t_test *t)
 	return (t->test_func.pure());
 }
 
-#if (defined(FORK_TESTS) && (FORK_TESTS == 1))
-
 static unsigned int resolve_timeout(const t_test *t, const t_module *m)
 {
 	if (t->timeout != 0)
@@ -84,14 +82,3 @@ int cti_tfork(t_test *t, t_module *m)
 		m->tests_passed++;
 	return (EXIT_SUCCESS);
 }
-
-#else
-
-// defining symbol to avoid compilation issues
-int fork_tests(t_test *t, t_module *m)
-{
-	(void)t;
-	return (EXIT_FAILURE);
-}
-
-#endif

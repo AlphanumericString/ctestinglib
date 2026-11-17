@@ -160,9 +160,9 @@ static int test_eval(void)
 }
 
 // Module fixtures: setup prepares the history once, before the module's tests
-// are forked, and teardown releases it after the last one. With FORK_TESTS each
-// test starts from the empty history built by setup; the tests reset it anyway
-// so they also keep working when the library is built without forks.
+// are forked, and teardown releases it after the last one. Each test starts
+// from the empty history built by setup; the tests reset it anyway so they do
+// not depend on the fork order.
 static t_calc_history g_history;
 
 static void history_setup(void)
@@ -177,8 +177,8 @@ static void history_teardown(void)
 
 static int test_history_push(void)
 {
-	// Clear the fixture so the test is independent of the run order and of
-	// FORK_TESTS: setup only has to provide a valid history object.
+	// Clear the fixture so the test is independent of the run order:
+	// setup only has to provide a valid history object.
 	calc_history_destroy(&g_history);
 	calc_history_init(&g_history);
 	if (ct_assert_true(g_history.values == NULL && g_history.len == 0,

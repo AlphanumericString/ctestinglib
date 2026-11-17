@@ -23,8 +23,8 @@ static int run_module_inner(t_module *module)
 
 /// @brief Run a module and all of its submodules.
 /// @details Each submodule is run first, then the module's own tests are run
-/// by ct_module_run_self_tests(). Tests run in a forked child by default
-/// (FORK_TESTS), so a crashing test does not stop the whole run.
+/// by ct_module_run_self_tests(). Tests always run in a forked child, so a
+/// crashing test does not stop the whole run.
 /// @param module Module tree to run, may be NULL.
 /// @return EXIT_SUCCESS when every test passed, EXIT_FAILURE otherwise.
 int ct_module_run(t_module *module)

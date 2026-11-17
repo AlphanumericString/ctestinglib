@@ -16,12 +16,6 @@
  * with ct_module_destroy().
  */
 
-#ifndef FORK_TESTS
-/// @brief Whether every test runs in a forked child (1) or in the current
-/// process (0). Defaults to 1.
-#define FORK_TESTS 1
-#endif
-
 #ifndef CT_DEFAULT_TIMEOUT
 /// @brief Default timeout, in seconds, applied to every test when neither the
 /// test nor its module defines one. 0 disables the timeout (plain waitpid).
@@ -46,9 +40,9 @@ bool ct_module_add_sub(t_module *m, t_module *sub_module);
 // The setup hook runs once before the module's tests, the teardown hook once
 // after the last test (also when a test failed). Both return void, so they are
 // meant to prepare/release a fixture, not to assert on the test results.
-// With FORK_TESTS the hooks run in the parent process, before the tests are
-// forked: a test starts from the state left by setup, but its own changes are
-// never visible to teardown.
+// Tests run in forked children, so the hooks run in the parent process before
+// the tests are forked: a test starts from the state left by setup, but its
+// own changes are never visible to teardown.
 void ct_module_set_setup(t_module *module, void (*setup)(void));
 void ct_module_set_teardown(t_module *module, void (*teardown)(void));
 
