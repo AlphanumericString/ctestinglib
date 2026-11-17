@@ -140,6 +140,14 @@ examples: $(NAME)
 		$(PRINT) "$(OK)Success$(RESET)\n"						|| \
 		$(PRINT) "$(KO)Fail$(RESET)\n"; \
 	done;
+# Build only the test binary of an example: make test_<example_name>
+test_examples: $(NAME)
+	@for i in $(EXAMPLES) ; do \
+		$(PRINT) "$(LOG_MAJ)Building example $$i's tests...$(RESET)"	&& \
+		$(MAKE_SL) -C $$i test > /dev/null 2>&1			&& \
+		$(PRINT) "$(OK)Success$(RESET)\n"				|| \
+		$(PRINT) "$(KO)Fail$(RESET)\n" ;				\
+	done;
 $(NAME): $(OBJS)
 	@$(PRINT) "$(LOG_MAJ)Linking $(NAME)...$(RESET)"	&& \
 	$(AR) -rcs $(NAME) $(OBJS)	2>> $(LOGFILE)			&& \
@@ -231,4 +239,4 @@ dev_env: .clangd compile_commands.json tags $(MAKE_SELF)
 	$(MAKE_SL) dbg_make													&& \
 	$(PRINT) "$(OK)Success$(RESET)\n"									|| \
 	$(PRINT) "$(KO)Fail$(RESET)\n"
-.PHONY: all examples clean fclean re dbg_make coverage $(EXAMPLES)
+.PHONY: all examples clean fclean re dbg_make coverage $(EXAMPLES) test_examples
