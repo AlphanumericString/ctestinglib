@@ -192,6 +192,32 @@ static int buffered_get(void)
 	return (safefree(s), ct_capture_destroy(c), EXIT_SUCCESS);
 }
 
+// destroy must flush stdio while the descriptor is still captured: output
+// that was never read must not leak to the descriptor restored afterwards.
+// A second capture records whatever reaches the real descriptor.
+static int destroy_discards_buffered(void)
+{
+	t_capture *outer;
+	t_capture *inner;
+	char	  *s;
+
+	outer = ct_capture_create(STDOUT_FILENO);
+	if (!outer)
+		return (1);
+	inner = ct_capture_create(STDOUT_FILENO);
+	if (!inner)
+		return (ct_capture_destroy(outer), 2);
+	printf("discarded");
+	ct_capture_destroy(inner);
+	write(STDOUT_FILENO, "kept", 4);
+	s = ct_capture_get(outer);
+	if (!s)
+		return (ct_capture_destroy(outer), 3);
+	if (strcmp(s, "kept") != 0)
+		return (safefree(s), ct_capture_destroy(outer), 4);
+	return (safefree(s), ct_capture_destroy(outer), EXIT_SUCCESS);
+}
+
 static int stderr_capture(void)
 {
 	t_capture *c;
@@ -270,6 +296,9 @@ int ctit_capture(void)
 	if (ret != EXIT_SUCCESS)
 		return (ret);
 	ret = buffered_get();
+	if (ret != EXIT_SUCCESS)
+		return (ret);
+	ret = destroy_discards_buffered();
 	if (ret != EXIT_SUCCESS)
 		return (ret);
 	ret = stderr_capture();

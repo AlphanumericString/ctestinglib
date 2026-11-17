@@ -340,9 +340,8 @@ static void auto_repl(void)
 	clearerr(g_auto_repl_input);
 	out = ct_capture_create(STDOUT_FILENO);
 	(void)calc_repl(g_auto_repl_input);
-	// Consume before destroying: release flushes pending output to the
-	// restored descriptor.
-	(void)ct_capture_compare(out, "");
+	// ct_capture_destroy() discards output still buffered in stdio, so the
+	// capture can be released without consuming what the repl printed.
 	ct_capture_destroy(out);
 }
 

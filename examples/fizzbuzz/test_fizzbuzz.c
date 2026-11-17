@@ -159,10 +159,8 @@ static void auto_fizzbuzz_run(void)
 	out = ct_capture_create(STDOUT_FILENO);
 	err = ct_capture_create(STDERR_FILENO);
 	(void)fizzbuzz_run();
-	// Consume the output before destroying the captures: release flushes
-	// pending stdio buffers to the restored descriptor.
-	(void)ct_capture_compare(out, "");
-	(void)ct_capture_compare(err, "");
+	// ct_capture_destroy() discards output still buffered in stdio, so the
+	// captures can be released without consuming what fizzbuzz_run printed.
 	ct_capture_destroy(out);
 	ct_capture_destroy(err);
 }

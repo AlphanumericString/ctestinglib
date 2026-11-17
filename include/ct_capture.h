@@ -28,6 +28,12 @@
  * that is available when they are called, so call them once the code under
  * test is done writing.
  *
+ * ct_capture_destroy() flushes stdio while the descriptor is still captured
+ * and then restores it: output that was neither read nor compared is
+ * discarded with the capture pipe instead of being written to the real
+ * descriptor. It is therefore safe to destroy a capture with output still
+ * buffered (for example from a function called by ct_auto_call()).
+ *
  * Captured output is handled as a NUL terminated string: it is truncated at
  * the first NUL byte.
  */

@@ -290,9 +290,8 @@ static void auto_dice_run(void)
 	out = ct_capture_create(STDOUT_FILENO);
 	dice_seed(42);
 	(void)dice_run(&options);
-	// Consume before destroying: release flushes pending output to the
-	// restored descriptor.
-	(void)ct_capture_compare(out, "");
+	// ct_capture_destroy() discards output still buffered in stdio, so the
+	// capture can be released without consuming what dice_run printed.
 	ct_capture_destroy(out);
 }
 
