@@ -193,6 +193,124 @@ static int buffered_get(void)
 	return (safefree(s), ct_capture_destroy(c), EXIT_SUCCESS);
 }
 
+// peekn inspects the output without consuming it: the same bytes can be
+// peeked several times and are still returned by get afterwards.
+static int peek_does_not_consume(void)
+{
+	t_capture *c;
+	char	   buf[16];
+	char	  *s;
+	ssize_t	   n;
+
+	c = ct_capture_create(STDOUT_FILENO);
+	if (!c)
+		return (1);
+	write(STDOUT_FILENO, "hello", 5);
+	n = ct_capture_peekn(c, sizeof(buf), buf);
+	if (n != 5 || memcmp(buf, "hello", 5) != 0)
+		return (ct_capture_destroy(c), 2);
+	// a short peek only copies what fits
+	n = ct_capture_peekn(c, 3, buf);
+	if (n != 3 || memcmp(buf, "hel", 3) != 0)
+		return (ct_capture_destroy(c), 3);
+	// new output is appended to the pending data
+	write(STDOUT_FILENO, " world", 6);
+	n = ct_capture_peekn(c, sizeof(buf), buf);
+	if (n != 11 || memcmp(buf, "hello world", 11) != 0)
+		return (ct_capture_destroy(c), 4);
+	s = ct_capture_get(c);
+	if (!s || strcmp(s, "hello world") != 0)
+		return (safefree(s), ct_capture_destroy(c), 5);
+	safefree(s);
+	// get consumed everything: nothing is left to peek
+	if (ct_capture_peekn(c, sizeof(buf), buf) != 0)
+		return (ct_capture_destroy(c), 6);
+	// compare also consumes data that was already peeked
+	write(STDOUT_FILENO, "bye", 3);
+	n = ct_capture_peekn(c, sizeof(buf), buf);
+	if (n != 3 || memcmp(buf, "bye", 3) != 0)
+		return (ct_capture_destroy(c), 7);
+	if (ct_capture_compare(c, "bye") != 0)
+		return (ct_capture_destroy(c), 8);
+	if (ct_capture_peekn(c, sizeof(buf), buf) != 0)
+		return (ct_capture_destroy(c), 9);
+	return (ct_capture_destroy(c), EXIT_SUCCESS);
+}
+
+// peekn is binary safe: embedded NUL bytes are copied and counted, so output
+// can be inspected as bytes instead of as a NUL terminated string.
+static int peek_binary(void)
+{
+	static const char data[] = {'a', '\0', 'b', '\0', 'c'};
+	t_capture		 *c;
+	char			  buf[sizeof(data)];
+	ssize_t			  n;
+
+	c = ct_capture_create(STDOUT_FILENO);
+	if (!c)
+		return (1);
+	write(STDOUT_FILENO, data, sizeof(data));
+	n = ct_capture_peekn(c, sizeof(buf), buf);
+	if (n != (ssize_t)sizeof(data) || memcmp(buf, data, sizeof(data)) != 0)
+		return (ct_capture_destroy(c), 2);
+	n = ct_capture_peekn(c, sizeof(buf), buf);
+	if (n != (ssize_t)sizeof(data) || memcmp(buf, data, sizeof(data)) != 0)
+		return (ct_capture_destroy(c), 3);
+	return (ct_capture_destroy(c), EXIT_SUCCESS);
+}
+
+static int peek_errors(void)
+{
+	t_capture *c;
+	t_capture  bad;
+	char	   buf[4];
+	int		   pf[2];
+
+	if (ct_capture_peekn(NULL, sizeof(buf), buf) != -1)
+		return (1);
+	c = ct_capture_create(STDOUT_FILENO);
+	if (!c)
+		return (2);
+	if (ct_capture_peekn(c, sizeof(buf), NULL) != -1)
+		return (ct_capture_destroy(c), 3);
+	// a zero sized peek does not need a buffer
+	if (ct_capture_peekn(c, 0, NULL) != 0)
+		return (ct_capture_destroy(c), 4);
+	ct_capture_destroy(c);
+	if (pipe(pf) == -1)
+		return (5);
+	memset(&bad, 0, sizeof(bad));
+	bad.pipe_read = pf[0];
+	close(pf[0]);
+	close(pf[1]);
+	if (ct_capture_peekn(&bad, sizeof(buf), buf) != -1)
+		return (6);
+	// an input capture has nothing to peek
+	c = ct_capture_stdin("x");
+	if (!c)
+		return (7);
+	if (ct_capture_peekn(c, sizeof(buf), buf) != -1)
+		return (ct_capture_destroy(c), 8);
+	return (ct_capture_destroy(c), EXIT_SUCCESS);
+}
+
+// peekn must flush stdio buffers before reading the capture pipe
+static int peek_buffered(void)
+{
+	t_capture *c;
+	char	   buf[16];
+	ssize_t	   n;
+
+	c = ct_capture_create(STDOUT_FILENO);
+	if (!c)
+		return (1);
+	printf("buffered");
+	n = ct_capture_peekn(c, sizeof(buf), buf);
+	if (n != 8 || memcmp(buf, "buffered", 8) != 0)
+		return (ct_capture_destroy(c), 2);
+	return (ct_capture_destroy(c), EXIT_SUCCESS);
+}
+
 // destroy must flush stdio while the descriptor is still captured: output
 // that was never read must not leak to the descriptor restored afterwards.
 // A second capture records whatever reaches the real descriptor.
@@ -395,6 +513,18 @@ int ctit_capture(void)
 	if (ret != EXIT_SUCCESS)
 		return (ret);
 	ret = buffered_get();
+	if (ret != EXIT_SUCCESS)
+		return (ret);
+	ret = peek_buffered();
+	if (ret != EXIT_SUCCESS)
+		return (ret);
+	ret = peek_does_not_consume();
+	if (ret != EXIT_SUCCESS)
+		return (ret);
+	ret = peek_binary();
+	if (ret != EXIT_SUCCESS)
+		return (ret);
+	ret = peek_errors();
 	if (ret != EXIT_SUCCESS)
 		return (ret);
 	ret = destroy_discards_buffered();

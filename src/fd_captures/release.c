@@ -5,8 +5,9 @@
 #include "ct_internal.h"
 
 // Flush stdio, restore the captured descriptor and close every resource held
-// by the capture. The structure is left empty (all descriptors set to -1), so
-// calling release twice is harmless and returns true.
+// by the capture. The structure is left empty (all descriptors set to -1 and
+// the pending buffer freed), so calling release twice is harmless and returns
+// true.
 bool ct_capture_release(t_capture *capture)
 {
 	bool restored;
@@ -31,6 +32,10 @@ bool ct_capture_release(t_capture *capture)
 		close(capture->pipe_read);
 	if (capture->pipe_write != -1)
 		close(capture->pipe_write);
+	safefree(capture->pending);
+	capture->pending = NULL;
+	capture->pending_len = 0;
+	capture->pending_cap = 0;
 	capture->original_fd = -1;
 	capture->source_fd = -1;
 	capture->pipe_read = -1;

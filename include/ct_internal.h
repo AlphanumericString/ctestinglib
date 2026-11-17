@@ -133,12 +133,17 @@ int ct_assert_true_v(bool condition, const char *err_msg, va_list args);
 // - source_fd is the descriptor being captured (-1 once released)
 // - pipe_read reads what was written to source_fd
 // - pipe_write only exists until the redirection is complete (-1 afterwards)
+// - pending keeps the bytes read from the pipe until they are consumed, so
+//   that peekn can inspect them without losing them
 struct s_capture
 {
-	int original_fd;
-	int source_fd;
-	int pipe_read;
-	int pipe_write;
+	int	   original_fd;
+	int	   source_fd;
+	int	   pipe_read;
+	int	   pipe_write;
+	char  *pending;
+	size_t pending_len;
+	size_t pending_cap;
 };
 
 bool ct_capture_init(int source_fd, t_capture *capture);

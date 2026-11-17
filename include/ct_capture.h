@@ -2,7 +2,9 @@
 #define CT_CAPTURE_H
 
 #include <sys/cdefs.h>
+#include <sys/types.h>
 #include <stdbool.h>
+#include <stddef.h>
 
 /**
  * @file ct_capture.h
@@ -26,7 +28,9 @@
  * The original descriptor is restored by ct_capture_destroy(). Reading is
  * non blocking: ct_capture_get() and ct_capture_compare() consume the output
  * that is available when they are called, so call them once the code under
- * test is done writing.
+ * test is done writing. ct_capture_peekn() inspects the same output without
+ * consuming it, which lets a test look at the result twice or check it before
+ * deciding to read it.
  *
  * ct_capture_destroy() flushes stdio while the descriptor is still captured
  * and then restores it: output that was neither read nor compared is
@@ -34,8 +38,10 @@
  * descriptor. It is therefore safe to destroy a capture with output still
  * buffered (for example from a function called by ct_auto_call()).
  *
- * Captured output is handled as a NUL terminated string: it is truncated at
- * the first NUL byte.
+ * ct_capture_get() and ct_capture_compare() handle captured output as a NUL
+ * terminated string: it is truncated at the first NUL byte. ct_capture_peekn()
+ * is binary safe: it copies raw bytes and reports how many were copied, so
+ * embedded NUL bytes are preserved.
  *
  * STDIN_FILENO can be captured too and fed the input a test should read:
  *
@@ -50,9 +56,9 @@
  * @endcode
  *
  * ct_capture_feed() replaces the input of an existing STDIN_FILENO capture,
- * which lets one capture be reused for several cases. ct_capture_get() and
- * ct_capture_compare() only apply to output captures: an input capture has
- * nothing to read back.
+ * which lets one capture be reused for several cases. ct_capture_get(),
+ * ct_capture_compare() and ct_capture_peekn() only apply to output captures:
+ * an input capture has nothing to read back.
  */
 
 /// @brief A capture on one file descriptor.
@@ -70,6 +76,8 @@ void ct_capture_destroy(t_capture *capture);
 char *ct_capture_get(t_capture *capture) __attribute__((malloc));
 
 int ct_capture_compare(t_capture *capture, const char *expected);
+
+ssize_t ct_capture_peekn(t_capture *capture, size_t n, char *buffer);
 
 int ct_capture_feed(t_capture *capture, const char *input);
 
