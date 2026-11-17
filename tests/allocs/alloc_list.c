@@ -72,9 +72,21 @@ int ctit_cleanup(void)
 		return (3);
 	do_cleanup(NULL);
 	ct_module_init(&tmp_dummy, "module_dummy", "dummy module to test cleanups");
+	if (!tmp_dummy)
+		return (5);
+	ct_module_set_auto_cleanup(NULL, true);
+	if (ct_module_get_auto_cleanup(NULL) != false)
+		return (ct_module_destroy(tmp_dummy), 6);
+	if (ct_module_get_auto_cleanup(tmp_dummy) != false)
+		return (ct_module_destroy(tmp_dummy), 7);
 	ct_module_taddf(tmp_dummy, dummy_alloc, "alloc");
-	tmp_dummy->auto_cleanup = true;
+	ct_module_set_auto_cleanup(tmp_dummy, true);
+	if (ct_module_get_auto_cleanup(tmp_dummy) != true)
+		return (ct_module_destroy(tmp_dummy), 8);
 	ct_module_run(tmp_dummy);
+	ct_module_set_auto_cleanup(tmp_dummy, false);
+	if (ct_module_get_auto_cleanup(tmp_dummy) != false)
+		return (ct_module_destroy(tmp_dummy), 9);
 	ct_module_destroy(tmp_dummy);
 	return (EXIT_SUCCESS);
 }

@@ -17,6 +17,7 @@
  * safealloc() and safefree() bypass those wrappers and are used by the library
  * itself for its own bookkeeping. safefree() is also the escape hatch for a
  * custom cleanup function that has to release a pointer itself.
+ * Automatic cleanup is enabled per module with ct_module_set_auto_cleanup().
  * Duplicating helpers such as strdup() and memdup() are intentionally not
  * wrapped: they are not direct allocation-failure exploration entry points.
  *

@@ -46,6 +46,14 @@ bool ct_module_add_sub(t_module *m, t_module *sub_module);
 void ct_module_set_setup(t_module *module, void (*setup)(void));
 void ct_module_set_teardown(t_module *module, void (*teardown)(void));
 
+// automatic memory cleanup
+// When enabled, allocations made by the module's tests through the wrapped
+// malloc(), calloc() and realloc() are tracked and released by the runner
+// instead of being freed by free(). The setting is disabled by default and is
+// not inherited by submodules.
+void ct_module_set_auto_cleanup(t_module *module, bool enabled);
+bool ct_module_get_auto_cleanup(const t_module *module);
+
 // timeouts
 // per module default timeout (0: fallback on CT_DEFAULT_TIMEOUT)
 void		 ct_module_set_timeout(t_module *module, unsigned int seconds);
