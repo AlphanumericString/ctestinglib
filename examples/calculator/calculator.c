@@ -1,4 +1,7 @@
+#include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "calculator.h"
 
@@ -59,30 +62,117 @@ int calc_eval(const char *line, int *result)
 	return (calc_apply(lhs, op, rhs, result));
 }
 
+void calc_history_init(t_calc_history *history)
+{
+	if (!history)
+		return;
+	*history = (t_calc_history){0};
+}
+
+static int calc_history_reserve(t_calc_history *history, size_t min_cap)
+{
+	int	  *values;
+	size_t new_cap;
+
+	if (!history)
+		return (1);
+	if (history->cap >= min_cap)
+		return (0);
+	new_cap = history->cap ? history->cap : 8;
+	while (new_cap < min_cap)
+	{
+		if (new_cap > SIZE_MAX / 2)
+		{
+			new_cap = min_cap;
+			break;
+		}
+		new_cap *= 2;
+	}
+	values = malloc(new_cap * sizeof(*values));
+	if (!values)
+		return (1);
+	if (history->values)
+	{
+		memcpy(values, history->values, history->len * sizeof(*values));
+		free(history->values);
+	}
+	history->values = values;
+	history->cap = new_cap;
+	return (0);
+}
+
+int calc_history_push(t_calc_history *history, int value)
+{
+	if (!history || calc_history_reserve(history, history->len + 1) != 0)
+		return (1);
+	history->values[history->len] = value;
+	history->len++;
+	return (0);
+}
+
+void calc_history_print(const t_calc_history *history)
+{
+	size_t i;
+
+	if (!history)
+		return;
+	i = 0;
+	while (i < history->len)
+	{
+		printf("%d\n", history->values[i]);
+		i++;
+	}
+}
+
+void calc_history_destroy(t_calc_history *history)
+{
+	if (!history)
+		return;
+	free(history->values);
+	*history = (t_calc_history){0};
+}
+
 int calc_repl(FILE *input)
 {
-	char line[128];
-	int	 status;
-	int	 value;
+	t_calc_history history;
+	char		  *line;
+	int			   status;
+	int			   value;
 
 	if (!input)
 		return (1);
+	line = malloc(CALC_LINE_MAX);
+	if (!line)
+		return (1);
+	calc_history_init(&history);
 	for (;;)
 	{
 		fputs(CALC_PROMPT, stdout);
 		fflush(stdout);
-		if (!fgets(line, sizeof(line), input))
+		if (!fgets(line, CALC_LINE_MAX, input))
 		{
 			fputc('\n', stdout);
 			break;
 		}
+		if (strncmp(line, "history", 7) == 0 &&
+			(line[7] == '\0' || line[7] == '\n'))
+		{
+			calc_history_print(&history);
+			continue;
+		}
 		status = calc_eval(line, &value);
 		if (status == 0)
+		{
 			printf("%d\n", value);
+			// history is a convenience: losing an entry is not fatal.
+			(void)calc_history_push(&history, value);
+		}
 		else if (status == 2)
 			fputs("error: division by zero\n", stderr);
 		else
 			fputs("error: expected '<int> <op> <int>'\n", stderr);
 	}
+	calc_history_destroy(&history);
+	free(line);
 	return (0);
 }

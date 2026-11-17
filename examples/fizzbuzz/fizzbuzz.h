@@ -3,6 +3,7 @@
 
 #define PROMPT "Enter a number: "
 #define ERRMSG "Can't init number\n"
+#define ERRMSG_ALLOC "Can't allocate fizzbuzz state\n"
 
 // Toy fizz-buzz project used to demonstrate the ctesting library.
 //

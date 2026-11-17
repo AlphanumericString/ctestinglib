@@ -4,6 +4,7 @@
 
 #include "ct_assert.h"
 #include "ct_capture.h"
+#include "ct_memory.h"
 #include "ct_modules.h"
 #include "dice.h"
 
@@ -245,6 +246,99 @@ static int test_errors(void)
 	return (ret);
 }
 
+static void auto_dice_run(void)
+{
+	t_dice_options options;
+	t_capture	  *out;
+
+	options = (t_dice_options){0};
+	options.die.sides = 6;
+	options.rolls = 4;
+	out = ct_capture_create(STDOUT_FILENO);
+	dice_seed(42);
+	(void)dice_run(&options);
+	// Consume before destroying: release flushes pending output to the
+	// restored descriptor.
+	(void)ct_capture_compare(out, "");
+	ct_capture_destroy(out);
+}
+
+// dice_run() keeps the rolls in a malloc'ed array. ct_alloc is used to count
+// that allocation and to make it fail before anything is printed.
+static int test_alloc(void)
+{
+	t_dice_options	   options;
+	t_capture		  *out;
+	char			   expected[256];
+	unsigned long long total;
+	unsigned int	   min;
+	unsigned int	   max;
+	size_t			   before;
+	size_t			   after;
+	int				   ret;
+
+	options = (t_dice_options){0};
+	options.die.sides = 6;
+	options.rolls = 5;
+	options.stats = true;
+	ct_failloc_reset();
+	ret = capture_raw(5, 6, &total, &min, &max);
+	if (ret != EXIT_SUCCESS)
+		return (ret);
+	snprintf(expected, sizeof(expected),
+			 "rolls: 5\ntotal: %llu\nmin: %u\nmax: %u\naverage: %.2f\n", total,
+			 min, max, (double)total / 5.0);
+
+	out = ct_capture_create(STDOUT_FILENO);
+	if (!out)
+		return (1);
+	dice_seed(42);
+	ret = dice_run(&options);
+	if (ret != 0 || ct_capture_compare(out, expected) != 0)
+		ret = 2;
+	else
+		ret = EXIT_SUCCESS;
+	ct_capture_destroy(out);
+	if (ret != EXIT_SUCCESS)
+		return (ret);
+
+	before = ct_alloc_getcount();
+	out = ct_capture_create(STDOUT_FILENO);
+	if (!out)
+		return (3);
+	dice_seed(42);
+	ret = dice_run(&options);
+	after = ct_alloc_getcount();
+	if (ret != 0 || ct_capture_compare(out, expected) != 0)
+		ret = 4;
+	else if (after != before + 1)
+		ret = 5;
+	else
+		ret = EXIT_SUCCESS;
+	ct_capture_destroy(out);
+	if (ret != EXIT_SUCCESS)
+		return (ret);
+
+	ct_failloc_set(0);
+	out = ct_capture_create(STDOUT_FILENO);
+	if (!out)
+		return (ct_failloc_reset(), 6);
+	dice_seed(42);
+	ret = dice_run(&options);
+	ct_failloc_reset();
+	if (ct_assert_true(ret != 0,
+					   "dice_run should report a failed roll allocation\n") !=
+			0 ||
+		ct_assert_true(ct_capture_compare(out, "") == 0,
+					   "a failed roll allocation should print nothing\n") != 0)
+		return (ct_capture_destroy(out), 7);
+	ct_capture_destroy(out);
+
+	ct_auto_call(auto_dice_run);
+	ct_failloc_reset();
+	return (EXIT_SUCCESS);
+}
+
 int main(int argc, char **argv)
 {
 	t_module *root;
@@ -257,6 +351,7 @@ int main(int argc, char **argv)
 	ct_module_taddf(root, test_stats_print, "capture stats output");
 	ct_module_taddf(root, test_run, "capture rolls and totals");
 	ct_module_taddf(root, test_errors, "capture usage errors");
+	ct_module_taddf(root, test_alloc, "ct_alloc showcase");
 	ret = ct_module_run_args(root, argc, argv, CT_DT_OK);
 	ct_module_destroy(root);
 	return (ret);
