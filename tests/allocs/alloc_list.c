@@ -7,6 +7,8 @@
 
 static int	g_custom_free_calls;
 static bool g_custom_free_untracked;
+static bool g_auto_call_first_failed;
+static int	g_auto_call_calls;
 
 static void custom_free(void *p)
 {
@@ -26,8 +28,11 @@ static void auto_call_helper(void)
 	void *a;
 	void *b;
 
+	g_auto_call_calls++;
 	a = malloc(8);
 	b = malloc(8);
+	if (!a)
+		g_auto_call_first_failed = true;
 	if (a)
 		free(a);
 	if (b)
@@ -91,6 +96,23 @@ int ctit_count(void)
 	return (EXIT_SUCCESS);
 }
 
+// The runner resets the allocation counter before every test, so a test starts
+// from a known count whatever the setup hooks or the previous tests allocated.
+int ctit_count_reset(void)
+{
+	void *p;
+
+	if (ct_alloc_getcount() != 0)
+		return (1);
+	p = malloc(8);
+	if (!p)
+		return (2);
+	if (ct_alloc_getcount() != 1)
+		return (free(p), 3);
+	free(p);
+	return (EXIT_SUCCESS);
+}
+
 int ctit_fail(void)
 {
 	void *p;
@@ -111,10 +133,22 @@ int ctit_fail(void)
 	if (p == NULL)
 		return (4);
 	free(p);
+	g_auto_call_first_failed = false;
+	g_auto_call_calls = 0;
+	// A pre-set budget must not break the measurement run: with 2 allocations,
+	// ct_auto_call() must call f() once to measure, then twice to fail each
+	// allocation in turn. The previous budget must be restored afterwards.
+	ct_failloc_set(1);
 	ct_auto_call(auto_call_helper);
-	ct_failloc_reset();
+	if (g_auto_call_calls != 3)
+		return (ct_failloc_reset(), 5);
+	if (!g_auto_call_first_failed)
+		return (ct_failloc_reset(), 6);
+	if (*cti_failloc_get() != 1)
+		return (ct_failloc_reset(), 7);
 	if (ct_alloc_getcount() == 0)
-		return (5);
+		return (ct_failloc_reset(), 8);
+	ct_failloc_reset();
 	return (EXIT_SUCCESS);
 }
 

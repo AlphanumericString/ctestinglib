@@ -6,11 +6,21 @@
 /// @brief Return the number of allocations that have succeeded so far.
 /// @details The counter is incremented by every call to malloc(), calloc() or
 /// realloc() that goes through the library wrappers; safealloc() does not
-/// increment it.
-/// @return Number of successful allocations since the program started.
+/// increment it. The test runner resets the counter before each test, so it
+/// measures the allocations of the current test.
+/// @return Number of successful allocations since the counter was last reset.
 size_t ct_alloc_getcount(void)
 {
 	return (*cti_alloc_get());
+}
+
+/// @brief Reset the allocation counter to zero.
+/// @details The counter reported by ct_alloc_getcount() is process-wide, so
+/// allocations made outside of the code under test shift it. The test runner
+/// calls this before each test so that every test starts from a known count.
+void cti_alloc_reset(void)
+{
+	(*cti_alloc_get()) = 0;
 }
 
 /// @brief Set how many allocations may succeed before the next one fails.
@@ -113,22 +123,28 @@ void free(void *ptr)
 /// @brief Exercise a function with each of its allocations failing in turn.
 /// @details The function is first called once to measure how many allocations
 /// it performs, then called again with a decreasing allocation budget so that
-/// each of its allocations, except the first, is made to fail in turn. This is
-/// a lightweight, funcheck-like way to check that a function handles
-/// allocation failures without crashing.
+/// each of its allocations is made to fail in turn, starting with the last one
+/// and ending with the first: a budget of 0 makes the very first allocation
+/// fail. This is a lightweight, funcheck-like way to check that a function
+/// handles allocation failures without crashing.
 /// @param f Function to call; it takes no argument and should perform the same
 /// allocations on every run.
+/// @note Failure injection is disabled while measuring the allocations, and the
+/// previous failure budget is restored when the function returns.
 void ct_auto_call(void (*f)(void))
 {
-	const size_t current_ac = ct_alloc_getcount();
-	size_t		 after_count;
+	const int64_t prev_failloc = (*cti_failloc_get());
+	const size_t  current_ac = ct_alloc_getcount();
+	size_t		  nb_allocs;
 
+	ct_failloc_reset();
 	f();
-	after_count = ct_alloc_getcount();
-	while (after_count != current_ac)
+	nb_allocs = ct_alloc_getcount() - current_ac;
+	while (nb_allocs > 0)
 	{
-		ct_failloc_set(after_count - current_ac);
+		nb_allocs--;
+		ct_failloc_set((int)nb_allocs);
 		f();
-		after_count--;
 	}
+	(*cti_failloc_get()) = prev_failloc;
 }

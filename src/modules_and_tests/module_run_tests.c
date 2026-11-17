@@ -42,6 +42,7 @@ int ct_module_run_self_tests(t_module *module)
 	while (t_ls)
 	{
 		ct_failloc_reset();
+		cti_alloc_reset();
 		if (cti_tfork(t_ls->data, module) != EXIT_SUCCESS)
 			ret = EXIT_FAILURE;
 		t_ls = t_ls->next;

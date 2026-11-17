@@ -107,6 +107,7 @@ void cti_print_charn(int depth, char c);
 // memory
 int64_t *cti_failloc_get(void);
 size_t	*cti_alloc_get(void);
+void	 cti_alloc_reset(void);
 
 void *safecalloc(size_t nmemb, size_t size);
 void *saferealloc(void *ptr, size_t size);
@@ -208,6 +209,7 @@ t_module *create_capture_tests(void);
 // memory
 int ctit_cleanup(void);
 int ctit_count(void);
+int ctit_count_reset(void);
 int ctit_fail(void);
 int ctit_alloc_variants(void);
 int ctit_free(void);

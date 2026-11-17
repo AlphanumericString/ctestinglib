@@ -21,8 +21,11 @@
  * wrapped: they are not direct allocation-failure exploration entry points.
  *
  * ct_auto_call() exercises a function with each of its allocations failing in
- * turn, which is a lightweight way to check that it handles allocation
- * failures.
+ * turn, including the first one, which is a lightweight way to check that it
+ * handles allocation failures.
+ *
+ * The allocation counter read by ct_alloc_getcount() is reset by the test
+ * runner before each test, so it measures the allocations of the current test.
  */
 
 void *safealloc(size_t size) __attribute__((malloc));

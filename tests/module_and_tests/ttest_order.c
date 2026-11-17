@@ -17,8 +17,8 @@ static int leaf_ordering_check(t_module *t)
 	leaf = t->tests_list;
 	while (leaf)
 	{
-		if ((void *)((t_test *)leaf->data)->test_func.pure
-			!= expected_forder[i++])
+		if ((void *)((t_test *)leaf->data)->test_func.pure !=
+			expected_forder[i++])
 			return (EXIT_FAILURE + i - 1);
 		leaf = leaf->next;
 	}
