@@ -133,24 +133,35 @@ void dice_stats_print(const t_dice_stats *stats)
 
 int dice_run(const t_dice_options *options)
 {
-	t_dice_stats stats;
-	unsigned int roll;
-	unsigned int i;
+	t_dice_stats  stats;
+	unsigned int *rolls;
+	unsigned int  i;
 
 	if (!options || options->rolls == 0)
+		return (1);
+	// Keep every roll so the stats and the raw output come from the same
+	// sequence. This allocation is what the ct_alloc tests make fail.
+	rolls = malloc(options->rolls * sizeof(*rolls));
+	if (!rolls)
 		return (1);
 	dice_stats_init(&stats);
 	i = 0;
 	while (i < options->rolls)
 	{
-		roll = dice_roll(&options->die);
-		if (roll == 0)
-			return (1);
-		dice_stats_add(&stats, roll);
-		if (options->raw)
-			printf("%u\n", roll);
+		rolls[i] = dice_roll(&options->die);
+		if (rolls[i] == 0)
+			return (free(rolls), 1);
 		i++;
 	}
+	i = 0;
+	while (i < options->rolls)
+	{
+		dice_stats_add(&stats, rolls[i]);
+		if (options->raw)
+			printf("%u\n", rolls[i]);
+		i++;
+	}
+	free(rolls);
 	if (options->stats)
 		dice_stats_print(&stats);
 	else if (!options->raw)

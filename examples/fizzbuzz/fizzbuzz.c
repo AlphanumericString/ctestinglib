@@ -37,13 +37,23 @@ void fizzbuzz_response(const t_fizzbuzz *fb)
 
 int fizzbuzz_run(void)
 {
-	t_fizzbuzz fb = {0};
+	t_fizzbuzz *fb;
 
-	if (fizzbuzz_scan(&fb) != 0)
+	// The state is heap allocated so the ct_alloc tests can make it fail.
+	fb = malloc(sizeof(*fb));
+	if (!fb)
 	{
+		dprintf(STDERR_FILENO, ERRMSG_ALLOC);
+		return (EXIT_FAILURE);
+	}
+	*fb = (t_fizzbuzz){0};
+	if (fizzbuzz_scan(fb) != 0)
+	{
+		free(fb);
 		dprintf(STDERR_FILENO, ERRMSG);
 		return (EXIT_FAILURE);
 	}
-	fizzbuzz_response(&fb);
+	fizzbuzz_response(fb);
+	free(fb);
 	return (EXIT_SUCCESS);
 }
