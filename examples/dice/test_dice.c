@@ -31,10 +31,10 @@ static int test_parse(void)
 	if (check_die("d2", 2) != 0 || check_die("d20", 20) != 0 ||
 		check_die("D1000", 1000) != 0)
 		return (1);
-	if (ct_assert_true(
-			dice_parse("d1", &die) != 0 && dice_parse("d0", &die) != 0 &&
-				dice_parse("d1001", &die) != 0 && dice_parse("20", &die) != 0 &&
-				dice_parse("d", &die) != 0,
+	if (ct_assert_false(
+			dice_parse("d1", &die) == 0 || dice_parse("d0", &die) == 0 ||
+				dice_parse("d1001", &die) == 0 || dice_parse("20", &die) == 0 ||
+				dice_parse("d", &die) == 0,
 			"dice_parse should reject invalid dice\n") != 0)
 		return (2);
 	if (ct_assert_true(dice_parse(NULL, &die) != 0 &&
@@ -69,18 +69,33 @@ static int test_parse(void)
 						   "dice_roll should reject a NULL die\n"));
 }
 
+// ct_capture_get() returns a malloc'ed copy of everything written so far.
+// String assertions can then be used on it, here to check the print format.
 static int capture_stats(const t_dice_stats *stats, const char *expected)
 {
 	t_capture *out;
+	char	  *text;
 	int		   ret;
 
 	out = ct_capture_create(STDOUT_FILENO);
 	if (!out)
 		return (1);
 	dice_stats_print(stats);
-	ret = ct_capture_compare(out, expected);
+	text = ct_capture_get(out);
 	ct_capture_destroy(out);
-	return (ret == 0 ? EXIT_SUCCESS : 2);
+	if (!text)
+		return (2);
+	if (ct_assert_str_neq(text, "",
+						  "dice_stats_print should print something\n") != 0)
+		ret = 3;
+	else if (ct_assert_str_eq(text, expected,
+							  "dice_stats_print output was \"%s\"\n",
+							  text) != 0)
+		ret = 4;
+	else
+		ret = EXIT_SUCCESS;
+	free(text);
+	return (ret);
 }
 
 static int test_stats_print(void)
@@ -152,7 +167,6 @@ static int capture_raw(unsigned int rolls, unsigned int sides,
 	out = ct_capture_create(STDOUT_FILENO);
 	if (!out)
 		return (1);
-	dice_seed(42);
 	ret = dice_run(&options);
 	text = ct_capture_get(out);
 	if (ret != 0 || !text)
@@ -166,11 +180,28 @@ static int capture_raw(unsigned int rolls, unsigned int sides,
 	return (ret);
 }
 
+// The run module owns its options in a fixture: setup builds the d6/5 rolls
+// stats run, teardown clears it. Since tests are forked, every test starts
+// from the same fresh options, even when it modifies them.
+static t_dice_options g_run_options;
+
+static void run_setup(void)
+{
+	g_run_options = (t_dice_options){0};
+	g_run_options.die.sides = 6;
+	g_run_options.rolls = 5;
+	g_run_options.stats = true;
+}
+
+static void run_teardown(void)
+{
+	g_run_options = (t_dice_options){0};
+}
+
 // The same seed makes the stats and default runs repeat the raw run: their
 // total/min/max can be compared without relying on a specific rand() sequence.
 static int test_run(void)
 {
-	t_dice_options	   options;
 	t_capture		  *out;
 	char			   expected[256];
 	unsigned long long total;
@@ -178,13 +209,15 @@ static int test_run(void)
 	unsigned int	   max;
 	int				   ret;
 
+	if (ct_assert_true(g_run_options.die.sides == 6 &&
+						   g_run_options.rolls == 5 &&
+						   g_run_options.stats == true,
+					   "setup should provide the d6/5 stats options\n") != 0)
+		return (1);
+	dice_seed(42);
 	ret = capture_raw(5, 6, &total, &min, &max);
 	if (ret != EXIT_SUCCESS)
 		return (ret);
-	options = (t_dice_options){0};
-	options.die.sides = 6;
-	options.rolls = 5;
-	options.stats = true;
 	snprintf(expected, sizeof(expected),
 			 "rolls: 5\ntotal: %llu\nmin: %u\nmax: %u\naverage: %.2f\n", total,
 			 min, max, (double)total / 5.0);
@@ -192,19 +225,19 @@ static int test_run(void)
 	if (!out)
 		return (4);
 	dice_seed(42);
-	ret = dice_run(&options);
+	ret = dice_run(&g_run_options);
 	if (ret != 0 || ct_capture_compare(out, expected) != 0)
 		ret = 5;
 	ct_capture_destroy(out);
 	if (ret != EXIT_SUCCESS)
 		return (ret);
-	options.stats = false;
+	g_run_options.stats = false;
 	snprintf(expected, sizeof(expected), "total: %llu\n", total);
 	out = ct_capture_create(STDOUT_FILENO);
 	if (!out)
 		return (6);
 	dice_seed(42);
-	ret = dice_run(&options);
+	ret = dice_run(&g_run_options);
 	if (ret != 0 || ct_capture_compare(out, expected) != 0)
 		ret = 7;
 	ct_capture_destroy(out);
@@ -282,6 +315,7 @@ static int test_alloc(void)
 	options.rolls = 5;
 	options.stats = true;
 	ct_failloc_reset();
+	dice_seed(42);
 	ret = capture_raw(5, 6, &total, &min, &max);
 	if (ret != EXIT_SUCCESS)
 		return (ret);
@@ -339,19 +373,90 @@ static int test_alloc(void)
 	return (EXIT_SUCCESS);
 }
 
+static t_module *create_parse_module(void)
+{
+	t_module *m;
+
+	ct_module_init(&m, "parse", "parse dice and arguments");
+	if (!m)
+		return (NULL);
+	if (!ct_module_taddf(m, test_parse, "parse dice and arguments"))
+		return (ct_module_destroy(m), NULL);
+	return (m);
+}
+
+static t_module *create_display_module(void)
+{
+	t_module *m;
+
+	ct_module_init(&m, "display", "print statistics");
+	if (!m)
+		return (NULL);
+	if (!ct_module_taddf(m, test_stats_print, "capture stats output"))
+		return (ct_module_destroy(m), NULL);
+	return (m);
+}
+
+static t_module *create_run_module(void)
+{
+	t_module *m;
+
+	ct_module_init(&m, "run", "rolls and totals fixture");
+	if (!m)
+		return (NULL);
+	ct_module_set_setup(m, run_setup);
+	ct_module_set_teardown(m, run_teardown);
+	if (!ct_module_taddf(m, test_run, "capture rolls and totals"))
+		return (ct_module_destroy(m), NULL);
+	return (m);
+}
+
+static t_module *create_errors_module(void)
+{
+	t_module *m;
+
+	ct_module_init(&m, "errors", "reject invalid options");
+	if (!m)
+		return (NULL);
+	if (!ct_module_taddf(m, test_errors, "capture usage errors"))
+		return (ct_module_destroy(m), NULL);
+	return (m);
+}
+
+static t_module *create_memory_module(void)
+{
+	t_module *m;
+
+	ct_module_init(&m, "memory", "allocation failure showcase");
+	if (!m)
+		return (NULL);
+	if (!ct_module_taddf(m, test_alloc, "ct_alloc showcase"))
+		return (ct_module_destroy(m), NULL);
+	return (m);
+}
+
 int main(int argc, char **argv)
 {
 	t_module *root;
-	int		  ret;
+	t_module *sub;
+	t_module *(*creators[])(void) = {
+		create_parse_module,  create_display_module, create_run_module,
+		create_errors_module, create_memory_module,
+	};
+	size_t i;
+	int	   ret;
 
 	ct_module_init(&root, "dice", "tests for the dice example");
 	if (!root)
 		return (EXIT_FAILURE);
-	ct_module_taddf(root, test_parse, "parse dice and arguments");
-	ct_module_taddf(root, test_stats_print, "capture stats output");
-	ct_module_taddf(root, test_run, "capture rolls and totals");
-	ct_module_taddf(root, test_errors, "capture usage errors");
-	ct_module_taddf(root, test_alloc, "ct_alloc showcase");
+	i = 0;
+	while (i < sizeof(creators) / sizeof(creators[0]))
+	{
+		sub = creators[i]();
+		i++;
+		if (!sub || !ct_module_add_sub(root, sub))
+			return (ct_module_destroy(root), EXIT_FAILURE);
+	}
 	ret = ct_module_run_args(root, argc, argv, CT_DT_OK);
 	ct_module_destroy(root);
 	return (ret);

@@ -42,6 +42,16 @@ bool ct_module_taddf_param_timeout(t_module *m, int (*f)(void *), void *param,
 void ct_module_init(t_module **m_ptr, const char *name, const char *dsc);
 bool ct_module_add_sub(t_module *m, t_module *sub_module);
 
+// module fixtures
+// The setup hook runs once before the module's tests, the teardown hook once
+// after the last test (also when a test failed). Both return void, so they are
+// meant to prepare/release a fixture, not to assert on the test results.
+// With FORK_TESTS the hooks run in the parent process, before the tests are
+// forked: a test starts from the state left by setup, but its own changes are
+// never visible to teardown.
+void ct_module_set_setup(t_module *module, void (*setup)(void));
+void ct_module_set_teardown(t_module *module, void (*teardown)(void));
+
 // timeouts
 // per module default timeout (0: fallback on CT_DEFAULT_TIMEOUT)
 void		 ct_module_set_timeout(t_module *module, unsigned int seconds);
